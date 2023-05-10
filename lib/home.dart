@@ -1,6 +1,8 @@
 import 'package:e_dukaxon/highlightReading.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,6 +12,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<String> generateText(String prompt) async {
+    final endpoint =
+        'https://api.openai.com/v1/engines/davinci-codex/completions';
+    final promptJson =
+        jsonEncode({'prompt': prompt, 'temperature': 0.7, 'max_tokens': 60});
+
+    final response = await http.post(
+      Uri.parse(endpoint),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':
+            'Bearer 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',
+      },
+      body: promptJson,
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final choices = responseData['choices'];
+      if (choices.isNotEmpty) {
+        return choices.first['text'];
+      } else {
+        throw Exception('Empty response from OpenAI API');
+      }
+    } else {
+      throw Exception('Failed to generate text: ${response.reasonPhrase}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,14 +83,15 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                // final text = await generateText("Generate a random paragraph.");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const HighlightReading(
-                            text:
-                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam malesuada posuere mauris, ac lobortis orci posuere nec. Aenean vel commodo nisl, non placerat turpis. Vestibulum tincidunt, augue in efficitur placerat, diam nunc tempus odio, id hendrerit nulla nibh at felis. Suspendisse volutpat, eros ac gravida imperdiet, enim massa bibendum orci, ac eleifend erat erat et nibh. Etiam sed purus et urna viverra consectetur. Nullam malesuada mollis efficitur. Praesent tempus, orci quis fringilla luctus, est est imperdiet est, sit amet sodales lacus nulla ut ante. Aenean vitae eros ex. Donec et rhoncus turpis, in dapibus augue. Aliquam ullamcorper ut massa vitae tempor. Suspendisse in justo commodo, tincidunt purus et, viverra neque. Maecenas ut semper massa, feugiat gravida est. Vestibulum tincidunt suscipit dui eget tempus.',
-                          )),
+                    builder: (context) => const HighlightReading(
+                        text:
+                            "The headphones were on. They had been utilized on purpose. She could hear her mom yelling in the background, but couldn't make out exactly what the yelling was about. That was exactly why she had put them on. She knew her mom would enter her room at any minute, and she could pretend that she hadn't heard any of the previous yelling."),
+                  ),
                 );
               },
               child: const Padding(
