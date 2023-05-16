@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "56063375822",
+    "project_id": "e-dukaxon",
+    "storage_bucket": "e-dukaxon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56063375822:android:5a1ef91b8e4b76ed17d39f",
+        "android_client_info": {
+          "package_name": "com.example.e_dukaxon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "56063375822-l1eau4k7gedeqim3bqlevdc4qqqhefbj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvV6m9tNyJNIQVnM1PA-A2Rpz0xHffnz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "56063375822-l1eau4k7gedeqim3bqlevdc4qqqhefbj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "56063375822-mr0mqhrs471oe0407n4e4n9mrnpieu7d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eDukaxon"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

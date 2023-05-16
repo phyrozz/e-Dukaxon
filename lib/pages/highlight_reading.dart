@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_dukaxon/auth.dart';
 
 class HighlightReading extends StatefulWidget {
   final String text;
@@ -16,6 +18,12 @@ class _HighlightReadingState extends State<HighlightReading> {
   final FlutterTts flutterTts = FlutterTts();
   bool _isReading = false;
   double _fontSize = 24.0;
+
+  final User? user = Auth().currentUser;
+
+  Future<void> signOut() async {
+    await Auth().signOut();
+  }
 
   @override
   void initState() {
@@ -116,10 +124,7 @@ class _HighlightReadingState extends State<HighlightReading> {
               ],
               onSelected: (value) {
                 if (value == 'Log Out') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
+                  signOut;
                 }
               },
             ),

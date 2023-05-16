@@ -1,7 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'widget_tree.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -45,19 +51,30 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             primary: Colors.grey[600], // sets the background color
             onPrimary: Colors.white, // sets the text color
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          prefixIconColor: Colors.black,
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+          ),
+          labelStyle: const TextStyle(color: Colors.black),
           filled: true,
           fillColor: Colors.grey[300],
           hintStyle: TextStyle(color: Colors.grey[400]),
         ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
+        dialogTheme: DialogTheme(
+          backgroundColor: Colors.grey[800],
+        ),
       ),
-      home: const LoginPage(),
+      home: const WidgetTree(),
     );
   }
 }
