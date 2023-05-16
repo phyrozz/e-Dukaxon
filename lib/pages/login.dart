@@ -123,17 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.all(14.0),
                 child: Text('Log In'),
               ),
-              // Change onPressed logic once login auth is implemented
               onPressed: signInWithEmailAndPassword,
-              // onPressed: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (context) => const HighlightReading(
-              //             text:
-              //                 "The headphones were on. They had been utilized on purpose. She could hear her mom yelling in the background, but couldn't make out exactly what the yelling was about. That was exactly why she had put them on. She knew her mom would enter her room at any minute, and she could pretend that she hadn't heard any of the previous yelling.")),
-              //   );
-              // },
             ),
             const SizedBox(height: 16),
             TextButton(
