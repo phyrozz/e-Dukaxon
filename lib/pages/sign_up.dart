@@ -13,6 +13,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  bool passwordVisible = false;
   String? errorMessage = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _userNameController = TextEditingController();
@@ -20,6 +21,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
 
   Future<void> signUp(BuildContext context, String email, String username,
       String password, String confirmPassword) async {
@@ -98,6 +105,12 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  void togglePasswordVisibility() {
+    setState(() {
+      passwordVisible = !passwordVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,18 +163,29 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.lock),
+                obscureText: passwordVisible,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock),
                   prefixIconColor: Colors.black,
                   labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(passwordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: togglePasswordVisibility,
+                    color: Colors.black,
+                  ),
+                  alignLabelWithHint: false,
+                  filled: true,
                 ),
+                keyboardType: TextInputType.visiblePassword,
+                textInputAction: TextInputAction.done,
                 style: const TextStyle(color: Colors.black),
               ),
               const SizedBox(height: 16.0),
               TextField(
                 controller: _confirmPasswordController,
-                obscureText: true,
+                obscureText: passwordVisible,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.lock),
                   prefixIconColor: Colors.black,

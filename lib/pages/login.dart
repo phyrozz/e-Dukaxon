@@ -13,9 +13,16 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool passwordVisible = false;
   String? errorMessage = '';
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
 
   Future<void> signInWithEmailAndPassword() async {
     try {
@@ -78,6 +85,12 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void togglePasswordVisibility() {
+    setState(() {
+      passwordVisible = !passwordVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,17 +118,28 @@ class _LoginPageState extends State<LoginPage> {
                   borderSide: BorderSide(color: Colors.white),
                 ),
               ),
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 16.0),
             TextField(
               controller: _controllerPassword,
-              obscureText: true,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.lock),
+              obscureText: passwordVisible,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.lock),
                 labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(passwordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                  onPressed: togglePasswordVisibility,
+                  color: Colors.black,
+                ),
+                alignLabelWithHint: false,
+                filled: true,
               ),
-              style: TextStyle(color: Colors.black),
+              keyboardType: TextInputType.visiblePassword,
+              textInputAction: TextInputAction.done,
+              style: const TextStyle(color: Colors.black),
             ),
             const SizedBox(height: 32.0),
             ElevatedButton(
