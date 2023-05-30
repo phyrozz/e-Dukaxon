@@ -1,7 +1,7 @@
-import 'package:e_dukaxon/pages/login.dart';
 import 'package:flutter/material.dart';
 import '../widgets/volume_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
 
@@ -63,13 +63,10 @@ class _SignUpPageState extends State<SignUpPage> {
         password: password,
       );
 
-      // Retrieve the current user object from FirebaseAuth
-      User? user = _auth.currentUser;
+      String userId = Auth().currentUser!.uid;
+      print(userId);
 
-      if (user != null) {
-        // Set the display name of the user
-        await user.updateDisplayName(username);
-      }
+      await addUsernameToFirestore(userId, username, email);
 
       // Remove the loading widget
       Navigator.pop(context);
@@ -105,6 +102,24 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
+  Future<void> addUsernameToFirestore(
+      String userId, String username, String email) async {
+    // Get a reference to the users collection
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    try {
+      // Create a document for the user using their user ID
+      DocumentReference userDocRef = users.doc(userId);
+
+      // Set the username and email field of the document
+      await userDocRef
+          .set({'username': username, 'email': email, 'isNewAccount': true});
+    } catch (e) {
+      // Handle any errors that occur during the process
+      print('Error adding username to Firestore: $e');
+    }
+  }
+
   void togglePasswordVisibility() {
     setState(() {
       passwordVisible = !passwordVisible;
@@ -114,103 +129,110 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: true,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back)),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
-        child: Container(
-          constraints: const BoxConstraints(
-              minHeight: 100, minWidth: 100, maxHeight: 600),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                "Create an account",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 36.0,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
+              child: Container(
+                constraints: const BoxConstraints(
+                    minHeight: 100, minWidth: 100, maxHeight: 600),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Create an account",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 36.0,
+                      ),
+                    ),
+                    const SizedBox(height: 32.0),
+                    TextField(
+                      controller: _userNameController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        prefixIconColor: Colors.black,
+                        labelText: 'User Name',
+                      ),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.email),
+                        prefixIconColor: Colors.black,
+                        labelText: 'Email',
+                      ),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: passwordVisible,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        prefixIconColor: Colors.black,
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: togglePasswordVisibility,
+                          color: Colors.black,
+                        ),
+                        alignLabelWithHint: false,
+                        filled: true,
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: passwordVisible,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.lock),
+                        prefixIconColor: Colors.black,
+                        labelText: 'Enter password again',
+                      ),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(height: 32.0),
+                    ElevatedButton(
+                      child: const Padding(
+                        padding: EdgeInsets.all(14.0),
+                        child: Text('Create account'),
+                      ),
+                      onPressed: () {
+                        signUp(
+                            context,
+                            _emailController.text,
+                            _userNameController.text,
+                            _passwordController.text,
+                            _confirmPasswordController.text);
+                      },
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 32.0),
-              TextField(
-                controller: _userNameController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.person),
-                  prefixIconColor: Colors.black,
-                  labelText: 'User Name',
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.email),
-                  prefixIconColor: Colors.black,
-                  labelText: 'Email',
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: passwordVisible,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.lock),
-                  prefixIconColor: Colors.black,
-                  labelText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(passwordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off),
-                    onPressed: togglePasswordVisibility,
-                    color: Colors.black,
-                  ),
-                  alignLabelWithHint: false,
-                  filled: true,
-                ),
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.done,
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _confirmPasswordController,
-                obscureText: passwordVisible,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.lock),
-                  prefixIconColor: Colors.black,
-                  labelText: 'Enter password again',
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 32.0),
-              ElevatedButton(
-                child: const Padding(
-                  padding: EdgeInsets.all(14.0),
-                  child: Text('Create account'),
-                ),
-                // Change onPressed logic once login auth is implemented
+            ),
+            Positioned(
+              top: 10,
+              left: 10,
+              child: ElevatedButton.icon(
+                label: const Text("Back"),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  signUp(
-                      context,
-                      _emailController.text,
-                      _userNameController.text,
-                      _passwordController.text,
-                      _confirmPasswordController.text);
+                  Navigator.pop(context);
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: const VolumeButton(

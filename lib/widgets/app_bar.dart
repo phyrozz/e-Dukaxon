@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/fetch_username.dart';
 
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
@@ -63,7 +64,20 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       key: key,
-      title: Text(title),
+      title: FutureBuilder<String?>(
+        future: getUsername(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loading...');
+          } else if (snapshot.hasData) {
+            return Text('Welcome, ${snapshot.data}!');
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return const Text('No username found');
+          }
+        },
+      ),
       automaticallyImplyLeading: false,
       backgroundColor: Colors.grey[900],
       actions: [
