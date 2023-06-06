@@ -35,48 +35,14 @@ class _HomePageState extends State<HomePage> {
     // Check if it's a new account
     if (userDoc.exists && userDoc.data()?['isNewAccount'] == true) {
       // Show the assessment page
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AgeSelectPage(),
-        ),
-      );
-    }
-  }
-
-  Future<String> generateText(String prompt) async {
-    final endpoint =
-        'https://api.openai.com/v1/engines/davinci-codex/completions';
-    final promptJson =
-        jsonEncode({'prompt': prompt, 'temperature': 0.7, 'max_tokens': 60});
-
-    final response = await http.post(
-      Uri.parse(endpoint),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer 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',
-      },
-      body: promptJson,
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final choices = responseData['choices'];
-      if (choices.isNotEmpty) {
-        return choices.first['text'];
-      } else {
-        throw Exception('Empty response from OpenAI API');
-      }
-    } else {
-      throw Exception('Failed to generate text: ${response.reasonPhrase}');
+      Navigator.pushNamed(context, '/assessment/init');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar("eDukaxon"),
+      appBar: CustomAppBar(isHomePage: true),
       body: Container(
         padding: const EdgeInsets.all(30.0),
         child: Column(
@@ -86,27 +52,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () async {
                 // final text = await generateText("Generate a random paragraph.");
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        AgeSelectPage(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      var begin = const Offset(1.0, 0.0);
-                      var end = Offset.zero;
-                      var curve = Curves.ease;
-
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    },
-                  ),
-                );
+                Navigator.pushNamed(context, '/highlightReading');
               },
               child: const Padding(
                 padding: EdgeInsets.all(14.0),

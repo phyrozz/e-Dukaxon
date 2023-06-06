@@ -1,3 +1,10 @@
+import 'package:e_dukaxon/my_pages.dart';
+import 'package:e_dukaxon/pages/assessment_questions/age.dart';
+import 'package:e_dukaxon/pages/assessment_questions/init.dart';
+import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
+import 'package:e_dukaxon/pages/highlight_reading.dart';
+import 'package:e_dukaxon/pages/home.dart';
+import 'package:e_dukaxon/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
@@ -24,11 +31,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'eDukaxon',
       theme: ThemeData(
-        primaryColor: Colors.grey[800],
-        backgroundColor: Colors.grey[800],
-        scaffoldBackgroundColor: Colors.grey[800],
+        primaryColor: Colors.grey[900],
+        backgroundColor: Colors.grey[900],
+        scaffoldBackgroundColor: Colors.grey[900],
         textTheme: const TextTheme(
           displayLarge:
               TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
@@ -55,7 +62,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            primary: Colors.grey[600], // sets the background color
+            primary: Colors.grey[800], // sets the background color
             onPrimary: Colors.white, // sets the text color
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
             shape: RoundedRectangleBorder(
@@ -77,10 +84,24 @@ class MyApp extends StatelessWidget {
           cursorColor: Colors.black,
         ),
         dialogTheme: DialogTheme(
-          backgroundColor: Colors.grey[800],
+          backgroundColor: Colors.black,
         ),
+        progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+        bottomAppBarTheme: BottomAppBarTheme(color: Colors.black),
+        floatingActionButtonTheme:
+            FloatingActionButtonThemeData(backgroundColor: Colors.grey[800]),
       ),
-      home: const WidgetTree(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const WidgetTree(),
+        '/login': (context) => LoginPage(),
+        '/myPages': (context) => MyPages(),
+        '/highlightReading': (context) => HighlightReading(text: "test"),
+        '/assessment/init': (context) => InitAssessmentPage(),
+        '/assessment/parentOrNot': (context) => ParentOrNotPage(),
+        '/assessment/ageSelect': (context) => AgeSelectPage(),
+      },
     );
   }
 }

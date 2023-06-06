@@ -70,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       // Remove the loading widget
       Navigator.pop(context);
-      Navigator.pop(context);
+      Navigator.pushNamed(context, '/');
 
       // Navigate to the login page
       // Navigator.push(

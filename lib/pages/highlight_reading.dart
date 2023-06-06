@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -102,35 +103,7 @@ class _HighlightReadingState extends State<HighlightReading> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        automaticallyImplyLeading: false, // Hide back button
-        title: const Text('eDukaxon'),
-        actions: [
-          Theme(
-            data: ThemeData(
-              canvasColor: Colors.grey[900],
-            ),
-            child: PopupMenuButton(
-              icon: const IconTheme(
-                data: IconThemeData(color: Colors.white),
-                child: Icon(Icons.person),
-              ),
-              itemBuilder: (BuildContext context) => [
-                const PopupMenuItem(
-                  value: 'Log Out',
-                  child: Text('Log Out'),
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'Log Out') {
-                  signOut;
-                }
-              },
-            ),
-          ),
-        ],
-      ),
+      appBar: CustomAppBarWithBackButton(text: 'Highlight Reading'),
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(

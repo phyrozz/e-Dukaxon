@@ -4,15 +4,18 @@ import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/fetch_username.dart';
 
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
+  final bool isHomePage;
+  final String? text;
+
   @override
   final Size preferredSize;
   final User? user = Auth().currentUser;
-  final String title;
 
-  CustomAppBar(
-    this.title, {
+  CustomAppBar({
     Key? key,
-  })  : preferredSize = const Size.fromHeight(50.0),
+    required this.isHomePage,
+    this.text,
+  })  : preferredSize = const Size.fromHeight(60.0),
         super(key: key);
 
   Future<void> signOut(BuildContext context) async {
@@ -38,6 +41,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     await Auth().signOut();
 
     Navigator.pop(context);
+    Navigator.pushNamed(context, '/');
   }
 
   Widget _signOutButton(BuildContext context) {
@@ -64,22 +68,23 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       key: key,
-      title: FutureBuilder<String?>(
-        future: getUsername(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading...');
-          } else if (snapshot.hasData) {
-            return Text('Welcome, ${snapshot.data}!');
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return const Text('No username found');
-          }
-        },
-      ),
+      title: isHomePage
+          ? FutureBuilder<String?>(
+              future: getUsername(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasData) {
+                  return Text('Welcome, ${snapshot.data}!');
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return const Text('No username found');
+                }
+              },
+            )
+          : Text(text!),
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.grey[900],
       actions: [
         Theme(
           data: ThemeData(
