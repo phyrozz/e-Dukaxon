@@ -130,99 +130,106 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              "Let's start learning!",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 36.0,
-              ),
-            ),
-            const SizedBox(height: 32.0),
-            TextField(
-              controller: _controllerEmailorUsername,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                labelText: 'Email / Username',
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  height: 100,
                 ),
-              ),
-              style: const TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: _controllerPassword,
-              obscureText: passwordVisible,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock),
-                labelText: 'Password',
-                suffixIcon: IconButton(
-                  icon: Icon(passwordVisible
-                      ? Icons.visibility
-                      : Icons.visibility_off),
-                  onPressed: togglePasswordVisibility,
-                  color: Colors.black,
-                ),
-                alignLabelWithHint: false,
-                filled: true,
-              ),
-              keyboardType: TextInputType.visiblePassword,
-              textInputAction: TextInputAction.done,
-              style: const TextStyle(color: Colors.black),
-            ),
-            const SizedBox(height: 32.0),
-            ElevatedButton(
-              onPressed: signInWithEmailAndPassword,
-              child: const Padding(
-                padding: EdgeInsets.all(14.0),
-                child: Text('Log In'),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        SignUpPage(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      var begin = const Offset(1.0, 0.0);
-                      var end = Offset.zero;
-                      var curve = Curves.ease;
-
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    },
+                const Text(
+                  "Let's start learning!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 36.0,
                   ),
-                );
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const SignUpPage()));
-              },
-              style: TextButton.styleFrom(
-                primary: Colors.white,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(14.0),
-                child: Text('I want to create an account'),
-              ),
+                ),
+                const SizedBox(height: 32.0),
+                TextField(
+                  controller: _controllerEmailorUsername,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.person),
+                    labelText: 'Email / Username',
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  controller: _controllerPassword,
+                  obscureText: passwordVisible,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.lock),
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: togglePasswordVisibility,
+                      color: Colors.black,
+                    ),
+                    alignLabelWithHint: false,
+                    filled: true,
+                  ),
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const SizedBox(height: 32.0),
+                ElevatedButton(
+                  onPressed: signInWithEmailAndPassword,
+                  child: const Padding(
+                    padding: EdgeInsets.all(14.0),
+                    child: Text('Log In'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            SignUpPage(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          var begin = const Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const SignUpPage()));
+                  },
+                  style: TextButton.styleFrom(
+                    primary: Colors.white,
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(14.0),
+                    child: Text('I want to create an account'),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       floatingActionButton: const VolumeButton(
