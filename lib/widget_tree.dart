@@ -1,4 +1,5 @@
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/main.dart';
 import 'my_pages.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _WidgetTreeState extends State<WidgetTree> {
         stream: Auth().authStateChanges,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const MyPages();
+            return const HomePageTree();
           } else {
             return const LoginPage();
           }

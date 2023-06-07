@@ -1,0 +1,58 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/main.dart';
+import 'my_pages.dart';
+import 'package:flutter/material.dart';
+import 'pages/child_home.dart';
+import 'pages/home.dart';
+import 'pages/login.dart';
+
+class HomePageTree extends StatefulWidget {
+  const HomePageTree({Key? key});
+
+  @override
+  State<HomePageTree> createState() => _HomePageTreeState();
+}
+
+class _HomePageTreeState extends State<HomePageTree> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
+      child: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(Auth().getCurrentUserId()) // Replace with your logic to get the current user ID
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Loading state
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            // Error state
+            return const Text('Error fetching data');
+          } else {
+            // Data available
+            final isParent = snapshot.data?.get('isParent') ?? false;
+            if (isParent) {
+              return const ChildHomePage();
+            } else {
+              return const MyPages();
+            }
+          }
+        },
+      ),
+    );
+  }
+}

@@ -52,12 +52,19 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       ),
       itemBuilder: (BuildContext context) => [
         const PopupMenuItem(
-          value: 'Log Out',
+          value: 'parentMode',
+          child: Text('Parent Mode'),
+        ),
+        const PopupMenuItem(
+          value: 'logOut',
           child: Text('Log Out'),
         ),
       ],
       onSelected: (value) {
-        if (value == 'Log Out') {
+        if (value == 'parentMode') {
+          Navigator.pushNamed(context, '/myPages');
+        }
+        else if (value == 'logOut') {
           signOut(context);
         }
       },

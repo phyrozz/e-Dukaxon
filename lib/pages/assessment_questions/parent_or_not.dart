@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_dukaxon/assessment_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,21 +11,21 @@ class ParentOrNotPage extends StatefulWidget {
 }
 
 class _ParentOrNotPageState extends State<ParentOrNotPage> {
-  Future<void> updateIsParent(bool isParent) async {
-    try {
-      FirebaseAuth auth = FirebaseAuth.instance;
-      User? currentUser = auth.currentUser;
+  // Future<void> updateIsParent(bool isParent) async {
+  //   try {
+  //     FirebaseAuth auth = FirebaseAuth.instance;
+  //     User? currentUser = auth.currentUser;
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser!.uid)
-          .update({'isParent': isParent});
-      print('isNewAccount updated successfully!');
-    } catch (error) {
-      print('Error updating isNewAccount: $error');
-      // Handle the error as needed
-    }
-  }
+  //     await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(currentUser!.uid)
+  //         .update({'isParent': isParent});
+  //     print('isNewAccount updated successfully!');
+  //   } catch (error) {
+  //     print('Error updating isNewAccount: $error');
+  //     // Handle the error as needed
+  //   }
+  // }
 
 
   @override
@@ -59,7 +60,8 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                           onPressed: () async {
                             Navigator.pushNamed(context, '/assessment/ageSelect');
                   
-                            await updateIsParent(false);
+                            // await updateIsParent(false);
+                            isParent = false;
                           },
                           child: const Text(
                               'No. I will use this whole app by myself.'),
@@ -74,7 +76,8 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                           onPressed: () async {
                             Navigator.pushNamed(context, '/assessment/ageSelect');
                   
-                            await updateIsParent(true);
+                            // await updateIsParent(true);
+                            isParent = true;
                           },
                           child: const Text('Yes'),
                         ),
