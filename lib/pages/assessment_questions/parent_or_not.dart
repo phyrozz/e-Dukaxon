@@ -26,6 +26,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,38 +48,39 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.fromLTRB(35, 20, 35, 20))),
-                        onPressed: () async {
-                          Navigator.pushNamed(context, '/assessment/ageSelect');
-
-                          await updateIsParent(false);
-                        },
-                        child: const Text(
-                            'No. I will use this whole app by myself.'),
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.fromLTRB(35, 20, 35, 20))),
-                        onPressed: () async {
-                          Navigator.pushNamed(context, '/assessment/ageSelect');
-
-                          await updateIsParent(true);
-                        },
-                        child: const Text('Yes'),
-                      ),
-                    ],
-                  ),
-                ],
+                      Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.all(20))),
+                          onPressed: () async {
+                            Navigator.pushNamed(context, '/assessment/ageSelect');
+                  
+                            await updateIsParent(false);
+                          },
+                          child: const Text(
+                              'No. I will use this whole app by myself.'),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                              padding: MaterialStatePropertyAll(
+                                  EdgeInsets.all(20))),
+                          onPressed: () async {
+                            Navigator.pushNamed(context, '/assessment/ageSelect');
+                  
+                            await updateIsParent(true);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    ),
+                    ]
               ),
             ),
             SizedBox(),
