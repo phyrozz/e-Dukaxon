@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/assessment_data.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:e_dukaxon/auth.dart';
@@ -39,9 +40,9 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     );
 
     await Auth().signOut();
-
     Navigator.pop(context);
-    Navigator.pushNamed(context, '/');
+    isOnParentMode = false;
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   Widget _signOutButton(BuildContext context) {
@@ -51,9 +52,11 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
         child: Icon(Icons.person),
       ),
       itemBuilder: (BuildContext context) => [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'parentMode',
-          child: Text('Parent Mode'),
+          child: isOnParentMode
+              ? const Text('Exit Parent Mode')
+              : const Text('Parent Mode'),
         ),
         const PopupMenuItem(
           value: 'logOut',
@@ -62,9 +65,14 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       ],
       onSelected: (value) {
         if (value == 'parentMode') {
-          Navigator.pushNamed(context, '/myPages');
-        }
-        else if (value == 'logOut') {
+          if (isOnParentMode) {
+            isOnParentMode = false;
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/childHomePage', (route) => false);
+          } else {
+            Navigator.pushNamed(context, '/parentModeLogin');
+          }
+        } else if (value == 'logOut') {
           signOut(context);
         }
       },

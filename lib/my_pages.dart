@@ -1,5 +1,6 @@
+import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/home.dart';
-import 'package:e_dukaxon/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'pages/my_account.dart';
 import 'pages/games.dart';
@@ -16,7 +17,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    HomePage(),
+    isParent ? ChildHomePage() : HomePage(),
     GamesPage(),
     MyProgressPage(),
     MyAccountPage(),

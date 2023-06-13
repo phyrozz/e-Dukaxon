@@ -40,7 +40,7 @@ class InitAssessmentPage extends StatelessWidget {
                         EdgeInsets.fromLTRB(35, 20, 35, 20))),
                 onPressed: () {
                   // Save the entered age and navigate back
-                  Navigator.pushNamed(context, '/assessment/parentOrNot');
+                  Navigator.pushNamed(context, '/assessment/questionOne');
                 },
                 child: const Text("Let's Go!"),
               ),

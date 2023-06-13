@@ -2,9 +2,18 @@ import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/pages/assessment_questions/init.dart';
 import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_3.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_4.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_5.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_6.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_7.dart';
+import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/highlight_reading.dart';
 import 'package:e_dukaxon/pages/home.dart';
 import 'package:e_dukaxon/pages/login.dart';
+import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
@@ -34,8 +43,8 @@ class MyApp extends StatelessWidget {
       title: 'eDukaxon',
       theme: ThemeData(
         primaryColor: Colors.grey[900],
-        backgroundColor: Colors.grey[900],
-        scaffoldBackgroundColor: Colors.grey[900],
+        // backgroundColor: Colors.grey[900],
+        scaffoldBackgroundColor: Colors.black,
         textTheme: const TextTheme(
           displayLarge:
               TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
@@ -84,23 +93,33 @@ class MyApp extends StatelessWidget {
           cursorColor: Colors.black,
         ),
         dialogTheme: DialogTheme(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.grey[900],
         ),
         progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: AppBarTheme(backgroundColor: Colors.black),
-        bottomAppBarTheme: BottomAppBarTheme(color: Colors.black),
+        bottomAppBarTheme: BottomAppBarTheme(color: Colors.grey[900]),
         floatingActionButtonTheme:
-            FloatingActionButtonThemeData(backgroundColor: Colors.grey[800]),
+            FloatingActionButtonThemeData(backgroundColor: Colors.grey[900]),
+        cardColor: Colors.grey[800],
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => const WidgetTree(),
         '/login': (context) => LoginPage(),
         '/myPages': (context) => MyPages(),
+        '/childHomePage': (context) => ChildHomePage(),
         '/highlightReading': (context) => HighlightReading(text: "test"),
         '/assessment/init': (context) => InitAssessmentPage(),
+        '/assessment/questionOne': (context) => BangorQuestionOne(),
+        '/assessment/questionTwo': (context) => BangorQuestionTwo(),
+        '/assessment/questionThree': (context) => BangorQuestionThree(),
+        '/assessment/questionFour': (context) => BangorQuestionFour(),
+        '/assessment/questionFive': (context) => BangorQuestionFive(),
+        '/assessment/questionSix': (context) => BangorQuestionSix(),
+        '/assessment/questionSeven': (context) => BangorQuestionSeven(),
         '/assessment/parentOrNot': (context) => ParentOrNotPage(),
         '/assessment/ageSelect': (context) => AgeSelectPage(),
+        '/parentModeLogin': (context) => PinAccessPage(),
       },
     );
   }

@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     // Check if it's a new account
     if (userDoc.exists && userDoc.data()?['isNewAccount'] == true) {
       // Show the assessment page
-      Navigator.pushNamed(context, '/assessment/init');
+      Navigator.pushReplacementNamed(context, '/assessment/init');
     }
   }
 
