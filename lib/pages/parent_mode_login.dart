@@ -25,10 +25,13 @@ class _PinAccessPageState extends State<PinAccessPage> {
   }
 
   void _verifyPin() {
-    final int currentYear = DateTime.now().year;
-    final int birthYear = int.tryParse(_pinController.text) ?? 0;
+  final int currentYear = DateTime.now().year;
+  final String pin = _pinController.text.trim();
 
-    if (currentYear - birthYear >= 18) {
+  if (pin.length == 4 && pin.contains(RegExp(r'^[0-9]+$'))) {
+    final int birthYear = int.parse(pin);
+
+    if (birthYear >= 1920 && currentYear - birthYear >= 18) {
       setState(() {
         _errorText = null;
       });
@@ -39,7 +42,12 @@ class _PinAccessPageState extends State<PinAccessPage> {
         _errorText = 'You must be at least 18 years old to access Parent Mode.';
       });
     }
+  } else {
+    setState(() {
+      _errorText = 'Please enter a valid 4-digit code.';
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +67,9 @@ class _PinAccessPageState extends State<PinAccessPage> {
               textAlign: TextAlign.center,
             ),
             TextField(
+              style: TextStyle(
+                color: Colors.black,
+              ),
               controller: _pinController,
               decoration: InputDecoration(
                 hintText: 'YYYY',
