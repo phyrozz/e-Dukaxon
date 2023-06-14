@@ -61,7 +61,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                   ),
                 );
               },
-              childCount: 20, // Replace with your actual item count
+              childCount: 10, // Replace with your actual item count
             ),
           ),
         ],
