@@ -26,17 +26,26 @@ class _PinAccessPageState extends State<PinAccessPage> {
 
   void _verifyPin() {
     final int currentYear = DateTime.now().year;
-    final int birthYear = int.tryParse(_pinController.text) ?? 0;
+    final String pin = _pinController.text.trim();
 
-    if (currentYear - birthYear >= 18) {
-      setState(() {
-        _errorText = null;
-      });
-      isOnParentMode = true;
-      Navigator.pushReplacementNamed(context, '/myPages');
+    if (pin.length == 4 && pin.contains(RegExp(r'^[0-9]+$'))) {
+      final int birthYear = int.parse(pin);
+
+      if (birthYear >= 1920 && currentYear - birthYear >= 18) {
+        setState(() {
+          _errorText = null;
+        });
+        isOnParentMode = true;
+        Navigator.pushReplacementNamed(context, '/myPages');
+      } else {
+        setState(() {
+          _errorText =
+              'You must be at least 18 years old to access Parent Mode.';
+        });
+      }
     } else {
       setState(() {
-        _errorText = 'You must be at least 18 years old to access Parent Mode.';
+        _errorText = 'Please enter a valid 4-digit code.';
       });
     }
   }

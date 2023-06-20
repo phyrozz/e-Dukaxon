@@ -113,7 +113,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       // Set the username and email field of the document
       await userDocRef
-          .set({'username': username, 'email': email, 'isNewAccount': true});
+          .set({'username': username, 'email': email, 'isNewAccount': true, 'isParent': true});
     } catch (e) {
       // Handle any errors that occur during the process
       print('Error adding username to Firestore: $e');
