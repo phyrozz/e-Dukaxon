@@ -49,29 +49,37 @@ class _PinAccessPageState extends State<PinAccessPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Enter your 4-digit birth year to access Parent Mode:',
-              style: TextStyle(fontSize: 18.0),
-              textAlign: TextAlign.center,
-            ),
-            TextField(
-              controller: _pinController,
-              decoration: InputDecoration(
-                hintText: 'YYYY',
-                errorText: _errorText,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Enter your 4-digit birth year to access Parent Mode:',
+                style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.center,
               ),
-              keyboardType: TextInputType.number,
-              maxLength: 4,
-            ),
-            ElevatedButton(
-              onPressed: _verifyPin,
-              child: const Text('Enter'),
-            ),
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 4,
+                child: TextField(
+                  controller: _pinController,
+                  decoration: InputDecoration(
+                    hintText: 'YYYY',
+                    errorText: _errorText,
+                  ),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _verifyPin,
+                child: const Text('Enter'),
+              ),
+            ],
+          ),
         ),
       ),
     );

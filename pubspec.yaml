@@ -41,6 +41,8 @@ dependencies:
   firebase_core: ^2.13.0
   firebase_auth: ^4.6.0
   cloud_firestore: ^4.7.1
+  flame: ^1.7.3
+  flame_audio: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +60,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -82,6 +86,12 @@ flutter:
         - asset: fonts/OpenDyslexic-Bold.otf
         - asset: fonts/OpenDyslexic-Italic.otf
         - asset: fonts/OpenDyslexic-BoldItalic.otf
+    - family: Comic Sans
+      fonts:
+        - asset: fonts/LDFComicSans.ttf
+        - asset: fonts/LDFComicSansBold.ttf
+        - asset: fonts/LDFComicSansHairline.ttf
+        - asset: fonts/LDFComicSansLight.ttf
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

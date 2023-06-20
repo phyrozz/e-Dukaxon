@@ -11,6 +11,11 @@ class ChildHomePage extends StatefulWidget {
 }
 
 class _ChildHomePageState extends State<ChildHomePage> {
+  List gameRoutes = [
+    '/games/traceLetter',
+  ];
+  List gameNames = ['Letter Tracing'];
+
   @override
   void initState() {
     super.initState();
@@ -50,18 +55,22 @@ class _ChildHomePageState extends State<ChildHomePage> {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      ListTile(
-                        title: Text('Game #$index'),
-                      ),
-                    ]),
+                return InkWell(
+                  onTap: () => Navigator.pushNamed(context, gameRoutes[index]),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        ListTile(
+                          title: Text(gameNames[index]),
+                        ),
+                      ]),
+                    ),
                   ),
                 );
               },
-              childCount: 10, // Replace with your actual item count
+              childCount:
+                  gameRoutes.length, // Replace with your actual item count
             ),
           ),
         ],

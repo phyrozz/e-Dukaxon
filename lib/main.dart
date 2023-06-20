@@ -10,12 +10,14 @@ import 'package:e_dukaxon/pages/assessment_questions/question_5.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_6.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_7.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
+import 'package:e_dukaxon/pages/games/trace_letter.dart';
 import 'package:e_dukaxon/pages/highlight_reading.dart';
 import 'package:e_dukaxon/pages/home.dart';
 import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flame/flame.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'widget_tree.dart';
@@ -29,6 +31,8 @@ void main() async {
     persistenceEnabled: true, // Enable local cache
     // Other settings if needed
   );
+  await Flame.device.fullScreen();
+  await Flame.device.setLandscape();
   runApp(const MyApp());
 }
 
@@ -52,8 +56,8 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
           displayMedium:
               TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-          labelLarge:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+          labelLarge: TextStyle(
+              color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 16),
           labelMedium:
               TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
           labelSmall:
@@ -71,9 +75,9 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            primary: Colors.grey[800], // sets the background color
-            onPrimary: Colors.white, // sets the text color
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+            primary: Colors.grey[800],
+            onPrimary: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -95,8 +99,9 @@ class MyApp extends StatelessWidget {
         dialogTheme: DialogTheme(
           backgroundColor: Colors.grey[900],
         ),
-        progressIndicatorTheme: ProgressIndicatorThemeData(color: Colors.white),
-        appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Colors.white),
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
         bottomAppBarTheme: BottomAppBarTheme(color: Colors.grey[900]),
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: Colors.grey[900]),
@@ -105,21 +110,22 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const WidgetTree(),
-        '/login': (context) => LoginPage(),
-        '/myPages': (context) => MyPages(),
-        '/childHomePage': (context) => ChildHomePage(),
-        '/highlightReading': (context) => HighlightReading(text: "test"),
-        '/assessment/init': (context) => InitAssessmentPage(),
-        '/assessment/questionOne': (context) => BangorQuestionOne(),
-        '/assessment/questionTwo': (context) => BangorQuestionTwo(),
-        '/assessment/questionThree': (context) => BangorQuestionThree(),
-        '/assessment/questionFour': (context) => BangorQuestionFour(),
-        '/assessment/questionFive': (context) => BangorQuestionFive(),
-        '/assessment/questionSix': (context) => BangorQuestionSix(),
-        '/assessment/questionSeven': (context) => BangorQuestionSeven(),
-        '/assessment/parentOrNot': (context) => ParentOrNotPage(),
-        '/assessment/ageSelect': (context) => AgeSelectPage(),
-        '/parentModeLogin': (context) => PinAccessPage(),
+        '/login': (context) => const LoginPage(),
+        '/myPages': (context) => const MyPages(),
+        '/childHomePage': (context) => const ChildHomePage(),
+        '/highlightReading': (context) => const HighlightReading(text: "test"),
+        '/assessment/init': (context) => const InitAssessmentPage(),
+        '/assessment/questionOne': (context) => const BangorQuestionOne(),
+        '/assessment/questionTwo': (context) => const BangorQuestionTwo(),
+        '/assessment/questionThree': (context) => const BangorQuestionThree(),
+        '/assessment/questionFour': (context) => const BangorQuestionFour(),
+        '/assessment/questionFive': (context) => const BangorQuestionFive(),
+        '/assessment/questionSix': (context) => const BangorQuestionSix(),
+        '/assessment/questionSeven': (context) => const BangorQuestionSeven(),
+        '/assessment/parentOrNot': (context) => const ParentOrNotPage(),
+        '/assessment/ageSelect': (context) => const AgeSelectPage(),
+        '/parentModeLogin': (context) => const PinAccessPage(),
+        '/games/traceLetter': (context) => const LetterTracingPage(),
       },
     );
   }
