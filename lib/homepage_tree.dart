@@ -33,7 +33,7 @@ class _HomePageTreeState extends State<HomePageTree> {
       child: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(Auth().getCurrentUserId()) // Replace with your logic to get the current user ID
+            .doc(Auth().getCurrentUserId())
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

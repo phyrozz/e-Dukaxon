@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
+import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +17,7 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(18),
+        padding: const EdgeInsets.all(18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -23,50 +25,58 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
             const SizedBox(),
             Center(
               child: Column(children: [
-                Text(
+                const Text(
                   "Alright, last one. Did you find this short quiz difficult to answer?",
                   style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question7 = 2;
-                        Navigator.pushNamed(context, '/assessment/parentOrNot');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const ParentOrNotPage()));
                       },
                       child: const Text('Yes'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question7 = 1;
-                        Navigator.pushNamed(context, '/assessment/parentOrNot');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const ParentOrNotPage()));
                       },
                       child: const Text("I don't know"),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question7 = 0;
-                        Navigator.pushNamed(context, '/assessment/parentOrNot');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const ParentOrNotPage()));
                       },
                       child: const Text('No'),
                     ),
@@ -74,14 +84,20 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
                 ),
               ]),
             ),
-            ElevatedButton(
-              style: ButtonStyle(
-                  padding: MaterialStatePropertyAll(
-                      EdgeInsets.fromLTRB(35, 20, 35, 20))),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Back'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  style: const ButtonStyle(
+                      padding: MaterialStatePropertyAll(
+                          EdgeInsets.fromLTRB(35, 20, 35, 20))),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Back'),
+                ),
+              ],
             ),
           ],
         ),

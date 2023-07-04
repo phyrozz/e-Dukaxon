@@ -17,6 +17,17 @@ class Auth {
     );
   }
 
+  Future<void> signInAnonymously() async {
+    try {
+      await _firebaseAuth.signInAnonymously();
+      // Anonymous sign-in successful, handle user navigation here
+      // You can access the anonymous user using userCredential.user
+    } catch (e) {
+      // Handle sign-in errors
+      print('Failed to sign in anonymously: $e');
+    }
+  }
+
   Future<void> createUserWithEmailAndPassword({
     required String email,
     required String password,

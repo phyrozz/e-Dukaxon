@@ -1,3 +1,5 @@
+import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
+import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
 
 class InitAssessmentPage extends StatelessWidget {
@@ -7,7 +9,7 @@ class InitAssessmentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -15,7 +17,7 @@ class InitAssessmentPage extends StatelessWidget {
             const SizedBox(),
             Center(
               child: Column(
-                children: [
+                children: const [
                   Text(
                     "Hello!",
                     style:
@@ -35,12 +37,14 @@ class InitAssessmentPage extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
-                style: ButtonStyle(
+                style: const ButtonStyle(
                     padding: MaterialStatePropertyAll(
                         EdgeInsets.fromLTRB(35, 20, 35, 20))),
                 onPressed: () {
-                  // Save the entered age and navigate back
-                  Navigator.pushNamed(context, '/assessment/questionOne');
+                  Navigator.push(
+                      context,
+                      createRouteWithHorizontalSlideAnimation(
+                          const BangorQuestionOne()));
                 },
                 child: const Text("Let's Go!"),
               ),

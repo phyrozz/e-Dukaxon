@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               children: const [
                 CircularProgressIndicator(
-                  color: Colors.white,
+                  color: Color(0xFF3F2305),
                 ),
                 SizedBox(height: 16),
                 Text("Signing in"),
@@ -248,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           },
                           style: TextButton.styleFrom(
-                            primary: Colors.white,
+                            primary: Colors.black,
                           ),
                           child: const Text('I want to create an account'),
                         ),

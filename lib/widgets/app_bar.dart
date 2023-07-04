@@ -45,7 +45,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
-  Widget _signOutButton(BuildContext context) {
+  Widget _menuButton(BuildContext context) {
     return PopupMenuButton(
       icon: const IconTheme(
         data: IconThemeData(color: Colors.white),
@@ -59,9 +59,18 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
               : const Text('Parent Mode'),
         ),
         const PopupMenuItem(
-          value: 'logOut',
-          child: Text('Log Out'),
+          value: 'createAccount',
+          child: Text('Create an Account'),
         ),
+        const PopupMenuItem(
+          value: 'signIn',
+          child: Text('Sign In'),
+        ),
+        // Uncomment if something goes wrong with the signInAnonymously feature
+        // const PopupMenuItem(
+        //   value: 'logOut',
+        //   child: Text('Log Out'),
+        // ),
       ],
       onSelected: (value) {
         if (value == 'parentMode') {
@@ -74,6 +83,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           }
         } else if (value == 'logOut') {
           signOut(context);
+        } else if (value == 'createAccount') {
+          // Add a functionality that lets the user create an account and sign in when they choose to
+        } else if (value == 'signIn') {
+          // Add a functionality that lets the user sign in when they choose to
         }
       },
     );
@@ -88,11 +101,11 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
               future: getUsername(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasData) {
                   return Text('Welcome, ${snapshot.data}!');
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return const Text('Welcome!');
                 } else {
                   return const Text('No username found');
                 }
@@ -105,7 +118,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           data: ThemeData(
             canvasColor: Colors.grey[900],
           ),
-          child: _signOutButton(context),
+          child: _menuButton(context),
         ),
       ],
     );

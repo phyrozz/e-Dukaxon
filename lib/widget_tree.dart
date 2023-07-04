@@ -1,6 +1,7 @@
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/main.dart';
+import 'package:e_dukaxon/pages/welcome.dart';
 import 'my_pages.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
@@ -29,13 +30,14 @@ class _WidgetTreeState extends State<WidgetTree> {
           child: child,
         );
       },
+      // child: const HomePageTree(),
       child: StreamBuilder(
         stream: Auth().authStateChanges,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return const HomePageTree();
           } else {
-            return const LoginPage();
+            return const WelcomePage();
           }
         },
       ),

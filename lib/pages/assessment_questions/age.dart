@@ -14,6 +14,9 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   String _currentAge = '3'; // Default age value
   List<String> ageOptions = [];
 
+  final FixedExtentScrollController scrollController =
+      FixedExtentScrollController(initialItem: 0);
+
   @override
   void initState() {
     super.initState();
@@ -21,20 +24,20 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   }
 
   void fetchIsParent() {
-      // Access isParent using instance name
-      if (isParent) {
-        setState(() {
-          _currentAge = '3';
-          ageOptions = List.generate(14, (index) => (index + 3).toString());
-        });
-      } else {
-        setState(() {
-          _currentAge = '3';
-          ageOptions = List.generate(33, (index) => (index + 3).toString())
-            ..add('Older than 35');
-        });
-      }
+    // Access isParent using instance name
+    if (isParent) {
+      setState(() {
+        _currentAge = '3';
+        ageOptions = List.generate(15, (index) => (index + 3).toString());
+      });
+    } else {
+      setState(() {
+        _currentAge = '3';
+        ageOptions = List.generate(33, (index) => (index + 3).toString())
+          ..add('Older than 35');
+      });
     }
+  }
 
   Future<void> updateIsNewAccount(bool isNewAccount, String age) async {
     try {
@@ -53,81 +56,105 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  String pageTitle = isParent ? "Please enter your child's age" : "What is your age?";
+  Widget build(BuildContext context) {
+    String pageTitle =
+        isParent ? "Please enter your child's age" : "What is your age?";
 
-  return Scaffold(
-    body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(),
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        pageTitle,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(
-                        height: 32.0,
-                      ),
-                      DropdownButtonFormField<String>(
-                        style: TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(const Radius.circular(20)),
-                          ),
-                        ),
-                        value: _currentAge,
-                        items: ageOptions.map((String age) {
-                          return DropdownMenuItem<String>(
-                            value: age,
-                            child: Text(age),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _currentAge = value!;
-                          });
-                        },
-                      ),
-                    ],
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    pageTitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  const SizedBox(
+                    height: 32.0,
+                  ),
+                  Container(
+                    height: 150.0,
+                    width: 180,
+                    child: ListWheelScrollView(
+                      controller: scrollController,
+                      itemExtent: 50.0,
+                      children: ageOptions.map((String age) {
+                        return ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          tileColor: _currentAge == age
+                              ? const Color(0xFF3F2305)
+                              : Colors.transparent,
+                          title: Text(
+                            age,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: _currentAge == age
+                                  ? FontWeight.w900
+                                  : FontWeight.normal,
+                              color: _currentAge == age
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                          dense: true,
+                        );
+                      }).toList(),
+                      onSelectedItemChanged: (index) {
+                        setState(() {
+                          _currentAge = ageOptions[index];
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: const ButtonStyle(
+                    padding: MaterialStatePropertyAll(
+                      EdgeInsets.fromLTRB(35, 20, 35, 20),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Back'),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                          padding: MaterialStatePropertyAll(
-                              EdgeInsets.fromLTRB(35, 20, 35, 20))),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Back'),
+                ElevatedButton(
+                  style: const ButtonStyle(
+                    padding: MaterialStatePropertyAll(
+                      EdgeInsets.fromLTRB(35, 20, 35, 20),
                     ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                          padding: MaterialStatePropertyAll(
-                              EdgeInsets.fromLTRB(35, 20, 35, 20))),
-                      onPressed: () async {
-                        Navigator.pop(context, _currentAge);
-                        Navigator.pushNamed(context, '/myPages');
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context, _currentAge);
+                    Navigator.pushNamed(context, '/myPages');
 
-                        await updateIsNewAccount(false, _currentAge);
-                      },
-                      child: const Text('Next'),
-                    ),
-                  ],
+                    await updateIsNewAccount(false, _currentAge);
+                  },
+                  child: const Text('Next'),
                 ),
               ],
             ),
-          ),
-  );
-}
-
+          ],
+        ),
+      ),
+    );
+  }
 }

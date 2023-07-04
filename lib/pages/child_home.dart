@@ -11,10 +11,63 @@ class ChildHomePage extends StatefulWidget {
 }
 
 class _ChildHomePageState extends State<ChildHomePage> {
-  List gameRoutes = [
+  // Add more lessons based on needs assessment
+  List letterLessonRoutes = [
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
     '/games/traceLetter',
   ];
-  List gameNames = ['Letter Tracing'];
+  List letterLessonNames = [
+    'Lesson 1',
+    'Lesson 2',
+    'Lesson 3',
+    'Lesson 4',
+    'Lesson 5',
+  ];
+  List wordLessonRoutes = [
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+  ];
+  List wordLessonNames = [
+    'Lesson 1',
+    'Lesson 2',
+    'Lesson 3',
+    'Lesson 4',
+    'Lesson 5',
+    'Lesson 6',
+    'Lesson 7',
+  ];
+  List sentenceLessonRoutes = [
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+  ];
+  List sentenceLessonNames = [
+    'Lesson 1',
+    'Lesson 2',
+    'Lesson 3',
+    'Lesson 4',
+  ];
+
+  List<bool> unlockedLetterLessons = [true, false, false, false, false];
+  List<bool> unlockedWordLessons = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ];
+  List<bool> unlockedSentenceLessons = [false, false, false, false];
 
   @override
   void initState() {
@@ -45,32 +98,213 @@ class _ChildHomePageState extends State<ChildHomePage> {
       appBar: CustomAppBar(isHomePage: true),
       body: CustomScrollView(
         slivers: [
-          SliverPersistentHeader(
-              pinned: true,
-              delegate: SliverHeaderDelegate(
-                minHeight: 50.0,
-                maxHeight: 150.0,
-                child: Container(),
-              )),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return InkWell(
-                  onTap: () => Navigator.pushNamed(context, gameRoutes[index]),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        ListTile(
-                          title: Text(gameNames[index]),
-                        ),
-                      ]),
-                    ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 12,
                   ),
-                );
-              },
-              childCount:
-                  gameRoutes.length, // Replace with your actual item count
+                  Text(
+                    'Letters',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 200.0,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: letterLessonRoutes.length,
+                itemBuilder: (context, index) {
+                  bool isUnlocked = unlockedLetterLessons[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: InkWell(
+                      onTap: isUnlocked
+                          ? () => Navigator.pushNamed(
+                              context, letterLessonRoutes[index])
+                          : null,
+                      child: Opacity(
+                        opacity: isUnlocked ? 1.0 : 0.5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).primaryColorDark,
+                                blurRadius: isUnlocked ? 10.0 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    isUnlocked ? letterLessonNames[index] : '',
+                                    style: const TextStyle(fontSize: 18.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    'Words',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 200.0,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: wordLessonRoutes.length,
+                itemBuilder: (context, index) {
+                  bool isUnlocked = unlockedWordLessons[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: InkWell(
+                      onTap: isUnlocked
+                          ? () => Navigator.pushNamed(
+                              context, wordLessonRoutes[index])
+                          : null,
+                      child: Opacity(
+                        opacity: isUnlocked ? 1.0 : 0.5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).primaryColorDark,
+                                blurRadius: isUnlocked ? 10.0 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    isUnlocked ? wordLessonNames[index] : '',
+                                    style: const TextStyle(fontSize: 18.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    'Sentences',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 200.0,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: sentenceLessonRoutes.length,
+                itemBuilder: (context, index) {
+                  bool isUnlocked = unlockedSentenceLessons[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: InkWell(
+                      onTap: isUnlocked
+                          ? () => Navigator.pushNamed(
+                              context, sentenceLessonRoutes[index])
+                          : null,
+                      child: Opacity(
+                        opacity: isUnlocked ? 1.0 : 0.5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).primaryColorDark,
+                                blurRadius: isUnlocked ? 10.0 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    isUnlocked
+                                        ? sentenceLessonNames[index]
+                                        : '',
+                                    style: const TextStyle(fontSize: 18.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -79,49 +313,48 @@ class _ChildHomePageState extends State<ChildHomePage> {
   }
 }
 
-class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
+// class SliverHeaderDelegate extends SliverPersistentHeaderDelegate {
+//   final double minHeight;
+//   final double maxHeight;
+//   final Widget child;
+//   final String headerText;
 
-  SliverHeaderDelegate({
-    required this.minHeight,
-    required this.maxHeight,
-    required this.child,
-  });
+//   SliverHeaderDelegate({
+//     required this.minHeight,
+//     required this.maxHeight,
+//     required this.child,
+//     required this.headerText,
+//   });
 
-  @override
-  double get minExtent => minHeight;
+//   @override
+//   double get minExtent => minHeight;
 
-  @override
-  double get maxExtent => maxHeight;
+//   @override
+//   double get maxExtent => maxHeight;
 
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    // Calculate the font size based on the shrink offset
-    final double fontSize = 24.0 - shrinkOffset / 18;
+//   @override
+//   Widget build(
+//     BuildContext context,
+//     double shrinkOffset,
+//     bool overlapsContent,
+//   ) {
+//     return Container(
+//       color: Theme.of(context).primaryColor,
+//       alignment: Alignment.center,
+//       child: Text(
+//         headerText,
+//         style: const TextStyle(
+//           fontSize: 32.0,
+//           color: Colors.black,
+//         ),
+//       ),
+//     );
+//   }
 
-    return Container(
-      color: Colors.black,
-      alignment: Alignment.center,
-      child: Text(
-        'My Games',
-        style: TextStyle(
-          fontSize: fontSize,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant SliverHeaderDelegate oldDelegate) {
-    return maxHeight != oldDelegate.maxHeight ||
-        minHeight != oldDelegate.minHeight ||
-        child != oldDelegate.child;
-  }
-}
+//   @override
+//   bool shouldRebuild(covariant SliverHeaderDelegate oldDelegate) {
+//     return maxHeight != oldDelegate.maxHeight ||
+//         minHeight != oldDelegate.minHeight ||
+//         child != oldDelegate.child;
+//   }
+// }

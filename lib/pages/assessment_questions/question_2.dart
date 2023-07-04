@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_3.dart';
+import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +17,7 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(18),
+        padding: const EdgeInsets.all(18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -23,53 +25,58 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
             const SizedBox(),
             Center(
               child: Column(children: [
-                Text(
+                const Text(
                   "Does spelling words fluently trouble you?",
                   style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question2 = 2;
-                        Navigator.pushNamed(
-                            context, '/assessment/questionThree');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const BangorQuestionThree()));
                       },
                       child: const Text('Yes'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question2 = 1;
-                        Navigator.pushNamed(
-                            context, '/assessment/questionThree');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const BangorQuestionThree()));
                       },
                       child: const Text("I don't know"),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question2 = 0;
-                        Navigator.pushNamed(
-                            context, '/assessment/questionThree');
+                        Navigator.push(
+                            context,
+                            createRouteWithHorizontalSlideAnimation(
+                                const BangorQuestionThree()));
                       },
                       child: const Text('No'),
                     ),
@@ -77,14 +84,20 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
                 ),
               ]),
             ),
-            ElevatedButton(
-              style: ButtonStyle(
-                  padding: MaterialStatePropertyAll(
-                      EdgeInsets.fromLTRB(35, 20, 35, 20))),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Back'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  style: const ButtonStyle(
+                      padding: MaterialStatePropertyAll(
+                          EdgeInsets.fromLTRB(35, 20, 35, 20))),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Back'),
+                ),
+              ],
             ),
           ],
         ),

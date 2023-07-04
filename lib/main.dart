@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/pages/assessment_questions/init.dart';
@@ -46,36 +47,37 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'eDukaxon',
       theme: ThemeData(
-        primaryColor: Colors.grey[900],
+        primaryColor: const Color(0xFFF2EAD3),
+        primaryColorDark: const Color(0xFF3F2305),
         // backgroundColor: Colors.grey[900],
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: const Color(0xFFF2EAD3),
         textTheme: const TextTheme(
           displayLarge:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           displaySmall:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           displayMedium:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           labelLarge: TextStyle(
-              color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 16),
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 16),
           labelMedium:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           labelSmall:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-          bodySmall: TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-          bodyLarge: TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+          bodySmall: TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+          bodyLarge: TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           bodyMedium:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           titleLarge:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           titleMedium:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           titleSmall:
-              TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            primary: Colors.grey[800],
+            primary: const Color(0xFF3F2305),
             onPrimary: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             shape: RoundedRectangleBorder(
@@ -83,29 +85,32 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          prefixIconColor: Colors.black,
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
+        inputDecorationTheme: const InputDecorationTheme(
+          prefixIconColor: Color(0xFF3F2305),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF3F2305)),
           ),
-          labelStyle: const TextStyle(color: Colors.black),
+          labelStyle: TextStyle(color: Color(0xFF3F2305)),
           filled: true,
-          fillColor: Colors.grey[300],
-          hintStyle: TextStyle(color: Colors.grey[400]),
+          fillColor: Color(0xFFF5F5F5),
+          hintStyle: TextStyle(color: Color(0xFF3F2305)),
         ),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Colors.black,
         ),
-        dialogTheme: DialogTheme(
-          backgroundColor: Colors.grey[900],
+        dialogTheme: const DialogTheme(
+          backgroundColor: Color(0xFFDFD7BF),
         ),
         progressIndicatorTheme:
-            const ProgressIndicatorThemeData(color: Colors.white),
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
-        bottomAppBarTheme: BottomAppBarTheme(color: Colors.grey[900]),
-        floatingActionButtonTheme:
-            FloatingActionButtonThemeData(backgroundColor: Colors.grey[900]),
-        cardColor: Colors.grey[800],
+            const ProgressIndicatorThemeData(color: Color(0xFF3F2305)),
+        appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF3F2305)),
+        bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF3F2305)),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            backgroundColor: Color(0xFF3F2305)),
+        cardColor: const Color(0xFF3F2305),
+        listTileTheme: const ListTileThemeData(
+          textColor: Colors.white,
+        ),
       ),
       initialRoute: '/',
       routes: {

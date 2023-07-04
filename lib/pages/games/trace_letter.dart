@@ -58,7 +58,7 @@ class _LetterTracingPageState extends State<LetterTracingPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.grey[700],
+        backgroundColor: Theme.of(context).primaryColorDark,
         child: const Icon(Icons.delete_outline),
         onPressed: () {
           setState(() {
@@ -78,16 +78,18 @@ class Painter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Draw the background color
-    Paint backgroundPaint = Paint()..color = Colors.grey[900]!;
+    Paint backgroundPaint = Paint()..color = const Color(0xFFF2EAD3);
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       backgroundPaint,
     );
 
     // Draw the letter on the canvas
-    final textStyle = TextStyle(
-        color: Colors.grey[600], fontSize: 300, fontFamily: 'Comic Sans');
-    final textSpan = TextSpan(
+    const textStyle = TextStyle(
+        color: Color.fromARGB(255, 175, 175, 175),
+        fontSize: 300,
+        fontFamily: 'Comic Sans');
+    const textSpan = TextSpan(
       text: 'A',
       style: textStyle,
     );
@@ -108,7 +110,7 @@ class Painter extends CustomPainter {
 
     // Draw the brush strokes
     Paint paint = Paint()
-      ..color = Colors.white
+      ..color = const Color(0xFF3F2305)
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 10.0;
 
