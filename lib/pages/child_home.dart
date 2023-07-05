@@ -26,6 +26,20 @@ class _ChildHomePageState extends State<ChildHomePage> {
     'Lesson 4',
     'Lesson 5',
   ];
+  List numberLessonRoutes = [
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+    '/games/traceLetter',
+  ];
+  List numberLessonNames = [
+    'Lesson 1',
+    'Lesson 2',
+    'Lesson 3',
+    'Lesson 4',
+    'Lesson 5',
+  ];
   List wordLessonRoutes = [
     '/games/traceLetter',
     '/games/traceLetter',
@@ -58,6 +72,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
   ];
 
   List<bool> unlockedLetterLessons = [true, false, false, false, false];
+  List<bool> unlockedNumberLessons = [false, false, false, false, false];
   List<bool> unlockedWordLessons = [
     false,
     false,
@@ -164,6 +179,93 @@ class _ChildHomePageState extends State<ChildHomePage> {
                     ),
                   );
                 },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    'Numbers',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 200.0,
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: numberLessonRoutes.length,
+                itemBuilder: (context, index) {
+                  bool isUnlocked = unlockedLetterLessons[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: InkWell(
+                      onTap: isUnlocked
+                          ? () => Navigator.pushNamed(
+                              context, numberLessonRoutes[index])
+                          : null,
+                      child: Opacity(
+                        opacity: isUnlocked ? 1.0 : 0.5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).primaryColorDark,
+                                blurRadius: isUnlocked ? 10.0 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    isUnlocked ? numberLessonNames[index] : '',
+                                    style: const TextStyle(fontSize: 18.0),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    'Sentences',
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
           ),

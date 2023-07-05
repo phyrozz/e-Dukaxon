@@ -5,6 +5,8 @@ import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'assessment_result.dart';
+
 class BangorQuestionFour extends StatefulWidget {
   const BangorQuestionFour({super.key});
 
@@ -41,6 +43,7 @@ class _BangorQuestionFourState extends State<BangorQuestionFour> {
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question4 = 2;
+                        dyslexiaScore += 2;
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -57,6 +60,7 @@ class _BangorQuestionFourState extends State<BangorQuestionFour> {
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question4 = 1;
+                        dyslexiaScore += 1;
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(

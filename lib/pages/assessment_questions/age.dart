@@ -2,6 +2,7 @@ import 'package:e_dukaxon/assessment_data.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'assessment_result.dart';
 
 class AgeSelectPage extends StatefulWidget {
   const AgeSelectPage({Key? key}) : super(key: key);
@@ -52,6 +53,24 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
     } catch (error) {
       print('Error updating isNewAccount: $error');
       // Handle the error as needed
+    }
+  }
+
+  void storeDyslexiaResult(int dyslexiaScore) async {
+    // Get the current user ID
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    // Reference to the document in the "users" collection
+    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    bool hasDyslexia = dyslexiaScore >= 7; // Determine if user has dyslexia based on score threshold
+
+    try {
+      // Create or update the document with the "hasDyslexia" field
+      await userDocRef.set({'hasDyslexia': hasDyslexia}, SetOptions(merge: true));
+      print('Dyslexia result stored successfully!');
+    } catch (e) {
+      print('Error storing dyslexia result: $e');
     }
   }
 
@@ -145,7 +164,9 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                   onPressed: () async {
                     Navigator.pop(context, _currentAge);
                     Navigator.pushNamed(context, '/myPages');
-
+                    storeDyslexiaResult(dyslexiaScore);
+                    print(dyslexiaScore);
+                    dyslexiaScore = 0;
                     await updateIsNewAccount(false, _currentAge);
                   },
                   child: const Text('Next'),

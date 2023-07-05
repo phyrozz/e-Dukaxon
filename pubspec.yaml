@@ -44,6 +44,7 @@ dependencies:
   flame: ^1.7.3
   flame_audio: ^2.0.2
   flutter_vector_icons: ^2.0.0
+  font_awesome_flutter: ^10.4.0
 
 dev_dependencies:
   flutter_test:

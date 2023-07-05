@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/pages/assessment_questions/assessment_result.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
 import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +43,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question1 = 2;
+                        dyslexiaScore += 2;
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -58,6 +60,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () {
                         question1 = 1;
+                        dyslexiaScore += 1;
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(

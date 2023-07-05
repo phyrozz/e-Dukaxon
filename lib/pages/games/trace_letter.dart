@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LetterTracingPage extends StatefulWidget {
   const LetterTracingPage({Key? key}) : super(key: key);
@@ -59,7 +60,7 @@ class _LetterTracingPageState extends State<LetterTracingPage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColorDark,
-        child: const Icon(Icons.delete_outline),
+        child: const FaIcon(FontAwesomeIcons.eraser),
         onPressed: () {
           setState(() {
             _strokes.clear();
