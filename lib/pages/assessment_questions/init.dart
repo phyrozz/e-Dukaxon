@@ -1,5 +1,5 @@
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
-import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
+import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
 
 class InitAssessmentPage extends StatelessWidget {

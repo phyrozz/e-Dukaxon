@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
-import 'package:e_dukaxon/pages/route_anims/horizontal_slide.dart';
+import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
