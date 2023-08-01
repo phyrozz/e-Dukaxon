@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,21 +23,19 @@ class _WelcomePageState extends State<WelcomePage> {
   Future<void> signInAnonymously() async {
     try {
       await Auth().signInAnonymously();
-      String userId = Auth().currentUser!.uid;
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
-      DocumentReference userDocRef = users.doc(userId);
+      String? userId = Auth().getCurrentUserId();
+      // CollectionReference users =
+      //     FirebaseFirestore.instance.collection('users');
+      // DocumentReference userDocRef = users.doc(userId);
 
-      // Check if the document already exists
-      DocumentSnapshot userDoc = await userDocRef.get();
-      if (!userDoc.exists) {
-        // Document doesn't exist, create a new one
-        await userDocRef.set({
-          'isAccountAnon': true,
-          'isNewAccount': true,
-          'isParent': true,
-        });
-      }
+      // // Check if the document already exists
+      // DocumentSnapshot userDoc = await userDocRef.get();
+      // if (!userDoc.exists) {
+      //   // Document doesn't exist, create a new one
+      //   UserFirestore(userId).setCreateAccountInitialValues;
+      //   UserFirestore(userId).initializeProgress;
+      // }
+      UserFirestore(userId: userId!).createNewAnonymousAccount();
     } on Exception catch (e) {
       // Remove the loading widget
       Navigator.pop(context);

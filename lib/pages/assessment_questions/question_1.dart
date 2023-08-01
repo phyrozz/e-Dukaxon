@@ -1,10 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
-import 'package:e_dukaxon/pages/assessment_questions/assessment_result.dart';
+import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BangorQuestionOne extends StatefulWidget {
   const BangorQuestionOne({super.key});
@@ -41,9 +46,8 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
-                        question1 = 2;
-                        dyslexiaScore += 2;
+                      onPressed: () async {
+                        updateDyslexiaScore(1, 2);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -58,9 +62,8 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
-                        question1 = 1;
-                        dyslexiaScore += 1;
+                      onPressed: () async {
+                        updateDyslexiaScore(1, 1);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -75,7 +78,8 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
+                      onPressed: () async {
+                        updateDyslexiaScore(1, 0);
                         question1 = 0;
                         Navigator.push(
                             context,

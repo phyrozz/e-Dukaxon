@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/data/assessment.dart';
+import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'assessment_result.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AgeSelectPage extends StatefulWidget {
   const AgeSelectPage({Key? key}) : super(key: key);
@@ -12,6 +18,7 @@ class AgeSelectPage extends StatefulWidget {
 }
 
 class _AgeSelectPageState extends State<AgeSelectPage> {
+  String? _currentUserId = Auth().getCurrentUserId();
   String _currentAge = '3'; // Default age value
   List<String> ageOptions = [];
 
@@ -26,7 +33,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
 
   void fetchIsParent() {
     // Access isParent using instance name
-    if (isParent) {
+    if (!isParent) {
       setState(() {
         _currentAge = '3';
         ageOptions = List.generate(15, (index) => (index + 3).toString());
@@ -56,18 +63,37 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
     }
   }
 
-  void storeDyslexiaResult(int dyslexiaScore) async {
+  Future<void> storeDyslexiaResult() async {
+    // Retrieve the values of each question and store them as a dyslexiaScore variable
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final file = File('$path/assessment_data.json');
+
+    final jsonString = await file.readAsString();
+    final assessment = Assessment.fromJson(json.decode(jsonString));
+    int sum = assessment.questions.fold(0, (prev, element) => prev + element);
+
+    // Update the dyslexiaScore with the sum value
+    assessment.dyslexiaScore = sum;
+
+    final updatedJsonString = json.encode(assessment.toJson());
+    await file.writeAsString(updatedJsonString);
+
     // Get the current user ID
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
     // Reference to the document in the "users" collection
-    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
 
-    bool hasDyslexia = dyslexiaScore >= 7; // Determine if user has dyslexia based on score threshold
+    bool hasDyslexia = assessment.dyslexiaScore >=
+        7; // Determine if user has dyslexia based on score threshold
 
     try {
       // Create or update the document with the "hasDyslexia" field
-      await userDocRef.set({'hasDyslexia': hasDyslexia}, SetOptions(merge: true));
+      await userDocRef.set(
+          {'hasDyslexia': hasDyslexia, 'questions': assessment.questions},
+          SetOptions(merge: true));
       print('Dyslexia result stored successfully!');
     } catch (e) {
       print('Error storing dyslexia result: $e');
@@ -163,10 +189,15 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                   ),
                   onPressed: () async {
                     Navigator.pop(context, _currentAge);
-                    Navigator.pushNamed(context, '/myPages');
-                    storeDyslexiaResult(dyslexiaScore);
-                    print(dyslexiaScore);
-                    dyslexiaScore = 0;
+                    if (await UserFirestore(userId: _currentUserId!)
+                        .getIsParent()) {
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          '/childHomePage', (Route<dynamic> route) => false);
+                    } else {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/myPages', (Route<dynamic> route) => false);
+                    }
+                    storeDyslexiaResult();
                     await updateIsNewAccount(false, _currentAge);
                   },
                   child: const Text('Next'),

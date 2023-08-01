@@ -38,18 +38,36 @@ class _HomePageTreeState extends State<HomePageTree> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Loading state
-            return const CircularProgressIndicator();
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    Text(
+                      'Loading...',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ],
+                ),
+              ),
+            );
           } else if (snapshot.hasError) {
             // Error state
             return const Text('Error fetching data');
           } else {
             // Data available
-            final isParent = snapshot.data?.get('isParent') ?? false;
-            if (isParent) {
-              return const ChildHomePage();
-            } else {
-              return const MyPages();
-            }
+            return const ChildHomePage();
+            // final isParent = snapshot.data?.get('isParent') ?? false;
+            // if (isParent) {
+            //   return const ChildHomePage();
+            // } else {
+            //   return const MyPages();
+            // }
           }
         },
       ),

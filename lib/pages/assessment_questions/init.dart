@@ -1,9 +1,35 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
-class InitAssessmentPage extends StatelessWidget {
+class InitAssessmentPage extends StatefulWidget {
   const InitAssessmentPage({super.key});
+
+  @override
+  State<InitAssessmentPage> createState() => _InitAssessmentPageState();
+}
+
+class _InitAssessmentPageState extends State<InitAssessmentPage> {
+  @override
+  void initState() {
+    super.initState();
+    initializeAssessmentData();
+  }
+
+  Future<void> initializeAssessmentData() async {
+    Assessment initialAssessment = Assessment([0, 0, 0, 0, 0, 0, 0], false, 0);
+    Map<String, dynamic> jsonMap = initialAssessment.toJson();
+
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/assessment_data.json');
+    final initialJsonString = json.encode(jsonMap);
+    await file.writeAsString(initialJsonString);
+  }
 
   @override
   Widget build(BuildContext context) {

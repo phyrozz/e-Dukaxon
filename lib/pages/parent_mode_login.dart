@@ -1,4 +1,5 @@
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class PinAccessPage extends StatefulWidget {
@@ -10,7 +11,6 @@ class PinAccessPage extends StatefulWidget {
 
 class _PinAccessPageState extends State<PinAccessPage> {
   late TextEditingController _pinController;
-  String? _errorText;
 
   @override
   void initState() {
@@ -32,30 +32,51 @@ class _PinAccessPageState extends State<PinAccessPage> {
       final int birthYear = int.parse(pin);
 
       if (birthYear >= 1920 && currentYear - birthYear >= 18) {
-        setState(() {
-          _errorText = null;
-        });
         isOnParentMode = true;
-        Navigator.pushReplacementNamed(context, '/myPages');
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/myPages', (Route<dynamic> route) => false);
       } else {
-        setState(() {
-          _errorText =
-              'You must be at least 18 years old to access Parent Mode.';
-        });
+        _showErrorDialog(
+            context, 'Invalid PIN', 'Invalid PIN. Please try again.');
       }
     } else {
-      setState(() {
-        _errorText = 'Please enter a valid 4-digit code.';
-      });
+      _showErrorDialog(
+          context, 'Invalid PIN', 'Invalid PIN. Please try again.');
     }
+  }
+
+  void _showErrorDialog(
+      BuildContext context, String errorTitle, String errorText) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            errorTitle,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+          ),
+          content: Text(
+            errorText,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          actions: [
+            ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK')),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Parent Mode'),
-      ),
+      appBar: CustomAppBarWithBackButton(text: 'Parent Mode'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -75,10 +96,10 @@ class _PinAccessPageState extends State<PinAccessPage> {
                 width: MediaQuery.of(context).size.width / 4,
                 child: TextField(
                   controller: _pinController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'YYYY',
-                    errorText: _errorText,
                   ),
+                  style: TextStyle(color: Theme.of(context).primaryColorDark),
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                 ),

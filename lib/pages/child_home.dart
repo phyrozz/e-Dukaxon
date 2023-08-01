@@ -1,7 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
+import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/app_bar.dart';
+import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ChildHomePage extends StatefulWidget {
   const ChildHomePage({super.key});
@@ -11,21 +21,51 @@ class ChildHomePage extends StatefulWidget {
 }
 
 class _ChildHomePageState extends State<ChildHomePage> {
-  // Add more lessons based on needs assessment
-  List letterLessonRoutes = [
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-  ];
-  List letterLessonNames = [
-    'Lesson 1',
-    'Lesson 2',
-    'Lesson 3',
-    'Lesson 4',
-    'Lesson 5',
-  ];
+  List letterLessonNames = [];
+  List letterLessonProgress = [];
+  List unlockedLetterLessons = [];
+
+  // Future<void> initializeGameDataOnFirestore() async {
+  //   String? user = Auth().getCurrentUserId();
+  //   await FirebaseFirestore.instance.collection('soundLessons').doc(user).set({
+  //     "lessonOne": {
+  //       "progress": 0,
+  //       "lessonStartedAt": null,
+  //     }
+  //   });
+  // }
+
+  Future<void> letterLessons() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/letter_lessons.json');
+      final jsonString = await file.readAsString();
+      final List<dynamic> jsonData = json.decode(jsonString);
+
+      List<String> letterNames = [];
+      List<bool> unlockedLessons = [];
+      List<int> letterProgress = [];
+
+      List<LetterLesson> letterLessons = jsonData.map((lesson) {
+        return LetterLesson.fromJson(lesson);
+      }).toList();
+
+      for (var lesson in letterLessons) {
+        letterNames.add(lesson.name);
+        unlockedLessons.add(lesson.isUnlocked);
+        letterProgress.add(lesson.progress);
+      }
+
+      setState(() {
+        letterLessonNames = letterNames;
+        unlockedLetterLessons = unlockedLessons;
+        letterLessonProgress = letterProgress;
+      });
+    } catch (e) {
+      print('Error reading JSON file: $e');
+    }
+  }
+
   List numberLessonRoutes = [
     '/games/traceLetter',
     '/games/traceLetter',
@@ -71,7 +111,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
     'Lesson 4',
   ];
 
-  List<bool> unlockedLetterLessons = [true, false, false, false, false];
   List<bool> unlockedNumberLessons = [false, false, false, false, false];
   List<bool> unlockedWordLessons = [
     false,
@@ -91,6 +130,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
   @override
   void initState() {
     super.initState();
+    // initializeGameDataOnFirestore();
+    // initLetterLessonData();
+    letterLessons();
     checkNewAccountAndNavigate();
     // Rebuild the screen after 3s which will process the animation from green to blue
     Future.delayed(const Duration(milliseconds: 300))
@@ -102,17 +144,17 @@ class _ChildHomePageState extends State<ChildHomePage> {
   }
 
   Future<void> checkNewAccountAndNavigate() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? currentUser = auth.currentUser;
+    await Auth().signInAnonymously();
+    String? userId = Auth().getCurrentUserId();
 
     // Retrieve the user document from Firestore
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUser!.uid)
-        .get();
+    // final userDoc = await FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(currentUser!.uid)
+    //     .get();
 
     // Check if it's a new account
-    if (userDoc.exists && userDoc.data()?['isNewAccount'] == true) {
+    if (await UserFirestore(userId: userId!).getIsNewAccount()) {
       // Show the assessment page
       Navigator.pushReplacementNamed(context, '/assessment/init');
     }
@@ -121,9 +163,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(isHomePage: true),
       body: CustomScrollView(
         slivers: [
+          const WelcomeCustomAppBar(),
           SliverToBoxAdapter(
             child: Container(
               height: 100.0,
@@ -162,16 +204,28 @@ class _ChildHomePageState extends State<ChildHomePage> {
                   crossAxisCount: 1,
                   childAspectRatio: 1.0,
                 ),
-                itemCount: letterLessonRoutes.length,
+                itemCount: letterLessonNames.length,
                 itemBuilder: (context, index) {
                   bool isUnlocked = unlockedLetterLessons[index];
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(
-                      onTap: isUnlocked
-                          ? () => Navigator.pushNamed(
-                              context, letterLessonRoutes[index])
-                          : null,
+                      onTap: () {
+                        if (isUnlocked) {
+                          if (letterLessonProgress[index] >= 0 &&
+                              letterLessonProgress[index] < 25) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LettersLevelOne(
+                                        lessonName: letterLessonNames[index])));
+                          }
+                          // else if (letterLessonProgress[index] >= 25 &&
+                          //     letterLessonProgress[index] < 50) {
+                          //   LettersLevelOne(lessonName: letterLessonNames[index]);
+                          // }
+                        }
+                      },
                       child: AnimatedOpacity(
                         opacity: isUnlocked
                             ? containerOpacity
@@ -193,7 +247,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                   child: Text(
                                     isUnlocked ? letterLessonNames[index] : '',
                                     style: const TextStyle(
-                                        fontSize: 18.0, color: Colors.white),
+                                        fontSize: 32.0, color: Colors.white),
                                   ),
                                 ),
                                 AnimatedAlign(
@@ -209,30 +263,28 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                       child: Container(
                                         width: 100.0,
                                         height: 100.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 121, 74, 25),
-                                            width: 10.0,
-                                          ),
-                                          boxShadow: const [
+                                          boxShadow: [
                                             BoxShadow(
                                               blurRadius: 20,
                                               color: Color.fromARGB(
                                                   255, 121, 74, 25),
                                             ),
                                           ],
-                                          color: const Color(0xFFDFD7BF),
+                                          color: Color(0xFFDFD7BF),
                                         ),
-                                        child: const Center(
-                                          child: Text(
-                                            '${75}%',
-                                            // '${progressPercentage.toStringAsFixed(0)}%',
-                                            style: TextStyle(
-                                              fontSize: 24.0,
-                                              color: Color(0xFF3F2305),
-                                              fontWeight: FontWeight.bold,
+                                        child: CustomPaint(
+                                          painter: CircularProgressBarPainter(
+                                              letterLessonProgress[index]),
+                                          child: Center(
+                                            child: Text(
+                                              '${letterLessonProgress[index]}%',
+                                              style: const TextStyle(
+                                                fontSize: 24.0,
+                                                color: Color(0xFF3F2305),
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -289,7 +341,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                   crossAxisCount: 1,
                   childAspectRatio: 1.0,
                 ),
-                itemCount: letterLessonRoutes.length,
+                itemCount: numberLessonRoutes.length,
                 itemBuilder: (context, index) {
                   bool isUnlocked = unlockedNumberLessons[index];
                   return Padding(
@@ -637,6 +689,45 @@ class _ChildHomePageState extends State<ChildHomePage> {
         ],
       ),
     );
+  }
+}
+
+class CircularProgressBarPainter extends CustomPainter {
+  final int progress;
+
+  CircularProgressBarPainter(this.progress);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double strokeWidth = 10.0;
+    final Paint borderPaint = Paint()
+      ..color = const Color.fromARGB(255, 121, 74, 25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    final Paint progressPaint = Paint()
+      ..color = const Color(0xFFDFD7BF)
+      ..style = PaintingStyle.fill;
+
+    final double center = size.width / 2;
+    final double radius = center - strokeWidth;
+
+    // Draw the circular border
+    canvas.drawCircle(Offset(center, center), radius, borderPaint);
+
+    // Draw the progress arc
+    double remainingAngle = 2 * pi * (100 - progress) / 100;
+    canvas.drawArc(
+        Rect.fromCircle(center: Offset(center, center), radius: radius + 5),
+        -pi / 2,
+        remainingAngle,
+        true,
+        progressPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 

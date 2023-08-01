@@ -60,20 +60,31 @@ class MyApp extends StatelessWidget {
               TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           labelLarge: TextStyle(
               color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 16),
-          labelMedium:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          labelSmall:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          bodySmall: TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          bodyLarge: TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          bodyMedium:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          titleLarge:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          titleMedium:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-          titleSmall:
-              TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+          labelMedium: TextStyle(
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
+          labelSmall: TextStyle(
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
+          bodySmall: TextStyle(
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
+          bodyLarge: TextStyle(
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
+          bodyMedium: TextStyle(
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
+          titleLarge: TextStyle(
+              color: Colors.black,
+              fontFamily: 'OpenDyslexic',
+              fontSize: 36,
+              fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenDyslexic',
+              fontSize: 24,
+              fontWeight: FontWeight.bold),
+          titleSmall: TextStyle(
+              color: Colors.black,
+              fontFamily: 'OpenDyslexic',
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

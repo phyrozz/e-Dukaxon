@@ -19,7 +19,10 @@ class CustomAppBarWithBackButton extends StatelessWidget
     return AppBar(
       key: key,
       automaticallyImplyLeading: true,
-      title: Text(text),
+      title: Text(
+        text,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
     );
   }
 }

@@ -13,21 +13,20 @@ class ParentOrNotPage extends StatefulWidget {
 }
 
 class _ParentOrNotPageState extends State<ParentOrNotPage> {
-  // Future<void> updateIsParent(bool isParent) async {
-  //   try {
-  //     FirebaseAuth auth = FirebaseAuth.instance;
-  //     User? currentUser = auth.currentUser;
+  Future<void> updateIsParent(bool isParent) async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? currentUser = auth.currentUser;
 
-  //     await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(currentUser!.uid)
-  //         .update({'isParent': isParent});
-  //     print('isNewAccount updated successfully!');
-  //   } catch (error) {
-  //     print('Error updating isNewAccount: $error');
-  //     // Handle the error as needed
-  //   }
-  // }
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .update({'isParent': isParent});
+      print('isParent updated successfully!');
+    } catch (error) {
+      print('Error updating isNewAccount: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        // await updateIsParent(false);
+                        await updateIsParent(false);
                         isParent = false;
                       },
                       child: const Text('No'),
@@ -81,7 +80,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        // await updateIsParent(true);
+                        await updateIsParent(true);
                         isParent = true;
                       },
                       child: const Text('Yes'),

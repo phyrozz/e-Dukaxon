@@ -103,11 +103,20 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 } else if (snapshot.hasData) {
-                  return Text('Welcome, ${snapshot.data}!');
+                  return Text(
+                    'Welcome, ${snapshot.data}!',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  );
                 } else if (snapshot.hasError) {
-                  return const Text('Welcome!');
+                  return Text(
+                    'Welcome!',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  );
                 } else {
-                  return const Text('No username found');
+                  return Text(
+                    'No username found',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  );
                 }
               },
             )

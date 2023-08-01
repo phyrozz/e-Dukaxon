@@ -1,11 +1,13 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_4.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'assessment_result.dart';
+import 'package:flutter/services.dart';
 
 class BangorQuestionThree extends StatefulWidget {
   const BangorQuestionThree({super.key});
@@ -41,9 +43,8 @@ class _BangorQuestionThreeState extends State<BangorQuestionThree> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
-                        question3 = 2;
-                        dyslexiaScore += 2;
+                      onPressed: () async {
+                        updateDyslexiaScore(3, 2);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -58,9 +59,8 @@ class _BangorQuestionThreeState extends State<BangorQuestionThree> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
-                        question3 = 1;
-                        dyslexiaScore += 1;
+                      onPressed: () async {
+                        updateDyslexiaScore(3, 1);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -75,8 +75,8 @@ class _BangorQuestionThreeState extends State<BangorQuestionThree> {
                       style: const ButtonStyle(
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
-                      onPressed: () {
-                        question3 = 0;
+                      onPressed: () async {
+                        updateDyslexiaScore(3, 0);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
