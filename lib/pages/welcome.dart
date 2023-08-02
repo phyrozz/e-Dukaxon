@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,6 +37,7 @@ class _WelcomePageState extends State<WelcomePage> {
       //   UserFirestore(userId).initializeProgress;
       // }
       UserFirestore(userId: userId!).createNewAnonymousAccount();
+      initLetterLessonData();
     } on Exception catch (e) {
       // Remove the loading widget
       Navigator.pop(context);
@@ -95,7 +97,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       ],
                     ),
                     const Text(
-                      'eDukaxon v0.1.0 pre-release. For research uses only.',
+                      'eDukaxon v0.1.5 pre-release. For research uses only.',
                       style: TextStyle(fontSize: 10.0),
                     ),
                   ],

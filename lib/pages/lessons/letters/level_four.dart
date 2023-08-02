@@ -3,32 +3,35 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/letters/level_five.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:gif_view/gif_view.dart';
 
-class LettersLevelOne extends StatefulWidget {
+class LettersLevelFour extends StatefulWidget {
   final String lessonName;
 
-  const LettersLevelOne({Key? key, required this.lessonName}) : super(key: key);
+  const LettersLevelFour({Key? key, required this.lessonName})
+      : super(key: key);
 
   @override
-  State<LettersLevelOne> createState() => _LettersLevelOneState();
+  State<LettersLevelFour> createState() => _LettersLevelFourState();
 }
 
-class _LettersLevelOneState extends State<LettersLevelOne> {
+class _LettersLevelFourState extends State<LettersLevelFour> {
   String? levelDescription;
   List<String> texts = [];
   List<dynamic> images = [];
-  List<dynamic> sounds = [];
   bool isLoading = true;
   bool showOverlay = true;
-  AssetsAudioPlayer audio = AssetsAudioPlayer();
+  final List<GifController> gifControllers = [];
+  final List<String> gifControllerStatuses = [];
 
   @override
   void initState() {
     super.initState();
-    getLevel1DataByName(widget.lessonName);
+    getLevelDataByName(widget.lessonName);
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -43,7 +46,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
     return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
   }
 
-  void getLevel1DataByName(String lessonName) async {
+  void getLevelDataByName(String lessonName) async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/letter_lessons.json');
 
@@ -58,40 +61,46 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
 
       if (lesson != null) {
-        Level levelData = lesson.level1;
-        print('Level 1 data for $lessonName: $levelData');
-        if (mounted) {
-          setState(() {
-            levelDescription = levelData.description;
-            texts.clear();
-            texts.addAll(levelData.texts!);
-            images.addAll(levelData.images!);
-            sounds.addAll(levelData.sounds!);
-            isLoading = false;
-          });
-        }
+        Level levelData = lesson.level4;
+        // print('Level 3 data for $lessonName: $levelData');
+        setState(() {
+          levelDescription = levelData.description;
+          texts.clear();
+          texts.addAll(levelData.texts!);
+          images.addAll(levelData.images!);
+          for (var i = 0; i < images.length; i++) {
+            gifControllers.add(GifController(
+                autoPlay: false,
+                loop: false,
+                onFinish: () {
+                  for (int i = 0; i < gifControllerStatuses.length; i++) {
+                    gifControllerStatuses[i] = "stopped";
+                  }
+                  ;
+                }));
+            gifControllerStatuses.add("stoped");
+          }
+          isLoading = false;
+        });
+
+        // print(images);
       } else {
-        print('LetterLesson with name $lessonName not found in JSON file');
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      print('Error reading letter_lessons.json: $e');
-      if (mounted) {
+        // print('LetterLesson with name $lessonName not found in JSON file');
         setState(() {
           isLoading = false;
         });
       }
+    } catch (e) {
+      // print('Error reading letter_lessons.json: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    audio.dispose();
   }
 
   @override
@@ -133,9 +142,50 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                   List<Widget> columnChildren = [
                                     const SizedBox(height: 20),
                                     if (images[index] is String)
-                                      Image.asset(
-                                        images[index] as String,
-                                        width: 200,
+                                      Column(
+                                        children: [
+                                          GifView.asset(
+                                            images[index],
+                                            controller: gifControllers[index],
+                                            width: 200,
+                                            frameRate: 15,
+                                          ),
+                                          SizedBox(height: 10),
+                                          ElevatedButton.icon(
+                                            onPressed: () {
+                                              if (gifControllerStatuses[
+                                                      index] ==
+                                                  "playing") {
+                                                gifControllers[index].stop();
+                                                if (mounted) {
+                                                  setState(() {
+                                                    gifControllerStatuses[
+                                                        index] = "stoped";
+                                                  });
+                                                }
+                                              } else {
+                                                gifControllers[index].play();
+                                                if (mounted) {
+                                                  setState(() {
+                                                    gifControllerStatuses[
+                                                        index] = "playing";
+                                                  });
+                                                }
+                                              }
+                                            },
+                                            label: Text(
+                                                gifControllerStatuses[index] ==
+                                                        "playing"
+                                                    ? 'Stop'
+                                                    : 'Play'),
+                                            icon:
+                                                gifControllerStatuses[index] ==
+                                                        "playing"
+                                                    ? Icon(Icons.stop_rounded)
+                                                    : Icon(Icons
+                                                        .play_arrow_rounded),
+                                          ),
+                                        ],
                                       ),
                                     const SizedBox(height: 20),
                                     Text(
@@ -145,13 +195,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                           .textTheme
                                           .bodyMedium,
                                     ),
-                                    const SizedBox(height: 20),
-                                    if (sounds[index] is String)
-                                      ElevatedButton.icon(
-                                          onPressed: () =>
-                                              audio.open(Audio(sounds[index])),
-                                          icon: const Icon(Icons.volume_up),
-                                          label: const Text("Listen")),
                                     const SizedBox(height: 50),
                                   ];
                                   return Column(
@@ -164,13 +207,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('Click the button to start playing',
-                                style: Theme.of(context).textTheme.bodySmall),
-                            const Icon(
-                              Icons.arrow_right_alt_rounded,
-                              size: 40,
-                            ),
-                            const SizedBox(width: 10),
                             ElevatedButton.icon(
                               label: const Text("Done"),
                               icon: const Icon(Icons.check),
@@ -178,11 +214,15 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                 backgroundColor: MaterialStatePropertyAll(
                                     Color.fromARGB(255, 52, 156, 55)),
                               ),
-                              onPressed: () => Navigator.pushReplacement(
+                              onPressed: () {
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LettersLevelTwo(
-                                          lessonName: widget.lessonName))),
+                                      builder: (context) => LettersLevelFive(
+                                            lessonName: widget.lessonName,
+                                          )),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -195,6 +235,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
             left: MediaQuery.of(context).size.width / 2 - 140,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
+              onTap: () {},
               child: AnimatedOpacity(
                 opacity: showOverlay ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),

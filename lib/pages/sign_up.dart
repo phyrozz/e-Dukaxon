@@ -112,8 +112,12 @@ class _SignUpPageState extends State<SignUpPage> {
       DocumentReference userDocRef = users.doc(userId);
 
       // Set the username and email field of the document
-      await userDocRef
-          .set({'username': username, 'email': email, 'isNewAccount': true, 'isParent': true});
+      await userDocRef.set({
+        'username': username,
+        'email': email,
+        'isNewAccount': true,
+        'isParent': true
+      });
     } catch (e) {
       // Handle any errors that occur during the process
       print('Error adding username to Firestore: $e');
@@ -135,8 +139,6 @@ class _SignUpPageState extends State<SignUpPage> {
             SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
               child: Container(
-                constraints: const BoxConstraints(
-                    minHeight: 100, minWidth: 100, maxHeight: 600),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -145,11 +147,16 @@ class _SignUpPageState extends State<SignUpPage> {
                       "Create an account",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.bold,
                         fontSize: 36.0,
                       ),
                     ),
-                    const SizedBox(height: 32.0),
+                    Text(
+                      "By creating an account, your games and progress will be saved.",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 60.0),
                     TextField(
                       controller: _userNameController,
                       decoration: const InputDecoration(
@@ -202,34 +209,35 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       style: const TextStyle(color: Colors.black),
                     ),
-                    const SizedBox(height: 32.0),
-                    ElevatedButton(
-                      child: const Padding(
-                        padding: EdgeInsets.all(14.0),
-                        child: Text('Create account'),
-                      ),
-                      onPressed: () {
-                        signUp(
-                            context,
-                            _emailController.text,
-                            _userNameController.text,
-                            _passwordController.text,
-                            _confirmPasswordController.text);
-                      },
+                    const SizedBox(height: 15.0),
+                    ButtonBar(
+                      alignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton.icon(
+                          label: const Text("Back"),
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: const Text('Sign Up'),
+                          onPressed: () {
+                            signUp(
+                                context,
+                                _emailController.text,
+                                _userNameController.text,
+                                _passwordController.text,
+                                _confirmPasswordController.text);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 80,
                     ),
                   ],
                 ),
-              ),
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: ElevatedButton.icon(
-                label: const Text("Back"),
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
               ),
             ),
           ],

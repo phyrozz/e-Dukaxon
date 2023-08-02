@@ -17,7 +17,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    isParent ? ChildHomePage() : HomePage(),
+    ChildHomePage(),
     GamesPage(),
     MyProgressPage(),
     MyAccountPage(),
@@ -26,6 +26,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    isParent = true;
   }
 
   @override

@@ -1,13 +1,25 @@
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/pages/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class WelcomeCustomAppBar extends StatelessWidget {
-  const WelcomeCustomAppBar({super.key});
+class WelcomeCustomAppBar extends StatefulWidget {
+  final String text;
+
+  const WelcomeCustomAppBar({super.key, required this.text});
+
+  @override
+  State<WelcomeCustomAppBar> createState() => _WelcomeCustomAppBarState();
+}
+
+class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
+  void initState() {
+    super.initState();
+  }
 
   Widget _menuButton(BuildContext context) {
     return IconButton(
@@ -35,24 +47,50 @@ class WelcomeCustomAppBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/parentModeLogin'),
-                  icon: const Icon(FontAwesomeIcons.userTie),
-                  label: const Text('Parent Mode')),
+                  onPressed: () {
+                    if (isParent) {
+                      isParent = false;
+                      Navigator.pushReplacementNamed(context, '/childHomePage');
+                    } else {
+                      Navigator.pushReplacementNamed(
+                          context, '/parentModeLogin');
+                    }
+                  },
+                  icon: isParent
+                      ? const Icon(Icons.exit_to_app_rounded)
+                      : const Icon(FontAwesomeIcons.userTie),
+                  label: isParent
+                      ? const Text('Exit Parent Mode')
+                      : const Text('Parent Mode')),
               const SizedBox(
                 height: 12,
               ),
               ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  icon: const Icon(FontAwesomeIcons.arrowRightToBracket),
+                  label: const Text('Log in')),
+              const SizedBox(
+                height: 12,
+              ),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const SignUpPage()));
+                  },
                   icon: const Icon(FontAwesomeIcons.userPlus),
                   label: const Text('Create an account')),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton.icon(
-                  onPressed: () => signOut(context),
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Log out')),
+              // const SizedBox(
+              //   height: 12,
+              // ),
+              // ElevatedButton.icon(
+              //     onPressed: () => signOut(context),
+              //     icon: const Icon(Icons.logout),
+              //     label: const Text('Log out')),
             ],
           ),
         );
@@ -61,99 +99,6 @@ class WelcomeCustomAppBar extends StatelessWidget {
   }
 
   // Widget _buildMenuItem(BuildContext context,
-  //     {required String value, required String label}) {
-  //   return InkWell(
-  //     onTap: () {
-  //       _handleMenuOption(context, value);
-  //       Navigator.pop(context); // Close the dialog when an option is tapped
-  //     },
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-  //       child: Text(
-  //         label,
-  //         style: const TextStyle(fontSize: 16.0, color: Colors.white),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void _handleMenuOption(BuildContext context, String value) {
-  //   switch (value) {
-  //     case 'parentMode':
-  //       Navigator
-  //       if (isOnParentMode) {
-  //         isOnParentMode = false;
-  //         Navigator.pushNamedAndRemoveUntil(
-  //             context, '/childHomePage', (route) => false);
-  //       } else {
-  //         Navigator.pushNamed(context, '/parentModeLogin');
-  //       }
-  //       break;
-  //     case 'logOut':
-  //       signOut(context);
-  //       break;
-  //     case 'createAccount':
-  //       // Implement the functionality for creating an account here
-  //       // ...
-  //       break;
-  //     case 'signIn':
-  //       // Implement the functionality for signing in here
-  //       // ...
-  //       break;
-  //     // Add more cases for other menu options as needed
-  //     default:
-  //       break;
-  //   }
-  // }
-
-  // Widget _menuButton(BuildContext context) {
-  //   return PopupMenuButton(
-  //     iconSize: 100,
-  //     icon: const IconTheme(
-  //       data: IconThemeData(color: Color(0xFF3F2305)),
-  //       child: Icon(Icons.person),
-  //     ),
-  //     itemBuilder: (BuildContext context) => [
-  //       PopupMenuItem(
-  //         value: 'parentMode',
-  //         child: isOnParentMode
-  //             ? const Text('Exit Parent Mode')
-  //             : const Text('Parent Mode'),
-  //       ),
-  //       const PopupMenuItem(
-  //         value: 'createAccount',
-  //         child: Text('Create an Account'),
-  //       ),
-  //       const PopupMenuItem(
-  //         value: 'signIn',
-  //         child: Text('Sign In'),
-  //       ),
-  //       // Uncomment if something goes wrong with the signInAnonymously feature
-  //       // const PopupMenuItem(
-  //       //   value: 'logOut',
-  //       //   child: Text('Log Out'),
-  //       // ),
-  //     ],
-  //     onSelected: (value) {
-  //       if (value == 'parentMode') {
-  //         if (isOnParentMode) {
-  //           isOnParentMode = false;
-  //           Navigator.pushNamedAndRemoveUntil(
-  //               context, '/childHomePage', (route) => false);
-  //         } else {
-  //           Navigator.pushNamed(context, '/parentModeLogin');
-  //         }
-  //       } else if (value == 'logOut') {
-  //         signOut(context);
-  //       } else if (value == 'createAccount') {
-  //         // Add a functionality that lets the user create an account and sign in when they choose to
-  //       } else if (value == 'signIn') {
-  //         // Add a functionality that lets the user sign in when they choose to
-  //       }
-  //     },
-  //   );
-  // }
-
   Future<void> signOut(BuildContext context) async {
     showDialog(
       context: context,
@@ -189,7 +134,7 @@ class WelcomeCustomAppBar extends StatelessWidget {
       floating: false,
       centerTitle: true,
       title: Text(
-        "Let's play!",
+        widget.text,
         style: Theme.of(context).textTheme.titleLarge,
       ),
       toolbarHeight: 80,

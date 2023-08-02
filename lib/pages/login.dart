@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     Text(
-                      'eDukaxon v0.1.0 pre-release. For research uses only.',
+                      'eDukaxon v0.1.5 pre-release. For research uses only.',
                       style: TextStyle(fontSize: 10.0),
                     ),
                   ],
@@ -221,36 +221,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(
                           height: 15,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        const SignUpPage(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  var begin = const Offset(1.0, 0.0);
-                                  var end = Offset.zero;
-                                  var curve = Curves.ease;
-
-                                  var tween = Tween(begin: begin, end: end)
-                                      .chain(CurveTween(curve: curve));
-
-                                  return SlideTransition(
-                                    position: animation.drive(tween),
-                                    child: child,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          style: TextButton.styleFrom(
-                            primary: Colors.black,
-                          ),
-                          child: const Text('I want to create an account'),
                         ),
                       ],
                     ),

@@ -5,42 +5,32 @@ import 'dart:math';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_three.dart';
+import 'package:e_dukaxon/pages/lessons/letters/result.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-class LettersLevelTwo extends StatefulWidget {
+class LettersLevelSeven extends StatefulWidget {
   final String lessonName;
 
-  const LettersLevelTwo({Key? key, required this.lessonName}) : super(key: key);
+  const LettersLevelSeven({Key? key, required this.lessonName})
+      : super(key: key);
 
   @override
-  State<LettersLevelTwo> createState() => _LettersLevelTwoState();
+  State<LettersLevelSeven> createState() => _LettersLevelSevenState();
 }
 
-class _LettersLevelTwoState extends State<LettersLevelTwo> {
+class _LettersLevelSevenState extends State<LettersLevelSeven> {
   String? levelDescription;
   List<dynamic> correctAnswers = [];
-  List<String> sounds = [
-    "assets/sounds/a_sound_female_UK.mp3",
-    "assets/sounds/ai_sound_female_UK.mp3",
-    "assets/sounds/air_sound_female_UK.mp3",
-    "assets/sounds/ar_sound_female_UK.mp3",
-    "assets/sounds/b_sound_female_UK.mp3",
-    "assets/sounds/c_sound_female_UK.mp3",
-    "assets/sounds/ch-chair_sound_female_UK.mp3",
-    "assets/sounds/d_sound_female_UK.mp3",
-    "assets/sounds/e_sound_female_UK.mp3",
-    "assets/sounds/ear_sound_female_UK.mp3",
-    "assets/sounds/ee_sound_female_UK.mp3",
-    "assets/sounds/f_sound_female_UK.mp3",
-    "assets/sounds/g_sound_female_UK.mp3",
-    "assets/sounds/h_sound_female_UK.mp3",
-    "assets/sounds/i_sound_female_UK.mp3",
-    "assets/sounds/igh_sound_female_UK.mp3",
-    "assets/sounds/j_sound_female_UK.mp3"
+  List<String> images = [
+    "assets/images/apple.png",
+    "assets/images/bat.png",
+    "assets/images/boy.png",
+    "assets/images/cat.png",
+    "assets/images/chair.png",
   ];
-  List<String> soundChoices = []; // List to store the sound choices for buttons
-  String? selectedSound; // Currently selected sound
+  List<String> imageChoices = [];
+  String? selectedImage;
   bool isLoading = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
@@ -70,47 +60,41 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
       LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
 
       if (lesson != null) {
-        Level levelData = lesson.level2;
-        print('Level 2 data for $lessonName: $levelData');
+        Level levelData = lesson.level7;
+        print('Level 7 data for $lessonName: $levelData');
 
         correctAnswers.addAll(levelData.correctAnswers!);
 
         // Select a random sound from the correctAnswers list
-        String correctSound =
+        String correctImage =
             correctAnswers[Random().nextInt(correctAnswers.length)];
 
         // Create a list of remaining random sounds
-        List<String> remainingRandomSounds = sounds..remove(correctSound);
+        List<String> remainingRandomImages = images..remove(correctImage);
 
         // Shuffle the remainingRandomSounds list and take 3 random elements
-        List<String> randomSounds = List.from(remainingRandomSounds)..shuffle();
-        randomSounds = randomSounds.take(3).toList();
+        List<String> randomImages = List.from(remainingRandomImages)..shuffle();
+        randomImages = randomImages.take(3).toList();
 
         // Add the correct sound to the randomSounds list
-        randomSounds.add(correctSound);
+        randomImages.add(correctImage);
 
-        if (mounted) {
-          setState(() {
-            levelDescription = levelData.description;
-            soundChoices = List.from(randomSounds);
-            isLoading = false;
-          });
-        }
+        setState(() {
+          levelDescription = levelData.description;
+          imageChoices = List.from(randomImages);
+          isLoading = false;
+        });
       } else {
         print('LetterLesson with name $lessonName not found in JSON file');
-        if (mounted) {
-          setState(() {
-            isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
-      print('Error reading letter_lessons.json: $e');
-      if (mounted) {
         setState(() {
           isLoading = false;
         });
       }
+    } catch (e) {
+      print('Error reading letter_lessons.json: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -172,7 +156,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LettersLevelThree(
+                              builder: (context) => LettersResultPage(
                                   lessonName: widget.lessonName)),
                         );
                       },
@@ -212,32 +196,25 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                     child: GridView.count(
                       shrinkWrap: true,
                       crossAxisCount: 2,
-                      childAspectRatio: (1 / .4),
+                      childAspectRatio: (1 / .5),
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
-                      children: soundChoices
+                      children: imageChoices
                           .asMap()
                           .entries
                           .map(
-                            (entry) => ElevatedButton.icon(
+                            (entry) => ElevatedButton(
                               onPressed: () {
-                                if (mounted) {
-                                  setState(() {
-                                    selectedSound = entry.value;
-                                  });
-                                }
-
-                                int index = entry.key;
-
-                                audio.open(Audio(soundChoices[index]));
+                                setState(() {
+                                  selectedImage = entry.value;
+                                });
                               },
-                              label: const Text(''),
-                              icon: const Icon(Icons.volume_up),
                               style: ElevatedButton.styleFrom(
-                                primary: selectedSound == entry.value
+                                primary: selectedImage == entry.value
                                     ? const Color.fromARGB(255, 27, 15, 2)
                                     : null,
                               ),
+                              child: Image.asset(imageChoices[entry.key]),
                             ),
                           )
                           .toList(),
@@ -257,7 +234,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                         onPressed: () {
                           // Check if the selected sound is correct
                           bool isCorrect =
-                              correctAnswers.contains(selectedSound);
+                              correctAnswers.contains(selectedImage);
                           // Display a message to the user based on the result
                           showResultModal(context, isCorrect);
                         },

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
@@ -132,6 +133,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
     super.initState();
     // initializeGameDataOnFirestore();
     // initLetterLessonData();
+    // addNewLetterLesson();
     letterLessons();
     checkNewAccountAndNavigate();
     // Rebuild the screen after 3s which will process the animation from green to blue
@@ -165,7 +167,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const WelcomeCustomAppBar(),
+          const WelcomeCustomAppBar(
+            text: "Let's play!",
+          ),
           SliverToBoxAdapter(
             child: Container(
               height: 100.0,
@@ -212,8 +216,8 @@ class _ChildHomePageState extends State<ChildHomePage> {
                     child: InkWell(
                       onTap: () {
                         if (isUnlocked) {
-                          if (letterLessonProgress[index] >= 0 &&
-                              letterLessonProgress[index] < 25) {
+                          if (letterLessonProgress[index] >= 0) {
+                            resetScore(letterLessonNames[index]);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
