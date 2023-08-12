@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_five.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gif_view/gif_view.dart';

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:e_dukaxon/data/assessment.dart';
-import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
+import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,7 +70,7 @@ class _InitAssessmentPageState extends State<InitAssessmentPage> {
                   Navigator.push(
                       context,
                       createRouteWithHorizontalSlideAnimation(
-                          const BangorQuestionOne()));
+                          const LocaleSelectPage()));
                 },
                 child: const Text("Let's Go!"),
               ),
