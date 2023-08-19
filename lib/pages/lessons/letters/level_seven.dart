@@ -192,7 +192,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                   // Display buttons with sounds in a 2x2 grid
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width / 5),
+                        horizontal: MediaQuery.of(context).size.width / 4),
                     child: GridView.count(
                       shrinkWrap: true,
                       crossAxisCount: 2,

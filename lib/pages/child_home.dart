@@ -146,14 +146,11 @@ class _ChildHomePageState extends State<ChildHomePage> {
   }
 
   Future<void> checkNewAccountAndNavigate() async {
-    await Auth().signInAnonymously();
     String? userId = Auth().getCurrentUserId();
 
     // Retrieve the user document from Firestore
-    // final userDoc = await FirebaseFirestore.instance
-    //     .collection('users')
-    //     .doc(currentUser!.uid)
-    //     .get();
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     // Check if it's a new account
     if (await UserFirestore(userId: userId!).getIsNewAccount()) {

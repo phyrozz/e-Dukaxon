@@ -59,11 +59,11 @@ class MyApp extends StatelessWidget {
           displayMedium:
               TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
           labelLarge: TextStyle(
-              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 16),
+              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
           labelMedium: TextStyle(
               color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
           labelSmall: TextStyle(
-              color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
+              color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
           bodySmall: TextStyle(
               color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
           bodyLarge: TextStyle(

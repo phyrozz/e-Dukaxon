@@ -57,11 +57,22 @@ class _SignUpPageState extends State<SignUpPage> {
         },
       );
 
-      // Call the Auth class method to create user account with email and password
-      await Auth().createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      AuthCredential credential =
+          EmailAuthProvider.credential(email: email, password: password);
+
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.currentUser!
+            .linkWithCredential(credential);
+
+        User? user = userCredential.user;
+        if (user != null) {
+          print("Anonymous account successfully upgraded: ${user.uid}");
+        } else {
+          print("Linking failed. No user found.");
+        }
+      } catch (e) {
+        print("Error upgrading anonymous account: $e");
+      }
 
       String userId = Auth().currentUser!.uid;
       print(userId);
@@ -111,13 +122,14 @@ class _SignUpPageState extends State<SignUpPage> {
       // Create a document for the user using their user ID
       DocumentReference userDocRef = users.doc(userId);
 
-      // Set the username and email field of the document
-      await userDocRef.set({
-        'username': username,
-        'email': email,
-        'isNewAccount': true,
-        'isParent': true
-      });
+      // Set the username and email field of the document with merge option set to true
+      await userDocRef.set(
+        {
+          'username': username,
+          'email': email,
+        },
+        SetOptions(merge: true),
+      );
     } catch (e) {
       // Handle any errors that occur during the process
       print('Error adding username to Firestore: $e');
