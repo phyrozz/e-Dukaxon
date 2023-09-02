@@ -1,3 +1,9 @@
+// Each letter lesson in the app are modeled in a LetterLesson class from the .JSON structure
+// There are seven pages (we'll call them levels).
+// Level 1, 4 are lesson pages, with the former teaching the user about the sounds of the letter and the latter teaching how to write that letter
+// The rest are quiz-type games that the user must answer to proceed to the next level
+// With the exception of level 5, which is a letter-tracing quiz.
+
 import 'dart:convert';
 import 'dart:io';
 

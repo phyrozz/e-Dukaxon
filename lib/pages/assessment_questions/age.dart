@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AgeSelectPage extends StatefulWidget {
   const AgeSelectPage({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   String? _currentUserId = Auth().getCurrentUserId();
   String _currentAge = '3'; // Default age value
   List<String> ageOptions = [];
+  bool isEnglish = true;
 
   final FixedExtentScrollController scrollController =
       FixedExtentScrollController(initialItem: 0);
@@ -29,6 +31,16 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   void initState() {
     super.initState();
     fetchIsParent();
+    getLanguage();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true;
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
   }
 
   void fetchIsParent() {
@@ -42,7 +54,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
       setState(() {
         _currentAge = '3';
         ageOptions = List.generate(33, (index) => (index + 3).toString())
-          ..add('Older than 35');
+          ..add(isEnglish ? 'Older than 35' : 'Mas matanda sa 35');
       });
     }
   }
@@ -102,8 +114,11 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
 
   @override
   Widget build(BuildContext context) {
-    String pageTitle =
-        isParent ? "Please enter your child's age" : "What is your age?";
+    String pageTitle = isParent
+        ? (isEnglish
+            ? "Please enter your child's age"
+            : "Ano ang edad ng inyong anak?")
+        : (isEnglish ? "What is your age?" : "Ano ang iyong edad?");
 
     return Scaffold(
       body: Padding(
@@ -179,7 +194,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Back'),
+                  child: Text(isEnglish ? 'Back' : 'Bumalik'),
                 ),
                 ElevatedButton(
                   style: const ButtonStyle(
@@ -200,7 +215,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                     storeDyslexiaResult();
                     await updateIsNewAccount(false, _currentAge);
                   },
-                  child: const Text('Next'),
+                  child: Text(isEnglish ? 'Next' : 'Susunod'),
                 ),
               ],
             ),

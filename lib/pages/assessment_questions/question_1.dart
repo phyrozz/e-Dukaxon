@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BangorQuestionOne extends StatefulWidget {
   const BangorQuestionOne({super.key});
@@ -19,6 +20,23 @@ class BangorQuestionOne extends StatefulWidget {
 }
 
 class _BangorQuestionOneState extends State<BangorQuestionOne> {
+  bool isEnglish = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getLanguage();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +49,10 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
             const SizedBox(),
             Center(
               child: Column(children: [
-                const Text(
-                  "Do you find it difficult to determine left and right directions?",
+                Text(
+                  isEnglish
+                      ? "Do you find it difficult to determine left and right directions?"
+                      : "Nahihirapan ka bang intindihin ang pinagkaiba ng kaliwa at kanan?",
                   style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
@@ -53,7 +73,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                             createRouteWithHorizontalSlideAnimation(
                                 const BangorQuestionTwo()));
                       },
-                      child: const Text('Yes'),
+                      child: Text(isEnglish ? 'Yes' : 'Opo'),
                     ),
                     const SizedBox(
                       height: 12,
@@ -69,7 +89,8 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                             createRouteWithHorizontalSlideAnimation(
                                 const BangorQuestionTwo()));
                       },
-                      child: const Text("I don't know"),
+                      child:
+                          Text(isEnglish ? "I don't know" : "Hindi ko po alam"),
                     ),
                     const SizedBox(
                       height: 12,
@@ -86,7 +107,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                             createRouteWithHorizontalSlideAnimation(
                                 const BangorQuestionTwo()));
                       },
-                      child: const Text('No'),
+                      child: Text(isEnglish ? 'No' : 'Hindi'),
                     ),
                   ],
                 ),
@@ -103,7 +124,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back'),
+                  label: Text(isEnglish ? 'Back' : 'Bumalik'),
                 ),
               ],
             ),

@@ -42,6 +42,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
   List<String> soundChoices = []; // List to store the sound choices for buttons
   String? selectedSound; // Currently selected sound
   bool isLoading = true;
+  bool isCorrectAtFirstAttempt = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
   @override
@@ -124,8 +125,14 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isCorrect) {
       if (isCorrect) {
+        if (isCorrectAtFirstAttempt) {
+          print("Score updated successfully!");
+          addScoreToLessonBy(widget.lessonName, 10);
+          isCorrectAtFirstAttempt = false;
+        }
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
+        isCorrectAtFirstAttempt = false;
         audio.open(Audio('assets/sounds/wrong.mp3'));
       }
 
@@ -167,7 +174,6 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                   if (isCorrect)
                     ElevatedButton(
                       onPressed: () {
-                        addScoreToLessonBy(widget.lessonName, 10);
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,

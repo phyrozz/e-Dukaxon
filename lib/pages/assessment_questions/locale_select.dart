@@ -1,9 +1,11 @@
 // Page that lets the new user choose what language they should use for the application
 // Two languages will be supported currently: English & Filipino
 
+import 'package:e_dukaxon/pages/assessment_questions/init.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
+import 'package:e_dukaxon/locale.dart';
 
 class LocaleSelectPage extends StatelessWidget {
   const LocaleSelectPage({super.key});
@@ -16,47 +18,47 @@ class LocaleSelectPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(),
-          Text('Choose a language:', style: Theme.of(context).textTheme.displayMedium,),
+          Text(
+            'Choose a language',
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
-                icon: Image.asset('assets/images/united-kingdom.png'),
+                icon: SizedBox(
+                  height: 75.0,
+                  width: 75.0,
+                  child: Image.asset(
+                    'assets/images/united-kingdom.png',
+                  ),
+                ),
                 label: const Text(''),
                 onPressed: () {
+                  setLanguage(true);
                   Navigator.push(
                       context,
                       createRouteWithHorizontalSlideAnimation(
-                          const BangorQuestionOne()));
+                          const InitAssessmentPage()));
                 },
               ),
               ElevatedButton.icon(
-                icon: Image.asset('assets/images/philippines.png'),
+                icon: SizedBox(
+                    height: 75.0,
+                    width: 75.0,
+                    child: Image.asset('assets/images/philippines.png')),
                 label: const Text(''),
                 onPressed: () {
+                  setLanguage(false);
                   Navigator.push(
                       context,
                       createRouteWithHorizontalSlideAnimation(
-                          const BangorQuestionOne()));
+                          const InitAssessmentPage()));
                 },
               ),
             ],
           ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ElevatedButton.icon(
-                  style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll(
-                          EdgeInsets.fromLTRB(35, 20, 35, 20))),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back'),
-                ),
-              ],
-            ),
+          const SizedBox(),
         ],
       ),
     );

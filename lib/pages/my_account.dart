@@ -120,6 +120,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                           ),
                           const SizedBox(height: 20),
                           ButtonBar(
+                            alignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton.icon(
                                   onPressed: () => signOut(context),
@@ -206,7 +207,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                               )),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 50,
                       ),
                     ])),

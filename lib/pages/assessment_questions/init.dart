@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:e_dukaxon/data/assessment.dart';
+import 'package:e_dukaxon/locale.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
+import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InitAssessmentPage extends StatefulWidget {
   const InitAssessmentPage({super.key});
@@ -15,10 +18,22 @@ class InitAssessmentPage extends StatefulWidget {
 }
 
 class _InitAssessmentPageState extends State<InitAssessmentPage> {
+  bool isEnglish = true;
+
   @override
   void initState() {
     super.initState();
     initializeAssessmentData();
+    getLanguage();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
   }
 
   Future<void> initializeAssessmentData() async {
@@ -43,9 +58,9 @@ class _InitAssessmentPageState extends State<InitAssessmentPage> {
             const SizedBox(),
             Center(
               child: Column(
-                children: const [
+                children: [
                   Text(
-                    "Hello!",
+                    isEnglish ? "Hello!" : "Kamusta!",
                     style:
                         TextStyle(fontSize: 48.0, fontWeight: FontWeight.w600),
                   ),
@@ -53,7 +68,9 @@ class _InitAssessmentPageState extends State<InitAssessmentPage> {
                     height: 15,
                   ),
                   Text(
-                    "Before we get started, let's answer a few questions.",
+                    isEnglish
+                        ? "Before we get started, let's answer a few questions."
+                        : "Bago tayo magsimula, magsagot muna tayo ng mga kaunting tanong.",
                     style: TextStyle(fontSize: 20.0),
                     textAlign: TextAlign.center,
                   ),
@@ -70,9 +87,9 @@ class _InitAssessmentPageState extends State<InitAssessmentPage> {
                   Navigator.push(
                       context,
                       createRouteWithHorizontalSlideAnimation(
-                          const LocaleSelectPage()));
+                          const BangorQuestionOne()));
                 },
-                child: const Text("Let's Go!"),
+                child: Text(isEnglish ? "Let's Go!" : "Tara na!"),
               ),
             ),
           ],

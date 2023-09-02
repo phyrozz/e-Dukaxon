@@ -32,6 +32,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
   List<String> imageChoices = [];
   String? selectedImage;
   bool isLoading = true;
+  bool isCorrectAtFirstAttempt = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
   @override
@@ -108,8 +109,14 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isCorrect) {
       if (isCorrect) {
+        if (isCorrectAtFirstAttempt) {
+          print("Score updated successfully!");
+          addScoreToLessonBy(widget.lessonName, 10);
+          isCorrectAtFirstAttempt = false;
+        }
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
+        isCorrectAtFirstAttempt = false;
         audio.open(Audio('assets/sounds/wrong.mp3'));
       }
 
@@ -151,7 +158,6 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                   if (isCorrect)
                     ElevatedButton(
                       onPressed: () {
-                        addScoreToLessonBy(widget.lessonName, 10);
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,

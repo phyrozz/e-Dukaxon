@@ -35,7 +35,11 @@ class _LettersResultPageState extends State<LettersResultPage> {
     if (score <= 40 && score >= 20) {
       audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
       if (progress < 100) {
-        incrementProgressValue(widget.lessonName, 10);
+        if (score == 40) {
+          incrementProgressValue(widget.lessonName, 20);
+        } else {
+          incrementProgressValue(widget.lessonName, 10);
+        }
       }
     } else {
       audio.open(Audio('assets/sounds/lesson_finished_2.mp3'));

@@ -4,6 +4,7 @@ import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParentOrNotPage extends StatefulWidget {
   const ParentOrNotPage({super.key});
@@ -13,6 +14,23 @@ class ParentOrNotPage extends StatefulWidget {
 }
 
 class _ParentOrNotPageState extends State<ParentOrNotPage> {
+  bool isEnglish = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getLanguage();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true;
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
+  }
+
   Future<void> updateIsParent(bool isParent) async {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,8 +58,10 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
             const SizedBox(),
             Center(
               child: Column(children: [
-                const Text(
-                  "Are you a parent?",
+                Text(
+                  isEnglish
+                      ? "Are you a parent?"
+                      : "Ikaw ba ay isang magulang?",
                   style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
@@ -64,7 +84,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                         await updateIsParent(false);
                         isParent = false;
                       },
-                      child: const Text('No'),
+                      child: Text(isEnglish ? 'No' : 'Hindi'),
                     ),
                     const SizedBox(
                       height: 12,
@@ -83,7 +103,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                         await updateIsParent(true);
                         isParent = true;
                       },
-                      child: const Text('Yes'),
+                      child: Text(isEnglish ? 'Yes' : 'Opo'),
                     ),
                   ],
                 ),
@@ -100,7 +120,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back'),
+                  label: Text(isEnglish ? 'Back' : 'Bumalik'),
                 ),
               ],
             ),

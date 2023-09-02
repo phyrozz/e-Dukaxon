@@ -112,6 +112,7 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isCorrect) {
       if (isCorrect) {
+        addScoreToLessonBy(widget.lessonName, 10);
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
         audio.open(Audio('assets/sounds/wrong.mp3'));
@@ -154,9 +155,6 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (isCorrect) {
-                        addScoreToLessonBy(widget.lessonName, 10);
-                      }
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,

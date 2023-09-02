@@ -1,3 +1,8 @@
+// Assessment is scored by an incrementing dyslexiaScore value per question
+// Yes = 2; Don't Know = 1; No = 0;
+// If dyslexiaScore is >= 7, then isDyslexic = true;
+// Will change this algorithm soon.
+
 import 'dart:convert';
 import 'dart:io';
 

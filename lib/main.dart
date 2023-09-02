@@ -2,6 +2,7 @@ import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/pages/assessment_questions/init.dart';
+import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
@@ -130,7 +131,7 @@ class MyApp extends StatelessWidget {
         '/myPages': (context) => const MyPages(),
         '/childHomePage': (context) => const ChildHomePage(),
         '/highlightReading': (context) => const HighlightReading(text: "test"),
-        '/assessment/init': (context) => const InitAssessmentPage(),
+        '/assessment/init': (context) => const LocaleSelectPage(),
         '/assessment/questionOne': (context) => const BangorQuestionOne(),
         '/assessment/questionTwo': (context) => const BangorQuestionTwo(),
         '/assessment/questionThree': (context) => const BangorQuestionThree(),

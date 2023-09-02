@@ -152,6 +152,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isPassed) {
       if (isPassed) {
+        addScoreToLessonBy(widget.lessonName, 10);
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
         audio.open(Audio('assets/sounds/wrong.mp3'));
@@ -194,9 +195,6 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (isPassed) {
-                        addScoreToLessonBy(widget.lessonName, 10);
-                      }
                       Navigator.pop(context);
                       Navigator.pushReplacement(
                         context,
