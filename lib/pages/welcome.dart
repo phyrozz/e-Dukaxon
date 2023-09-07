@@ -1,8 +1,6 @@
 import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
 
@@ -23,6 +21,29 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Future<void> signInAnonymously() async {
     try {
+      // Show the loading widget
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(
+                  color: Color(0xFF3F2305),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  "Setting everything up...",
+                  style: TextStyle(color: Color(0xFF3F2305)),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
       await Auth().signInAnonymously();
       String? userId = Auth().getCurrentUserId();
       // CollectionReference users =
@@ -72,25 +93,34 @@ class _WelcomePageState extends State<WelcomePage> {
                     const SizedBox(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 12, 30, 12),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/app-logo.png',
+                              width: 150,
+                            ),
+                          ),
+                        ),
+                        const Text(
                           "Let's start learning!",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontWeight: FontWeight.w300,
-                            fontSize: 48.0,
+                            fontSize: 28.0,
                             height: 1.2,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
-                        Text(
+                        const Text(
                           "eDukaxon provides an amazing learning platform for dyslexics of all ages. Get started by tapping the button on the right!",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontWeight: FontWeight.w300,
-                            fontSize: 16.0,
+                            fontSize: 12.0,
                             height: 1.2,
                           ),
                         ),
@@ -98,7 +128,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ),
                     const Text(
                       'eDukaxon v0.1.5 pre-release. For research uses only.',
-                      style: TextStyle(fontSize: 10.0),
+                      style: TextStyle(fontSize: 8.0),
                     ),
                   ],
                 ),
@@ -126,8 +156,14 @@ class _WelcomePageState extends State<WelcomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Hmm...'),
-          content: Text(errorMessage),
+          title: const Text(
+            'Hmm...',
+            style: TextStyle(color: Color(0xFF3F2305)),
+          ),
+          content: Text(
+            errorMessage,
+            style: const TextStyle(color: Color(0xFF3F2305)),
+          ),
           actions: [
             ElevatedButton(
               onPressed: () {
