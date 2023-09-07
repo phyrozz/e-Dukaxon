@@ -18,38 +18,38 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
 
-  late List<SideMenuItem> pages = [
+  late List<SideMenuItem> items = [
     SideMenuItem(
       title: "Home",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
-      icon: Icon(Icons.home),
+      icon: const Icon(Icons.home),
     ),
     SideMenuItem(
       title: "Games",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
-      icon: Icon(Icons.games),
+      icon: const Icon(Icons.games),
     ),
     SideMenuItem(
       title: "Stats",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
-      icon: Icon(Icons.show_chart),
+      icon: const Icon(Icons.show_chart),
     ),
     SideMenuItem(
       title: "My Account",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
-      icon: Icon(Icons.account_circle),
+      icon: const Icon(Icons.account_circle),
     ),
   ];
 
-  final List<Widget> _pages = [
+  final List<Widget> pages = [
     const ChildHomePage(),
     const GamesPage(),
     const MyProgressPage(),
@@ -79,41 +79,73 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SideMenu(
-          // Page controller to manage a PageView
-          controller: sideMenu,
-          // Will shows on top of all items, it can be a logo or a Title text
-          title: Image.asset('assets/images/app-logo.png'),
-          // Will show on bottom of SideMenu when displayMode was SideMenuDisplayMode.open
-          footer: Text('eDukaxon'),
-          // Notify when display mode changed
-          onDisplayModeChanged: (mode) {
-            print(mode);
-          },
-          // List of SideMenuItem to show them on SideMenu
-          items: pages,
-        ),
-        Expanded(
-          child: PageView(
-            controller: pageController,
-            children: [
-              Container(
-                child: Center(
-                  child: Text('Dashboard'),
-                ),
+    return Scaffold(
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SideMenu(
+            style: SideMenuStyle(
+              displayMode: SideMenuDisplayMode.auto,
+              hoverColor: Colors.black,
+              selectedColor: Theme.of(context).primaryColor,
+              selectedTitleTextStyle:
+                  TextStyle(color: Theme.of(context).primaryColorDark),
+              selectedIconColor: Theme.of(context).primaryColorDark,
+              unselectedIconColor: Colors.white,
+              unselectedTitleTextStyle: const TextStyle(color: Colors.white),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 79, 117, 134),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
+                    ),
+                  ]),
+              backgroundColor: Theme.of(context).primaryColorDark,
+              openSideMenuWidth: 200,
+            ),
+            // Page controller to manage a PageView
+            controller: sideMenu,
+            // Will shows on top of all items, it can be a logo or a Title text
+            title: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/images/app-logo.png',
+                    width: 32,
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  const Text(
+                    'eDukaxon',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                child: Center(
-                  child: Text('Settings'),
-                ),
-              ),
-            ],
+            ),
+            // Notify when display mode changed
+            onDisplayModeChanged: (mode) {
+              print(mode);
+            },
+            // List of SideMenuItem to show them on SideMenu
+            items: items,
           ),
-        ),
-      ],
+          Expanded(
+            child: PageView(
+              controller: pageController,
+              children: pages,
+            ),
+          ),
+        ],
+      ),
     );
 
     // @override

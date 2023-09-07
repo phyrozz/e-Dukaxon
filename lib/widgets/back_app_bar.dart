@@ -3,7 +3,7 @@ import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/fetch_username.dart';
 
 class CustomAppBarWithBackButton extends StatelessWidget
-    with PreferredSizeWidget {
+    implements PreferredSizeWidget {
   final String text;
   @override
   final Size preferredSize;
