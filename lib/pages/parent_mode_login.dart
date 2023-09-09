@@ -1,4 +1,6 @@
 import 'package:e_dukaxon/assessment_data.dart';
+import 'package:e_dukaxon/my_pages.dart';
+import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -33,8 +35,10 @@ class _PinAccessPageState extends State<PinAccessPage> {
 
       if (birthYear >= 1920 && currentYear - birthYear >= 18) {
         isOnParentMode = true;
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/myPages', (Route<dynamic> route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            createRouteWithHorizontalSlideAnimation(const MyPages()),
+            (route) => false);
       } else {
         _showErrorDialog(
             context, 'Invalid PIN', 'Invalid PIN. Please try again.');
@@ -76,7 +80,7 @@ class _PinAccessPageState extends State<PinAccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarWithBackButton(text: 'Parent Mode'),
+      appBar: const CustomAppBarWithBackButton(text: 'Parent Mode'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(

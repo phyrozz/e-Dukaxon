@@ -19,7 +19,7 @@ class AgeSelectPage extends StatefulWidget {
 }
 
 class _AgeSelectPageState extends State<AgeSelectPage> {
-  String? _currentUserId = Auth().getCurrentUserId();
+  final String? _currentUserId = Auth().getCurrentUserId();
   String _currentAge = '3'; // Default age value
   List<String> ageOptions = [];
   bool isEnglish = true;
@@ -142,7 +142,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                   const SizedBox(
                     height: 32.0,
                   ),
-                  Container(
+                  SizedBox(
                     height: 150.0,
                     width: 180,
                     child: ListWheelScrollView(

@@ -1,6 +1,5 @@
 import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'login.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:e_dukaxon/auth.dart';
@@ -103,7 +102,7 @@ class _HighlightReadingState extends State<HighlightReading> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: CustomAppBarWithBackButton(text: 'Highlight Reading'),
+      appBar: const CustomAppBarWithBackButton(text: 'Highlight Reading'),
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -178,7 +177,7 @@ class _HighlightReadingState extends State<HighlightReading> {
                         _fontSize -= 2.0; // decrease font size by 2
                       });
                     },
-                    icon: Icon(Icons.remove),
+                    icon: const Icon(Icons.remove),
                     label: const Text('Decrease size'),
                   ),
                   const SizedBox(width: 20.0),
@@ -188,7 +187,7 @@ class _HighlightReadingState extends State<HighlightReading> {
                         _fontSize += 2.0; // increase font size by 2
                       });
                     },
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     label: const Text("Increase size"),
                   ),
                 ],

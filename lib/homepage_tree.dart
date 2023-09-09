@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
-import 'package:e_dukaxon/main.dart';
-import 'my_pages.dart';
 import 'package:flutter/material.dart';
 import 'pages/child_home.dart';
-import 'pages/home.dart';
-import 'pages/login.dart';
 
 class HomePageTree extends StatefulWidget {
-  const HomePageTree({Key? key});
+  const HomePageTree({super.key});
 
   @override
   State<HomePageTree> createState() => _HomePageTreeState();
@@ -38,12 +34,12 @@ class _HomePageTreeState extends State<HomePageTree> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Loading state
-            return Scaffold(
+            return const Scaffold(
               body: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     CircularProgressIndicator(),
                     SizedBox(
                       height: 24,

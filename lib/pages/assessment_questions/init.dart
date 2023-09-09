@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:e_dukaxon/data/assessment.dart';
-import 'package:e_dukaxon/locale.dart';
-import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
@@ -62,16 +60,16 @@ class _InitAssessmentPageState extends State<InitAssessmentPage> {
                   Text(
                     isEnglish ? "Hello!" : "Kamusta!",
                     style:
-                        TextStyle(fontSize: 48.0, fontWeight: FontWeight.w600),
+                        const TextStyle(fontSize: 48.0, fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Text(
                     isEnglish
                         ? "Before we get started, let's answer a few questions."
                         : "Bago tayo magsimula, magsagot muna tayo ng mga kaunting tanong.",
-                    style: TextStyle(fontSize: 20.0),
+                    style: const TextStyle(fontSize: 20.0),
                     textAlign: TextAlign.center,
                   ),
                 ],

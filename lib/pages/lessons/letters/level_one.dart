@@ -6,6 +6,7 @@ import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LettersLevelOne extends StatefulWidget {
   final String lessonName;
@@ -23,6 +24,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   List<dynamic> sounds = [];
   bool isLoading = true;
   bool showOverlay = true;
+  bool isEnglish = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
   @override
@@ -36,6 +38,18 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
         });
       }
     });
+    getLanguage();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    if (mounted) {
+      setState(() {
+        this.isEnglish = isEnglish;
+      });
+    }
   }
 
   LetterLesson? getLetterLessonByName(
@@ -54,6 +68,12 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       List<LetterLesson> letterLessons = jsonData.map((lesson) {
         return LetterLesson.fromJson(lesson);
       }).toList();
+
+      // // Filter the letterLessons list to include only lessons with "locale" set to "en"
+      // final List<LetterLesson> enLessons = letterLessons
+      //     .where((lesson) =>
+      //         isEnglish ? lesson.locale == "en" : lesson.locale == "ph")
+      //     .toList();
 
       LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
 
@@ -203,11 +223,11 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                     color: Colors.black.withOpacity(0.6),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
                     child: Center(
                       child: Row(
-                        children: const [
+                        children: [
                           Text(
                             'Scroll down to read more',
                             style: TextStyle(

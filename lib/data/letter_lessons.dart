@@ -15,6 +15,7 @@ part 'letter_lessons.g.dart';
 @JsonSerializable()
 class LetterLesson {
   String name;
+  String locale;
   int progress;
   int score;
   bool isUnlocked;
@@ -28,6 +29,7 @@ class LetterLesson {
 
   LetterLesson(
       {required this.name,
+      required this.locale,
       required this.progress,
       required this.score,
       required this.isUnlocked,
@@ -69,6 +71,7 @@ class Level {
 Future<void> initLetterLessonData() async {
   final letterAa = LetterLesson(
     name: "Aa",
+    locale: "en",
     progress: 0,
     score: 0,
     isUnlocked: true,
@@ -129,6 +132,7 @@ Future<void> initLetterLessonData() async {
 
   final letterBb = LetterLesson(
       name: "Bb",
+      locale: "en",
       progress: 0,
       score: 0,
       isUnlocked: false,
@@ -179,6 +183,7 @@ Future<void> initLetterLessonData() async {
 
   final letterCc = LetterLesson(
       name: "Cc",
+      locale: "en",
       progress: 0,
       score: 0,
       isUnlocked: false,
@@ -237,6 +242,7 @@ Future<void> initLetterLessonData() async {
 
   final letterDd = LetterLesson(
       name: "Dd",
+      locale: "en",
       progress: 0,
       score: 0,
       isUnlocked: false,
@@ -292,6 +298,7 @@ Future<void> initLetterLessonData() async {
 
   final letterEe = LetterLesson(
       name: "Ee",
+      locale: "en",
       progress: 0,
       score: 0,
       isUnlocked: false,
@@ -385,6 +392,7 @@ Future<void> addNewLetterLesson() async {
     // Create the new LetterLesson object with default values
     LetterLesson newLetterLesson = LetterLesson(
         name: "Ee",
+        locale: "en",
         progress: 0,
         score: 0,
         isUnlocked: false,

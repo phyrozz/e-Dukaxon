@@ -8,6 +8,7 @@ part of 'letter_lessons.dart';
 
 LetterLesson _$LetterLessonFromJson(Map<String, dynamic> json) => LetterLesson(
       name: json['name'] as String,
+      locale: json['locale'] as String,
       progress: json['progress'] as int,
       score: json['score'] as int,
       isUnlocked: json['isUnlocked'] as bool,
@@ -23,6 +24,7 @@ LetterLesson _$LetterLessonFromJson(Map<String, dynamic> json) => LetterLesson(
 Map<String, dynamic> _$LetterLessonToJson(LetterLesson instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'locale': instance.locale,
       'progress': instance.progress,
       'score': instance.score,
       'isUnlocked': instance.isUnlocked,

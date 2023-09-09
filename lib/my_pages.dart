@@ -2,6 +2,7 @@ import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_flutter/icons_flutter.dart';
 import 'pages/my_account.dart';
 import 'pages/games.dart';
 import 'pages/my_progress.dart';
@@ -64,11 +65,6 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
       pageController.jumpToPage(index);
     });
     isParent = true;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   // void _onTabSelected(int index) {
@@ -137,6 +133,26 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
             },
             // List of SideMenuItem to show them on SideMenu
             items: items,
+            footer: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Theme.of(context).primaryColor),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.lock_open_rounded),
+                      Text(
+                        'Parent mode',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
           Expanded(
             child: PageView(

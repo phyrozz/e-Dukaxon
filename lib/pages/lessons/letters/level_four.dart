@@ -74,7 +74,6 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                   for (int i = 0; i < gifControllerStatuses.length; i++) {
                     gifControllerStatuses[i] = "stopped";
                   }
-                  ;
                 }));
             gifControllerStatuses.add("stoped");
           }
@@ -148,7 +147,7 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                                             width: 200,
                                             frameRate: 15,
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           ElevatedButton.icon(
                                             onPressed: () {
                                               if (gifControllerStatuses[
@@ -179,8 +178,8 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                                             icon:
                                                 gifControllerStatuses[index] ==
                                                         "playing"
-                                                    ? Icon(Icons.stop_rounded)
-                                                    : Icon(Icons
+                                                    ? const Icon(Icons.stop_rounded)
+                                                    : const Icon(Icons
                                                         .play_arrow_rounded),
                                           ),
                                         ],
@@ -242,11 +241,11 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                     color: Colors.black.withOpacity(0.6),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
                     child: Center(
                       child: Row(
-                        children: const [
+                        children: [
                           Text(
                             'Scroll down to read more',
                             style: TextStyle(

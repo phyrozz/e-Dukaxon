@@ -164,7 +164,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
             text: "Let's play!",
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 100.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -301,7 +301,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 100.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -428,7 +428,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 100.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -555,7 +555,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
+            child: SizedBox(
               height: 100.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -696,7 +696,7 @@ class CircularProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double strokeWidth = 10.0;
+    const double strokeWidth = 10.0;
     final Paint borderPaint = Paint()
       ..color = const Color.fromARGB(255, 121, 74, 25)
       ..style = PaintingStyle.stroke

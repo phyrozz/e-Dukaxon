@@ -1,11 +1,7 @@
-import 'package:e_dukaxon/pages/highlight_reading.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/widgets/app_bar.dart';
-import 'assessment_questions/age.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {

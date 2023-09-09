@@ -1,15 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BangorQuestionOne extends StatefulWidget {
@@ -53,7 +47,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                   isEnglish
                       ? "Do you find it difficult to determine left and right directions?"
                       : "Nahihirapan ka bang intindihin ang pinagkaiba ng kaliwa at kanan?",
-                  style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(

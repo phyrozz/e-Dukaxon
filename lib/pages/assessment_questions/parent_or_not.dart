@@ -62,7 +62,7 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                   isEnglish
                       ? "Are you a parent?"
                       : "Ikaw ba ay isang magulang?",
-                  style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: 15,

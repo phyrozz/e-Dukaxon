@@ -1,11 +1,7 @@
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/homepage_tree.dart';
-import 'package:e_dukaxon/main.dart';
 import 'package:e_dukaxon/pages/welcome.dart';
-import 'my_pages.dart';
 import 'package:flutter/material.dart';
-import 'pages/home.dart';
-import 'pages/login.dart';
 
 class WidgetTree extends StatefulWidget {
   const WidgetTree({super.key});

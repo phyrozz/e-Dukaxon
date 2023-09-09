@@ -1,7 +1,5 @@
-import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
-import 'package:e_dukaxon/pages/assessment_questions/init.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_1.dart';
@@ -14,7 +12,6 @@ import 'package:e_dukaxon/pages/assessment_questions/question_7.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/games/trace_letter.dart';
 import 'package:e_dukaxon/pages/highlight_reading.dart';
-import 'package:e_dukaxon/pages/home.dart';
 import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -89,8 +86,7 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            primary: const Color(0xFF3F2305),
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white, backgroundColor: const Color(0xFF3F2305),
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),

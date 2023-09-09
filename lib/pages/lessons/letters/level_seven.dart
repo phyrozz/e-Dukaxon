@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_three.dart';
 import 'package:e_dukaxon/pages/lessons/letters/result.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -216,7 +215,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: selectedImage == entry.value
+                                backgroundColor: selectedImage == entry.value
                                     ? const Color.fromARGB(255, 27, 15, 2)
                                     : null,
                               ),

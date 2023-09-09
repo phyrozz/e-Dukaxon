@@ -24,10 +24,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return const AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               CircularProgressIndicator(
                 color: Colors.white,
               ),

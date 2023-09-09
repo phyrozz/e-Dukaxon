@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_four.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_three.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -196,7 +193,7 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 130,
                         width: 130,
                         child: ElevatedButton.icon(
@@ -238,7 +235,7 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
                             label: const Text('No'),
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
-                                  Color.fromARGB(255, 187, 68, 59)),
+                                  const Color.fromARGB(255, 187, 68, 59)),
                             ),
                           ),
                           ElevatedButton.icon(

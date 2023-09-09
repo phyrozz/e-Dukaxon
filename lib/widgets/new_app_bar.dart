@@ -1,10 +1,9 @@
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:e_dukaxon/pages/sign_up.dart';
+import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class WelcomeCustomAppBar extends StatefulWidget {
@@ -17,6 +16,7 @@ class WelcomeCustomAppBar extends StatefulWidget {
 }
 
 class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
+  @override
   void initState() {
     super.initState();
   }
@@ -52,8 +52,10 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                       isParent = false;
                       Navigator.pushReplacementNamed(context, '/childHomePage');
                     } else {
-                      Navigator.pushReplacementNamed(
-                          context, '/parentModeLogin');
+                      Navigator.pushReplacement(
+                          context,
+                          createRouteWithHorizontalSlideAnimation(
+                              const PinAccessPage()));
                     }
                   },
                   icon: isParent
@@ -104,10 +106,10 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return const AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: [
               CircularProgressIndicator(
                 color: Colors.white,
               ),

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:e_dukaxon/auth.dart';
-import 'package:e_dukaxon/fetch_username.dart';
 
 class CustomAppBarWithBackButton extends StatelessWidget
     implements PreferredSizeWidget {
@@ -8,7 +6,7 @@ class CustomAppBarWithBackButton extends StatelessWidget
   @override
   final Size preferredSize;
 
-  CustomAppBarWithBackButton({
+  const CustomAppBarWithBackButton({
     Key? key,
     required this.text,
   })  : preferredSize = const Size.fromHeight(60.0),

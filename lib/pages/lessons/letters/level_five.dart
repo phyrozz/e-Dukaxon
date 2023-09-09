@@ -23,7 +23,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
   List<dynamic> answers = [];
   bool isLoading = true;
   bool showOverlay = true;
-  List<List<Offset>> _strokes = [];
+  final List<List<Offset>> _strokes = [];
   String currentlyTracedLetter = "";
   double accuracy = 0;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
@@ -126,17 +126,15 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
     List<Offset> templateStrokes = templates[letter] ?? [];
 
     for (int i = 0; i < min(userStrokes.length, templateStrokes.length); i++) {
-      if (userStrokes[i] != null && templateStrokes[i] != null) {
-        Offset adjustedTemplatePoint = Offset(
-          templateStrokes[i].dx + offsetX,
-          templateStrokes[i].dy + offsetY,
-        );
+      Offset adjustedTemplatePoint = Offset(
+        templateStrokes[i].dx + offsetX,
+        templateStrokes[i].dy + offsetY,
+      );
 
-        double distance = (userStrokes[i] - adjustedTemplatePoint).distance;
-        distanceSum += distance;
-        pointCount++;
-      }
-    }
+      double distance = (userStrokes[i] - adjustedTemplatePoint).distance;
+      distanceSum += distance;
+      pointCount++;
+        }
 
     // Normalize distanceSum to a percentage
     double accuracyPercentage = 1000 * (1 - distanceSum / (pointCount * 100));
@@ -362,9 +360,7 @@ class Painter extends CustomPainter {
 
     for (final stroke in strokes) {
       for (int i = 0; i < stroke.length - 1; i++) {
-        if (stroke[i] != null &&
-            stroke[i + 1] != null &&
-            !stroke[i].isInfinite) {
+        if (!stroke[i].isInfinite) {
           canvas.drawLine(stroke[i], stroke[i + 1], paint);
         }
       }

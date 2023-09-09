@@ -9,7 +9,7 @@ class LetterTracingPage extends StatefulWidget {
 }
 
 class _LetterTracingPageState extends State<LetterTracingPage> {
-  List<List<Offset>> _strokes = [];
+  final List<List<Offset>> _strokes = [];
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +117,7 @@ class Painter extends CustomPainter {
 
     for (final stroke in strokes) {
       for (int i = 0; i < stroke.length - 1; i++) {
-        if (stroke[i] != null &&
-            stroke[i + 1] != null &&
-            !stroke[i].isInfinite) {
+        if (!stroke[i].isInfinite) {
           canvas.drawLine(stroke[i], stroke[i + 1], paint);
         }
       }

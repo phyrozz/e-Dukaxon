@@ -240,7 +240,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                               label: const Text(''),
                               icon: const Icon(Icons.volume_up),
                               style: ElevatedButton.styleFrom(
-                                primary: selectedSound == entry.value
+                                backgroundColor: selectedSound == entry.value
                                     ? const Color.fromARGB(255, 27, 15, 2)
                                     : null,
                               ),

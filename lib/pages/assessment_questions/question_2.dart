@@ -1,13 +1,8 @@
-import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_3.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BangorQuestionTwo extends StatefulWidget {
@@ -51,7 +46,7 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
                   isEnglish
                       ? "Does spelling words fluently trouble you?"
                       : "Nahihirapan ka bang mag-spell ng mga salita?",
-                  style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(

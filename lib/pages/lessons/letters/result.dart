@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
@@ -142,7 +139,7 @@ class _LettersResultPageState extends State<LettersResultPage> {
                             ),
                           ],
                         ),
-                      Text('You got a score of ${score}/40!'),
+                      Text('You got a score of $score/40!'),
                     ],
                   ),
                   Row(

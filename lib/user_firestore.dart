@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_dukaxon/game_data.dart';
 
 class UserFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
