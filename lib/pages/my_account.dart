@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/pages/sign_up.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -82,24 +83,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
       body: isLoading
-          ? CustomScrollView(
+          ? const CustomScrollView(
               slivers: [
-                const WelcomeCustomAppBar(text: "My Account"),
+                WelcomeCustomAppBar(text: "My Account"),
                 SliverFillRemaining(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Loading...',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
+                  child: LoadingPage(),
                 ),
               ],
             )
@@ -108,36 +100,48 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   slivers: [
                     const WelcomeCustomAppBar(text: "My Account"),
                     SliverFillRemaining(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Create an account now to save your progress',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(height: 20),
-                          ButtonBar(
-                            alignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton.icon(
-                                  onPressed: () => signOut(context),
-                                  icon: const Icon(Icons.logout),
-                                  label: const Text('Delete progress')),
-                              ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SignUpPage()));
-                                  },
-                                  icon: const Icon(
-                                      FontAwesomeIcons.arrowRightToBracket),
-                                  label: const Text('Sign up')),
-                            ],
-                          ),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Create an account now to save your progress',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 20),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton.icon(
+                                    onPressed: () => signOut(context),
+                                    icon: const Icon(Icons.logout),
+                                    label: const Text('Delete progress')),
+                                SizedBox(
+                                  width: orientation == Orientation.landscape
+                                      ? 12
+                                      : 0,
+                                  height: orientation == Orientation.portrait
+                                      ? 12
+                                      : 0,
+                                ),
+                                ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const SignUpPage()));
+                                    },
+                                    icon: const Icon(
+                                        FontAwesomeIcons.arrowRightToBracket),
+                                    label: const Text('Sign up')),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

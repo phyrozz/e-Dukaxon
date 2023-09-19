@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
 import '../widgets/volume_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,25 +38,37 @@ class _SignUpPageState extends State<SignUpPage> {
         return;
       }
 
-      // Show the loading widget
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-                SizedBox(height: 16),
-                Text("Creating your account"),
-              ],
-            ),
-          );
-        },
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          opaque: false, // Make the loading page non-opaque
+          pageBuilder: (context, _, __) {
+            return const LoadingPage(); // Replace with your loading page widget
+          },
+        ),
       );
+
+      // // Show the loading widget
+      // showDialog(
+      //   context: context,
+      //   barrierDismissible: false,
+      //   builder: (BuildContext context) {
+      //     return const AlertDialog(
+      //       content: Padding(
+      //         padding: EdgeInsets.all(20.0),
+      //         child: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           children: [
+      //             CircularProgressIndicator(
+      //               color: Colors.white,
+      //             ),
+      //             SizedBox(height: 16),
+      //             Text("Creating your account"),
+      //           ],
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // );
 
       AuthCredential credential =
           EmailAuthProvider.credential(email: email, password: password);
@@ -80,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
       await addUsernameToFirestore(userId, username, email);
 
       // Remove the loading widget
-      Navigator.pop(context);
+      Navigator.of(context).pop();
       Navigator.pushNamed(context, '/');
 
       // Navigate to the login page
@@ -91,7 +104,7 @@ class _SignUpPageState extends State<SignUpPage> {
       //     ));
     } on FirebaseAuthException catch (e) {
       // Remove the loading widget
-      Navigator.pop(context);
+      Navigator.of(context).pop();
 
       setState(() {
         errorMessage = e.message;
@@ -101,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
           "Sign up failed. Please try again."); // Show the error dialog
     } on Exception catch (e) {
       // Remove the loading widget
-      Navigator.pop(context);
+      Navigator.of(context).pop();
 
       setState(() {
         errorMessage = e.toString();
@@ -268,7 +281,10 @@ class _SignUpPageState extends State<SignUpPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Hmm...'),
-          content: Text(errorMessage),
+          content: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(errorMessage),
+          ),
           actions: [
             ElevatedButton(
               onPressed: () {

@@ -8,7 +8,9 @@ import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:e_dukaxon/assessment_data.dart';
 
 class ChildHomePage extends StatefulWidget {
   const ChildHomePage({super.key});
@@ -132,13 +134,27 @@ class _ChildHomePageState extends State<ChildHomePage> {
     // addNewLetterLesson();
     letterLessons();
     checkNewAccountAndNavigate();
-    // Rebuild the screen after 3s which will process the animation from green to blue
+    // Rebuild the screen after 3s which will process the animation
     Future.delayed(const Duration(milliseconds: 300))
         .then((value) => setState(() {
               headerPosition = Alignment.bottomCenter;
               containerPosition = Alignment.bottomCenter;
               containerOpacity = 1.0;
             }));
+
+    if (!isParent) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown
+      ]);
+    }
   }
 
   Future<void> checkNewAccountAndNavigate() async {

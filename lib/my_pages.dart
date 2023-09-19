@@ -2,7 +2,7 @@ import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_flutter/icons_flutter.dart';
+import 'package:flutter/services.dart';
 import 'pages/my_account.dart';
 import 'pages/games.dart';
 import 'pages/my_progress.dart';
@@ -35,7 +35,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
       icon: const Icon(Icons.games),
     ),
     SideMenuItem(
-      title: "Stats",
+      title: "Progress",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
@@ -75,6 +75,8 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -90,7 +92,9 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
               unselectedIconColor: Colors.white,
               unselectedTitleTextStyle: const TextStyle(color: Colors.white),
               decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8)),
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromARGB(255, 79, 117, 134),
@@ -111,14 +115,15 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
                 children: [
                   Image.asset(
                     'assets/images/app-logo.png',
-                    width: 32,
+                    width: 26,
                   ),
-                  const SizedBox(
-                    width: 8,
+                  SizedBox(
+                    height: orientation == Orientation.portrait ? 12 : 0,
+                    width: orientation == Orientation.landscape ? 12 : 0,
                   ),
-                  const Text(
-                    'eDukaxon',
-                    style: TextStyle(
+                  Text(
+                    orientation == Orientation.portrait ? '' : 'eDukaxon',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

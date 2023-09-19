@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class UserFirestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -26,38 +27,51 @@ class UserFirestore {
   }
 
   Future<void> createNewAnonymousAccount() async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    DocumentReference userDocRef = users.doc(userId);
-    // CollectionReference progress =
-    //     FirebaseFirestore.instance.collection('progress');
+    try {
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+      DocumentReference userDocRef = users.doc(userId);
 
-    // final List<String> gameIds = gameData.keys.toList();
-    // final Map<String, List<String>> levelIdsMap = gameData
-    //     .map((gameId, levels) => MapEntry(gameId, levels.keys.toList()));
+      await userDocRef.set({
+        'isAccountAnon': true,
+        'isNewAccount': true,
+        'isParent': true,
+        'hasDyslexia': true,
+      });
 
-    // for (final gameId in gameIds) {
-    //   final List<String> levelIds = levelIdsMap[gameId] ?? [];
+      // Copy all default letter lesson data from lessons collection to users
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      // Reference to the source collection "letters > en > lessons"
+      CollectionReference sourceCollection =
+          firestore.collection('letters').doc('en').collection('lessons');
 
-    //   Map<String, dynamic> initialProgress = {};
+      // Reference to the destination collection "users > <userId> > letters > en > lessons"
+      CollectionReference destinationCollection = firestore
+          .collection('users')
+          .doc(userId)
+          .collection('letters')
+          .doc('en')
+          .collection('lessons');
 
-    //   for (final levelId in levelIds) {
-    //     initialProgress[levelId] = {
-    //       'progress': 0,
-    //       'timestamp': null,
-    //       'history': [],
-    //       'duration': null,
-    //     };
-    //   }
+      // Query the source collection
+      QuerySnapshot sourceQuery = await sourceCollection.get();
 
-    //   await progress.doc(gameId).set(initialProgress);
-    // }
+      // Loop through the documents in the source collection
+      for (QueryDocumentSnapshot sourceDoc in sourceQuery.docs) {
+        // Get the data from the source document
+        Map<String, dynamic> data = sourceDoc.data() as Map<String, dynamic>;
 
-    await userDocRef.set({
-      'isAccountAnon': true,
-      'isNewAccount': true,
-      'isParent': true,
-      'hasDyslexia': true,
-    });
+        // Get the document ID from the source document
+        String documentId = sourceDoc.id;
+
+        // Add the data to the destination collection with the same document ID
+        await destinationCollection.doc(documentId).set(data);
+      }
+
+      print('Documents copied successfully');
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   Future<bool> getIsParent() async {

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
+import 'package:flutter/services.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -17,51 +20,43 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+  }
+
+  void addLesson(String lesson, Map<String, dynamic> data) {
+    FirebaseFirestore.instance
+        .collection('letters')
+        .doc('en')
+        .collection('lessons')
+        .doc(lesson)
+        .set(data)
+        .then((value) {
+      print('Lesson added to Firestore');
+    }).catchError((error) {
+      print('Error adding lesson to Firestore: $error');
+    });
   }
 
   Future<void> signInAnonymously() async {
     try {
-      // Show the loading widget
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: Color(0xFF3F2305),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  "Setting everything up...",
-                  style: TextStyle(color: Color(0xFF3F2305)),
-                ),
-              ],
-            ),
-          );
-        },
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          opaque: false, // Make the loading page non-opaque
+          pageBuilder: (context, _, __) {
+            return const LoadingPage(); // Replace with your loading page widget
+          },
+        ),
       );
 
       await Auth().signInAnonymously();
       String? userId = Auth().getCurrentUserId();
-      // CollectionReference users =
-      //     FirebaseFirestore.instance.collection('users');
-      // DocumentReference userDocRef = users.doc(userId);
 
-      // // Check if the document already exists
-      // DocumentSnapshot userDoc = await userDocRef.get();
-      // if (!userDoc.exists) {
-      //   // Document doesn't exist, create a new one
-      //   UserFirestore(userId).setCreateAccountInitialValues;
-      //   UserFirestore(userId).initializeProgress;
-      // }
       UserFirestore(userId: userId!).createNewAnonymousAccount();
       initLetterLessonData();
     } on Exception catch (e) {
       // Remove the loading widget
-      Navigator.pop(context);
+      Navigator.of(context).pop();
 
       setState(() {
         errorMessage = e.toString();
@@ -127,7 +122,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       ],
                     ),
                     const Text(
-                      'eDukaxon v0.1.5 pre-release. For research uses only.',
+                      'eDukaxon v0.2.2 pre-release. For research uses only.',
                       style: TextStyle(fontSize: 8.0),
                     ),
                   ],
@@ -137,12 +132,29 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           Expanded(
             child: Center(
-              child: ElevatedButton(
-                onPressed: signInAnonymously,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  child: Text("Let's Go!"),
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: signInAnonymously,
+                    child: const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      child: Text("Let's Go!"),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pushNamed(context, '/login'),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 15),
+                      child: Text(
+                        "Log in",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -160,9 +172,12 @@ class _WelcomePageState extends State<WelcomePage> {
             'Hmm...',
             style: TextStyle(color: Color(0xFF3F2305)),
           ),
-          content: Text(
-            errorMessage,
-            style: const TextStyle(color: Color(0xFF3F2305)),
+          content: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              errorMessage,
+              style: const TextStyle(color: Color(0xFF3F2305)),
+            ),
           ),
           actions: [
             ElevatedButton(

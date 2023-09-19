@@ -62,8 +62,14 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                       ? const Icon(Icons.exit_to_app_rounded)
                       : const Icon(FontAwesomeIcons.userTie),
                   label: isParent
-                      ? const Text('Exit Parent Mode')
-                      : const Text('Parent Mode')),
+                      ? const Text(
+                          'Exit Parent Mode',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      : const Text(
+                          'Parent Mode',
+                          style: TextStyle(fontSize: 16),
+                        )),
               const SizedBox(
                 height: 12,
               ),
@@ -72,7 +78,10 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                     Navigator.pushNamed(context, '/login');
                   },
                   icon: const Icon(FontAwesomeIcons.arrowRightToBracket),
-                  label: const Text('Log in')),
+                  label: const Text(
+                    'Log in',
+                    style: TextStyle(fontSize: 16),
+                  )),
               const SizedBox(
                 height: 12,
               ),
@@ -85,7 +94,10 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                                 const SignUpPage()));
                   },
                   icon: const Icon(FontAwesomeIcons.userPlus),
-                  label: const Text('Create an account')),
+                  label: const Text(
+                    'Create an account',
+                    style: TextStyle(fontSize: 16),
+                  )),
               // const SizedBox(
               //   height: 12,
               // ),

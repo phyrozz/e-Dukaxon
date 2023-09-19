@@ -16,10 +16,10 @@ import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flame/flame.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'widget_tree.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +30,8 @@ void main() async {
     persistenceEnabled: true, // Enable local cache
     // Other settings if needed
   );
-  await Flame.device.fullScreen();
-  await Flame.device.setLandscape();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const MyApp());
 }
 
@@ -86,7 +86,8 @@ class MyApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, backgroundColor: const Color(0xFF3F2305),
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFF3F2305),
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
