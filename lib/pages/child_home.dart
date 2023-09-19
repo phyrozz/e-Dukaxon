@@ -36,23 +36,27 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
   Future<void> letterLessons() async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/letter_lessons.json');
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonData = json.decode(jsonString);
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final String? userId = Auth().getCurrentUserId();
 
       List<String> letterNames = [];
       List<bool> unlockedLessons = [];
       List<int> letterProgress = [];
 
-      List<LetterLesson> letterLessons = jsonData.map((lesson) {
-        return LetterLesson.fromJson(lesson);
-      }).toList();
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('letters')
+          .doc('en')
+          .collection('lessons')
+          .get();
 
-      for (var lesson in letterLessons) {
-        letterNames.add(lesson.name);
-        unlockedLessons.add(lesson.isUnlocked);
-        letterProgress.add(lesson.progress);
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in querySnapshot.docs) {
+        Map<String, dynamic> lessonData = doc.data();
+        letterNames.add(lessonData['name'] as String);
+        unlockedLessons.add(lessonData['isUnlocked'] as bool);
+        letterProgress.add(lessonData['progress'] as int);
       }
 
       setState(() {
@@ -61,9 +65,38 @@ class _ChildHomePageState extends State<ChildHomePage> {
         letterLessonProgress = letterProgress;
       });
     } catch (e) {
-      print('Error reading JSON file: $e');
+      print('Error updating local letter lessons: $e');
     }
   }
+  // try {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final file = File('${directory.path}/letter_lessons.json');
+  //   final jsonString = await file.readAsString();
+  //   final List<dynamic> jsonData = json.decode(jsonString);
+
+  //   List<String> letterNames = [];
+  //   List<bool> unlockedLessons = [];
+  //   List<int> letterProgress = [];
+
+  //   List<LetterLesson> letterLessons = jsonData.map((lesson) {
+  //     return LetterLesson.fromJson(lesson);
+  //   }).toList();
+
+  //   for (var lesson in letterLessons) {
+  //     letterNames.add(lesson.name);
+  //     unlockedLessons.add(lesson.isUnlocked);
+  //     letterProgress.add(lesson.progress);
+  //   }
+
+  //   setState(() {
+  //     letterLessonNames = letterNames;
+  //     unlockedLetterLessons = unlockedLessons;
+  //     letterLessonProgress = letterProgress;
+  //   });
+  // } catch (e) {
+  //   print('Error reading JSON file: $e');
+  // }
+  // }
 
   List numberLessonRoutes = [
     '/games/traceLetter',
@@ -161,8 +194,8 @@ class _ChildHomePageState extends State<ChildHomePage> {
     String? userId = Auth().getCurrentUserId();
 
     // Retrieve the user document from Firestore
-    final userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    // final userDoc =
+    // await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     // Check if it's a new account
     if (await UserFirestore(userId: userId!).getIsNewAccount()) {
