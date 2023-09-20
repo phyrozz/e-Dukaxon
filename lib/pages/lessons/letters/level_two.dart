@@ -4,11 +4,12 @@ import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/auth.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_three.dart';
 import 'package:e_dukaxon/pages/loading.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 // import 'package:path_provider/path_provider.dart';
 
@@ -23,31 +24,33 @@ class LettersLevelTwo extends StatefulWidget {
 
 class _LettersLevelTwoState extends State<LettersLevelTwo> {
   String levelDescription = "";
+  String uid = "";
   List<dynamic> correctAnswers = [];
   List<String> sounds = [
-    "assets/sounds/a_sound_female_UK.mp3",
-    "assets/sounds/ai_sound_female_UK.mp3",
-    "assets/sounds/air_sound_female_UK.mp3",
-    "assets/sounds/ar_sound_female_UK.mp3",
-    "assets/sounds/b_sound_female_UK.mp3",
-    "assets/sounds/c_sound_female_UK.mp3",
-    "assets/sounds/ch-chair_sound_female_UK.mp3",
-    "assets/sounds/d_sound_female_UK.mp3",
-    "assets/sounds/e_sound_female_UK.mp3",
-    "assets/sounds/ear_sound_female_UK.mp3",
-    "assets/sounds/ee_sound_female_UK.mp3",
-    "assets/sounds/f_sound_female_UK.mp3",
-    "assets/sounds/g_sound_female_UK.mp3",
-    "assets/sounds/h_sound_female_UK.mp3",
-    "assets/sounds/i_sound_female_UK.mp3",
-    "assets/sounds/igh_sound_female_UK.mp3",
-    "assets/sounds/j_sound_female_UK.mp3"
+    "sounds/a_sound_female_UK.mp3",
+    "sounds/ai_sound_female_UK.mp3",
+    "sounds/air_sound_female_UK.mp3",
+    "sounds/ar_sound_female_UK.mp3",
+    "sounds/b_sound_female_UK.mp3",
+    "sounds/c_sound_female_UK.mp3",
+    "sounds/ch-chair_sound_female_UK.mp3",
+    "sounds/d_sound_female_UK.mp3",
+    "sounds/e_sound_female_UK.mp3",
+    "sounds/ear_sound_female_UK.mp3",
+    "sounds/ee_sound_female_UK.mp3",
+    "sounds/f_sound_female_UK.mp3",
+    "sounds/g_sound_female_UK.mp3",
+    "sounds/h_sound_female_UK.mp3",
+    "sounds/i_sound_female_UK.mp3",
+    "sounds/igh_sound_female_UK.mp3",
+    "sounds/j_sound_female_UK.mp3"
   ];
   List<String> soundChoices = []; // List to store the sound choices for buttons
   String? selectedSound; // Currently selected sound
   bool isLoading = true;
   bool isCorrectAtFirstAttempt = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
+  AudioPlayer networkAudio = AudioPlayer();
 
   @override
   void initState() {
@@ -71,6 +74,15 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
         _correctAnswers = await Future.wait(
             _correctAnswers.map((e) => AssetFirebaseStorage().getAsset(e)));
 
+        List<Future<String>> soundFutures = sounds.map((e) {
+          return AssetFirebaseStorage().getAsset(e).then((String? result) {
+            // Handle the possibility of null values here, if necessary
+            return result ?? ''; // Return an empty string if the result is null
+          });
+        }).toList();
+
+        sounds = await Future.wait(soundFutures);
+
         correctAnswers = _correctAnswers.toList();
 
         // Select a random sound from the correctAnswers list
@@ -91,9 +103,11 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
           setState(() {
             levelDescription = description;
             soundChoices = List.from(randomSounds);
+            uid = userId;
             isLoading = false;
           });
         }
+        print(soundChoices);
       } else {
         print(
             'Letter lesson "$lessonName" was not found within the Firestore.');
@@ -177,6 +191,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
   void dispose() {
     super.dispose();
     audio.dispose();
+    networkAudio.dispose();
   }
 
   @override
@@ -185,7 +200,8 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
       if (isCorrect) {
         if (isCorrectAtFirstAttempt) {
           print("Score updated successfully!");
-          addScoreToLessonBy(widget.lessonName, 10);
+          LetterLessonFirestore(userId: uid)
+              .addScoreToLessonBy(widget.lessonName, 10);
           isCorrectAtFirstAttempt = false;
         }
         audio.open(Audio('assets/sounds/correct.mp3'));
@@ -287,7 +303,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                                 .entries
                                 .map(
                                   (entry) => ElevatedButton.icon(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (mounted) {
                                         setState(() {
                                           selectedSound = entry.value;
@@ -296,7 +312,9 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
 
                                       int index = entry.key;
 
-                                      audio.open(Audio(soundChoices[index]));
+                                      await AudioPlayer()
+                                          .play(UrlSource(soundChoices[index]));
+                                      // audio.open(Audio(soundChoices[index]));
                                     },
                                     label: const Text(''),
                                     icon: const Icon(Icons.volume_up),

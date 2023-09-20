@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../widgets/volume_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -127,6 +128,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
@@ -136,8 +142,7 @@ class _LoginPageState extends State<LoginPage> {
           const Expanded(
             child: SafeArea(
               child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,

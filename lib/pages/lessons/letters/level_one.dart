@@ -10,6 +10,7 @@ import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +25,7 @@ class LettersLevelOne extends StatefulWidget {
 
 class _LettersLevelOneState extends State<LettersLevelOne> {
   String levelDescription = "";
+  String uid = "";
   List<dynamic> texts = [];
   List<dynamic> images = [];
   List<dynamic> sounds = [];
@@ -95,6 +97,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
             texts = _texts.toList();
             images = _images.toList();
             sounds = _sounds.toList();
+            uid = userId;
             isLoading = false;
           });
         }

@@ -1,13 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/auth.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
+// import 'package:e_dukaxon/firebase_storage.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_seven.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class LettersLevelFive extends StatefulWidget {
   final String lessonName;
@@ -19,7 +22,8 @@ class LettersLevelFive extends StatefulWidget {
 }
 
 class _LettersLevelFiveState extends State<LettersLevelFive> {
-  String? levelDescription;
+  String levelDescription = "";
+  String uid = "";
   List<dynamic> answers = [];
   bool isLoading = true;
   bool showOverlay = true;
@@ -36,46 +40,82 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
     _strokes.add([]);
   }
 
-  LetterLesson? getLetterLessonByName(
-      List<LetterLesson> letterLessons, String lessonName) {
-    return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  }
-
   void getLevelDataByName(String lessonName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/letter_lessons.json');
-
     try {
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonData = json.decode(jsonString);
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await LetterLessonFirestore(userId: userId!)
+              .getLessonData(lessonName);
 
-      List<LetterLesson> letterLessons = jsonData.map((lesson) {
-        return LetterLesson.fromJson(lesson);
-      }).toList();
+      if (lessonData != null && lessonData.containsKey('level5')) {
+        Map<String, dynamic> levelData =
+            lessonData['level5'] as Map<String, dynamic>;
+        String description = levelData['description'] as String;
+        Iterable<dynamic> _answers = levelData['answers'];
 
-      LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-      if (lesson != null) {
-        Level levelData = lesson.level5;
-        // print('Level 3 data for $lessonName: $levelData');
-        setState(() {
-          levelDescription = levelData.description;
-          answers.addAll(levelData.answers!);
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            levelDescription = description;
+            answers.addAll(_answers);
+            uid = userId;
+            isLoading = false;
+          });
+        }
       } else {
-        // print('LetterLesson with name $lessonName not found in JSON file');
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
+      }
+    } catch (e) {
+      print('Error reading letter_lessons.json: $e');
+      if (mounted) {
         setState(() {
           isLoading = false;
         });
       }
-    } catch (e) {
-      // print('Error reading letter_lessons.json: $e');
-      setState(() {
-        isLoading = false;
-      });
     }
   }
+
+  // LetterLesson? getLetterLessonByName(
+  //     List<LetterLesson> letterLessons, String lessonName) {
+  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
+  // }
+
+  // void getLevelDataByName(String lessonName) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final file = File('${directory.path}/letter_lessons.json');
+
+  //   try {
+  //     final jsonString = await file.readAsString();
+  //     final List<dynamic> jsonData = json.decode(jsonString);
+
+  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
+  //       return LetterLesson.fromJson(lesson);
+  //     }).toList();
+
+  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+
+  //     if (lesson != null) {
+  //       Level levelData = lesson.level5;
+  //       // print('Level 3 data for $lessonName: $levelData');
+  //       setState(() {
+  //         levelDescription = levelData.description;
+  //         answers.addAll(levelData.answers!);
+  //         isLoading = false;
+  //       });
+  //     } else {
+  //       // print('LetterLesson with name $lessonName not found in JSON file');
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     // print('Error reading letter_lessons.json: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   double calculateAccuracy(List<Offset> userStrokes, String letter,
       double canvasWidth, double canvasHeight) {
@@ -134,7 +174,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
       double distance = (userStrokes[i] - adjustedTemplatePoint).distance;
       distanceSum += distance;
       pointCount++;
-        }
+    }
 
     // Normalize distanceSum to a percentage
     double accuracyPercentage = 1000 * (1 - distanceSum / (pointCount * 100));
@@ -150,7 +190,8 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isPassed) {
       if (isPassed) {
-        addScoreToLessonBy(widget.lessonName, 10);
+        LetterLessonFirestore(userId: uid)
+            .addScoreToLessonBy(widget.lessonName, 10);
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
         audio.open(Audio('assets/sounds/wrong.mp3'));
@@ -289,7 +330,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
-                        levelDescription!,
+                        levelDescription,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),

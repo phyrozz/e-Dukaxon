@@ -1,11 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
+// import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/auth.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/firebase_storage.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_four.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class LettersLevelThree extends StatefulWidget {
   final String lessonName;
@@ -18,31 +23,33 @@ class LettersLevelThree extends StatefulWidget {
 }
 
 class _LettersLevelThreeState extends State<LettersLevelThree> {
-  String? levelDescription;
+  String levelDescription = "";
+  String uid = "";
   List<dynamic> correctAnswers = [];
   List<String> sounds = [
-    "assets/sounds/a_sound_female_UK.mp3",
-    "assets/sounds/ai_sound_female_UK.mp3",
-    "assets/sounds/air_sound_female_UK.mp3",
-    "assets/sounds/ar_sound_female_UK.mp3",
-    "assets/sounds/b_sound_female_UK.mp3",
-    "assets/sounds/c_sound_female_UK.mp3",
-    "assets/sounds/ch-chair_sound_female_UK.mp3",
-    "assets/sounds/d_sound_female_UK.mp3",
-    "assets/sounds/e_sound_female_UK.mp3",
-    "assets/sounds/ear_sound_female_UK.mp3",
-    "assets/sounds/ee_sound_female_UK.mp3",
-    "assets/sounds/f_sound_female_UK.mp3",
-    "assets/sounds/g_sound_female_UK.mp3",
-    "assets/sounds/h_sound_female_UK.mp3",
-    "assets/sounds/i_sound_female_UK.mp3",
-    "assets/sounds/igh_sound_female_UK.mp3",
-    "assets/sounds/j_sound_female_UK.mp3"
+    "sounds/a_sound_female_UK.mp3",
+    "sounds/ai_sound_female_UK.mp3",
+    "sounds/air_sound_female_UK.mp3",
+    "sounds/ar_sound_female_UK.mp3",
+    "sounds/b_sound_female_UK.mp3",
+    "sounds/c_sound_female_UK.mp3",
+    "sounds/ch-chair_sound_female_UK.mp3",
+    "sounds/d_sound_female_UK.mp3",
+    "sounds/e_sound_female_UK.mp3",
+    "sounds/ear_sound_female_UK.mp3",
+    "sounds/ee_sound_female_UK.mp3",
+    "sounds/f_sound_female_UK.mp3",
+    "sounds/g_sound_female_UK.mp3",
+    "sounds/h_sound_female_UK.mp3",
+    "sounds/i_sound_female_UK.mp3",
+    "sounds/igh_sound_female_UK.mp3",
+    "sounds/j_sound_female_UK.mp3"
   ];
   String? selectedSoundChoice;
   bool isLoading = true;
   bool isAnswered = false;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
+  AudioPlayer networkAudio = AudioPlayer();
 
   @override
   void initState() {
@@ -50,66 +57,121 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
     getLevelDataByName(widget.lessonName);
   }
 
-  LetterLesson? getLetterLessonByName(
-      List<LetterLesson> letterLessons, String lessonName) {
-    return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  }
+  // LetterLesson? getLetterLessonByName(
+  //     List<LetterLesson> letterLessons, String lessonName) {
+  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
+  // }
 
   void getLevelDataByName(String lessonName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/letter_lessons.json');
-
     try {
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonData = json.decode(jsonString);
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await LetterLessonFirestore(userId: userId!)
+              .getLessonData(lessonName);
 
-      List<LetterLesson> letterLessons = jsonData.map((lesson) {
-        return LetterLesson.fromJson(lesson);
-      }).toList();
+      if (lessonData != null && lessonData.containsKey('level3')) {
+        Map<String, dynamic> levelData =
+            lessonData['level3'] as Map<String, dynamic>;
+        String description = levelData['description'] as String;
+        Iterable<dynamic> _correctAnswers = levelData['correctAnswers'];
 
-      LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+        _correctAnswers = await Future.wait(
+            _correctAnswers.map((e) => AssetFirebaseStorage().getAsset(e)));
 
-      if (lesson != null) {
-        Level levelData = lesson.level3;
-        print('Level 3 data for $lessonName: $levelData');
+        List<Future<String>> soundFutures = sounds.map((e) {
+          return AssetFirebaseStorage().getAsset(e).then((String? result) {
+            // Handle the possibility of null values here, if necessary
+            return result ?? ''; // Return an empty string if the result is null
+          });
+        }).toList();
 
-        correctAnswers.addAll(levelData.correctAnswers!);
+        sounds = await Future.wait(soundFutures);
+
+        correctAnswers = _correctAnswers.toList();
 
         List<String> shuffleList = sounds..shuffle();
         String pickRandomSound = shuffleList[0];
 
-        setState(() {
-          levelDescription = levelData.description;
-          selectedSoundChoice = pickRandomSound;
-          isLoading = false;
-        });
-
-        audio.open(Audio(selectedSoundChoice!));
+        if (mounted) {
+          setState(() {
+            levelDescription = description;
+            selectedSoundChoice = pickRandomSound;
+            uid = userId;
+            isLoading = false;
+          });
+        }
       } else {
-        print('LetterLesson with name $lessonName not found in JSON file');
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
+      }
+    } catch (e) {
+      print('Error reading letter_lessons.json: $e');
+      if (mounted) {
         setState(() {
           isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error reading letter_lessons.json: $e');
-      setState(() {
-        isLoading = false;
-      });
     }
   }
+
+  // void getLevelDataByName(String lessonName) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final file = File('${directory.path}/letter_lessons.json');
+
+  //   try {
+  //     final jsonString = await file.readAsString();
+  //     final List<dynamic> jsonData = json.decode(jsonString);
+
+  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
+  //       return LetterLesson.fromJson(lesson);
+  //     }).toList();
+
+  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+
+  //     if (lesson != null) {
+  //       Level levelData = lesson.level3;
+  //       print('Level 3 data for $lessonName: $levelData');
+
+  //       correctAnswers.addAll(levelData.correctAnswers!);
+
+  //       List<String> shuffleList = sounds..shuffle();
+  //       String pickRandomSound = shuffleList[0];
+
+  //       setState(() {
+  //         levelDescription = levelData.description;
+  //         selectedSoundChoice = pickRandomSound;
+  //         isLoading = false;
+  //       });
+
+  //       audio.open(Audio(selectedSoundChoice!));
+  //     } else {
+  //       print('LetterLesson with name $lessonName not found in JSON file');
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error reading letter_lessons.json: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
     super.dispose();
     audio.dispose();
+    networkAudio.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isCorrect) {
       if (isCorrect) {
-        addScoreToLessonBy(widget.lessonName, 10);
+        LetterLessonFirestore(userId: uid)
+            .addScoreToLessonBy(widget.lessonName, 10);
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
         audio.open(Audio('assets/sounds/wrong.mp3'));
@@ -182,7 +244,7 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
                 ]
               : [
                   Text(
-                    levelDescription!,
+                    levelDescription,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
@@ -197,8 +259,10 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
                         height: 130,
                         width: 130,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            audio.open(Audio(selectedSoundChoice!));
+                          onPressed: () async {
+                            await networkAudio
+                                .play(UrlSource(selectedSoundChoice!));
+                            // audio.open(Audio(selectedSoundChoice!));
                           },
                           label: const Text(''),
                           icon: const Icon(

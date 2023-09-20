@@ -1,15 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:e_dukaxon/assessment_data.dart';
 
 class ChildHomePage extends StatefulWidget {
@@ -175,19 +176,19 @@ class _ChildHomePageState extends State<ChildHomePage> {
               containerOpacity = 1.0;
             }));
 
-    if (!isParent) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-    } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown
-      ]);
-    }
+    // if (!isParent) {
+    //   SystemChrome.setPreferredOrientations([
+    //     DeviceOrientation.landscapeLeft,
+    //     DeviceOrientation.landscapeRight,
+    //   ]);
+    // } else {
+    //   SystemChrome.setPreferredOrientations([
+    //     DeviceOrientation.landscapeLeft,
+    //     DeviceOrientation.landscapeRight,
+    //     DeviceOrientation.portraitUp,
+    //     DeviceOrientation.portraitDown
+    //   ]);
+    // }
   }
 
   Future<void> checkNewAccountAndNavigate() async {
@@ -202,6 +203,11 @@ class _ChildHomePageState extends State<ChildHomePage> {
       // Show the assessment page
       Navigator.pushReplacementNamed(context, '/assessment/init');
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -256,10 +262,13 @@ class _ChildHomePageState extends State<ChildHomePage> {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
                         if (isUnlocked) {
                           if (letterLessonProgress[index] >= 0) {
-                            resetScore(letterLessonNames[index]);
+                            await LetterLessonFirestore(
+                                    userId: Auth().getCurrentUserId()!)
+                                .resetScore(letterLessonNames[index]);
+                            // resetScore(letterLessonNames[index]);
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

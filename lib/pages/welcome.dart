@@ -5,7 +5,7 @@ import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -20,8 +20,6 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   }
 
   void addLesson(String lesson, Map<String, dynamic> data) {
@@ -67,6 +65,11 @@ class _WelcomePageState extends State<WelcomePage> {
         "Failed to load the app. Please try again.",
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

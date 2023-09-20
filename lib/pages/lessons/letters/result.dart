@@ -1,10 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 
-import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/auth.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
+// import 'package:e_dukaxon/firebase_storage.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
 class LettersResultPage extends StatefulWidget {
@@ -19,6 +23,7 @@ class LettersResultPage extends StatefulWidget {
 class _LettersResultPageState extends State<LettersResultPage> {
   int score = 0;
   int progress = 0;
+  String uid = "";
   bool isLoading = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
@@ -33,52 +38,49 @@ class _LettersResultPageState extends State<LettersResultPage> {
       audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
       if (progress < 100) {
         if (score == 40) {
-          incrementProgressValue(widget.lessonName, 20);
+          LetterLessonFirestore(userId: uid)
+              .incrementProgressValue(widget.lessonName, 20);
         } else {
-          incrementProgressValue(widget.lessonName, 10);
+          LetterLessonFirestore(userId: uid)
+              .incrementProgressValue(widget.lessonName, 10);
         }
       }
     } else {
       audio.open(Audio('assets/sounds/lesson_finished_2.mp3'));
       if (progress < 100) {
-        incrementProgressValue(widget.lessonName, 5);
+        LetterLessonFirestore(userId: uid)
+            .incrementProgressValue(widget.lessonName, 5);
       }
     }
   }
 
-  LetterLesson? getLetterLessonByName(
-      List<LetterLesson> letterLessons, String lessonName) {
-    return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  }
+  // LetterLesson? getLetterLessonByName(
+  //     List<LetterLesson> letterLessons, String lessonName) {
+  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
+  // }
 
   Future<void> getScore(String lessonName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/letter_lessons.json');
-
     try {
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonData = json.decode(jsonString);
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await LetterLessonFirestore(userId: userId!)
+              .getLessonData(lessonName);
 
-      List<LetterLesson> letterLessons = jsonData.map((lesson) {
-        return LetterLesson.fromJson(lesson);
-      }).toList();
+      if (lessonData != null) {
+        if (mounted) {
+          setState(() {
+            progress = lessonData['progress'];
+            score = lessonData['score'];
+            uid = userId;
+            isLoading = false;
+          });
+        }
 
-      LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-      if (lesson != null) {
-        setState(() {
-          progress = lesson.progress;
-          score = lesson.score;
-          isLoading = false;
-        });
-
-        // Call playLessonFinishedSound after the score is updated
         playLessonFinishedSound();
       } else {
-        print('LetterLesson with name $lessonName not found in JSON file');
-        setState(() {
-          isLoading = false;
-        });
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
@@ -87,6 +89,43 @@ class _LettersResultPageState extends State<LettersResultPage> {
       });
     }
   }
+
+  // Future<void> getScore(String lessonName) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final file = File('${directory.path}/letter_lessons.json');
+
+  //   try {
+  //     final jsonString = await file.readAsString();
+  //     final List<dynamic> jsonData = json.decode(jsonString);
+
+  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
+  //       return LetterLesson.fromJson(lesson);
+  //     }).toList();
+
+  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+
+  //     if (lesson != null) {
+  //       setState(() {
+  //         progress = lesson.progress;
+  //         score = lesson.score;
+  //         isLoading = false;
+  //       });
+
+  //       // Call playLessonFinishedSound after the score is updated
+  //       playLessonFinishedSound();
+  //     } else {
+  //       print('LetterLesson with name $lessonName not found in JSON file');
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error reading letter_lessons.json: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -151,13 +190,14 @@ class _LettersResultPageState extends State<LettersResultPage> {
                                 MaterialStatePropertyAll(Colors.green[600]),
                           ),
                           onPressed: () {
-                            if (progress >= 50) {
-                              unlockLesson(widget.lessonName);
+                            if (progress >= 40) {
+                              LetterLessonFirestore(userId: uid)
+                                  .unlockLesson(widget.lessonName);
                             }
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ChildHomePage()),
+                                  builder: (context) => const HomePageTree()),
                             );
                           },
                           icon: const Icon(Icons.check_rounded),

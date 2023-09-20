@@ -1,12 +1,15 @@
-import 'dart:convert';
-import 'dart:io';
+// import 'dart:convert';
+// import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/auth.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/firebase_storage.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/result.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class LettersLevelSeven extends StatefulWidget {
   final String lessonName;
@@ -19,14 +22,15 @@ class LettersLevelSeven extends StatefulWidget {
 }
 
 class _LettersLevelSevenState extends State<LettersLevelSeven> {
-  String? levelDescription;
+  String levelDescription = "";
+  String uid = "";
   List<dynamic> correctAnswers = [];
   List<String> images = [
-    "assets/images/apple.png",
-    "assets/images/bat.png",
-    "assets/images/boy.png",
-    "assets/images/cat.png",
-    "assets/images/chair.png",
+    "images/apple.png",
+    "images/bat.png",
+    "images/boy.png",
+    "images/cat.png",
+    "images/chair.png",
   ];
   List<String> imageChoices = [];
   String? selectedImage;
@@ -40,30 +44,32 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
     getLevelDataByName(widget.lessonName);
   }
 
-  LetterLesson? getLetterLessonByName(
-      List<LetterLesson> letterLessons, String lessonName) {
-    return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  }
-
   void getLevelDataByName(String lessonName) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/letter_lessons.json');
-
     try {
-      final jsonString = await file.readAsString();
-      final List<dynamic> jsonData = json.decode(jsonString);
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await LetterLessonFirestore(userId: userId!)
+              .getLessonData(lessonName);
 
-      List<LetterLesson> letterLessons = jsonData.map((lesson) {
-        return LetterLesson.fromJson(lesson);
-      }).toList();
+      if (lessonData != null && lessonData.containsKey('level7')) {
+        Map<String, dynamic> levelData =
+            lessonData['level7'] as Map<String, dynamic>;
+        String description = levelData['description'] as String;
+        Iterable<dynamic> _correctAnswers = levelData['correctAnswers'];
 
-      LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+        _correctAnswers = await Future.wait(
+            _correctAnswers.map((e) => AssetFirebaseStorage().getAsset(e)));
 
-      if (lesson != null) {
-        Level levelData = lesson.level7;
-        print('Level 7 data for $lessonName: $levelData');
+        List<Future<String>> imageFutures = images.map((e) {
+          return AssetFirebaseStorage().getAsset(e).then((String? result) {
+            // Handle the possibility of null values here, if necessary
+            return result ?? ''; // Return an empty string if the result is null
+          });
+        }).toList();
 
-        correctAnswers.addAll(levelData.correctAnswers!);
+        images = await Future.wait(imageFutures);
+
+        correctAnswers = _correctAnswers.toList();
 
         // Select a random sound from the correctAnswers list
         String correctImage =
@@ -79,24 +85,86 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
         // Add the correct sound to the randomSounds list
         randomImages.add(correctImage);
 
-        setState(() {
-          levelDescription = levelData.description;
-          imageChoices = List.from(randomImages);
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            levelDescription = description;
+            imageChoices = List.from(randomImages);
+            uid = userId;
+            isLoading = false;
+          });
+        }
       } else {
-        print('LetterLesson with name $lessonName not found in JSON file');
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
+      }
+    } catch (e) {
+      print('Error reading letter_lessons.json: $e');
+      if (mounted) {
         setState(() {
           isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error reading letter_lessons.json: $e');
-      setState(() {
-        isLoading = false;
-      });
     }
   }
+
+  // LetterLesson? getLetterLessonByName(
+  //     List<LetterLesson> letterLessons, String lessonName) {
+  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
+  // }
+
+  // void getLevelDataByName(String lessonName) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final file = File('${directory.path}/letter_lessons.json');
+
+  //   try {
+  //     final jsonString = await file.readAsString();
+  //     final List<dynamic> jsonData = json.decode(jsonString);
+
+  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
+  //       return LetterLesson.fromJson(lesson);
+  //     }).toList();
+
+  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
+
+  //     if (lesson != null) {
+  //       Level levelData = lesson.level7;
+  //       print('Level 7 data for $lessonName: $levelData');
+
+  //       correctAnswers.addAll(levelData.correctAnswers!);
+
+  //       // Select a random sound from the correctAnswers list
+  //       String correctImage =
+  //           correctAnswers[Random().nextInt(correctAnswers.length)];
+
+  //       // Create a list of remaining random sounds
+  //       List<String> remainingRandomImages = images..remove(correctImage);
+
+  //       // Shuffle the remainingRandomSounds list and take 3 random elements
+  //       List<String> randomImages = List.from(remainingRandomImages)..shuffle();
+  //       randomImages = randomImages.take(3).toList();
+
+  //       // Add the correct sound to the randomSounds list
+  //       randomImages.add(correctImage);
+
+  //       setState(() {
+  //         levelDescription = levelData.description;
+  //         imageChoices = List.from(randomImages);
+  //         isLoading = false;
+  //       });
+  //     } else {
+  //       print('LetterLesson with name $lessonName not found in JSON file');
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print('Error reading letter_lessons.json: $e');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -110,7 +178,8 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
       if (isCorrect) {
         if (isCorrectAtFirstAttempt) {
           print("Score updated successfully!");
-          addScoreToLessonBy(widget.lessonName, 10);
+          LetterLessonFirestore(userId: uid)
+              .addScoreToLessonBy(widget.lessonName, 10);
           isCorrectAtFirstAttempt = false;
         }
         audio.open(Audio('assets/sounds/correct.mp3'));
@@ -187,7 +256,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                 ]
               : [
                   Text(
-                    levelDescription!,
+                    levelDescription,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
@@ -219,7 +288,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                                     ? const Color.fromARGB(255, 27, 15, 2)
                                     : null,
                               ),
-                              child: Image.asset(imageChoices[entry.key]),
+                              child: Image.network(imageChoices[entry.key]),
                             ),
                           )
                           .toList(),
