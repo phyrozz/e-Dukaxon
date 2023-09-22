@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +28,11 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
     setState(() {
       this.isEnglish = isEnglish;
     });
+  }
+
+  Future<void> setParentModePreferences(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isParentMode', value);
   }
 
   Future<void> updateIsParent(bool isParent) async {
@@ -62,7 +66,8 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                   isEnglish
                       ? "Are you a parent?"
                       : "Ikaw ba ay isang magulang?",
-                  style: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 32.0, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: 15,
@@ -81,8 +86,8 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        await updateIsParent(false);
-                        isParent = false;
+                        await updateIsParent(false)
+                            .then((value) => setParentModePreferences(false));
                       },
                       child: Text(isEnglish ? 'No' : 'Hindi'),
                     ),
@@ -100,8 +105,8 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        await updateIsParent(true);
-                        isParent = true;
+                        await updateIsParent(true)
+                            .then((value) => setParentModePreferences(true));
                       },
                       child: Text(isEnglish ? 'Yes' : 'Opo'),
                     ),

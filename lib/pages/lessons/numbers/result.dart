@@ -1,7 +1,6 @@
-import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
-import 'package:e_dukaxon/pages/child_home.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,27 +20,30 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
   String uid = "";
   bool isLoading = true;
   bool isEnglish = true;
+  bool isParentMode = false;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    getLanguage().then((_) => getScore(widget.lessonName)).then((_) {
+    getPrefValues().then((_) => getScore(widget.lessonName)).then((_) {
       if (progress >= 50) {
         NumberLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
       }
-      isParent = false;
+      // isParent = false;
     });
   }
 
-  Future<void> getLanguage() async {
+  Future<void> getPrefValues() async {
     final prefs = await SharedPreferences.getInstance();
     final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+    final isParentMode = prefs.getBool('isParentMode') ?? true;
 
     if (mounted) {
       setState(() {
         this.isEnglish = isEnglish;
+        this.isParentMode = isParentMode;
       });
     }
   }
@@ -168,7 +170,7 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ChildHomePage()),
+                                  builder: (context) => const HomePageTree()),
                             );
                           },
                           icon: const Icon(Icons.check_rounded),

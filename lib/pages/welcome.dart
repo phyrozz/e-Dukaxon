@@ -5,6 +5,7 @@ import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter/services.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -54,6 +55,11 @@ class _WelcomePageState extends State<WelcomePage> {
       UserFirestore(userId: userId).initializeLessons("letters", "en");
       UserFirestore(userId: userId).initializeLessons("letters", "ph");
       UserFirestore(userId: userId).initializeLessons("numbers", "en");
+
+      // Initialize preference values
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isParentMode', false);
+
       // initLetterLessonData();
     } on Exception catch (e) {
       // Remove the loading widget

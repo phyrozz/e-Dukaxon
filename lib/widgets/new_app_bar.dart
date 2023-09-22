@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
-// import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:e_dukaxon/pages/settings.dart';
@@ -10,11 +8,14 @@ import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:e_dukaxon/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeCustomAppBar extends StatefulWidget {
   final String text;
+  final bool isParentMode;
 
-  const WelcomeCustomAppBar({super.key, required this.text});
+  const WelcomeCustomAppBar(
+      {super.key, required this.text, required this.isParentMode});
 
   @override
   State<WelcomeCustomAppBar> createState() => _WelcomeCustomAppBarState();
@@ -28,6 +29,11 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
   void initState() {
     getUserAccountData();
     super.initState();
+  }
+
+  Future<void> setParentModePreferences(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isParentMode', value);
   }
 
   Future<void> getUserAccountData() async {
@@ -45,16 +51,14 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
       });
     } else {
       print("User ID is null or empty.");
-      setState(() {
-        isLoading = false;
-      });
+      isLoading = false;
     }
   }
 
   Widget _menuButton(BuildContext context) {
     return IconButton(
       onPressed: () {
-        if (isParent) {
+        if (widget.isParentMode) {
           _showMenuDialog(context);
         } else {
           Navigator.push(context,
@@ -84,14 +88,14 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ElevatedButton.icon(
-                        onPressed: () {
-                          if (isParent) {
-                            isParent = false;
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                createRouteWithHorizontalSlideAnimation(
-                                    const WidgetTree()),
-                                (route) => false);
+                        onPressed: () async {
+                          if (widget.isParentMode) {
+                            setParentModePreferences(false).then((value) =>
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    createRouteWithHorizontalSlideAnimation(
+                                        const WidgetTree()),
+                                    (route) => false));
                           } else {
                             Navigator.pushReplacement(
                                 context,
@@ -99,10 +103,10 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                                     const PinAccessPage()));
                           }
                         },
-                        icon: isParent
+                        icon: widget.isParentMode
                             ? const Icon(Icons.exit_to_app_rounded)
                             : const Icon(FontAwesomeIcons.userTie),
-                        label: isParent
+                        label: widget.isParentMode
                             ? const Text(
                                 'Exit Parent Mode',
                                 style: TextStyle(fontSize: 16),
@@ -195,7 +199,6 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
 
     await Auth().signOut();
     Navigator.pop(context);
-    isOnParentMode = false;
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
@@ -224,39 +227,3 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
     );
   }
 }
-
-// class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
-//   @override
-//   Widget build(
-//       BuildContext context, double shrinkOffset, bool overlapsContent) {
-//     final progress = shrinkOffset / maxExtent;
-//     return Stack(
-//       fit: StackFit.expand,
-//       children: [
-//         AnimatedContainer(
-//           duration: const Duration(milliseconds: 100),
-//           padding: EdgeInsets.lerp(
-//             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-//             const EdgeInsets.only(bottom: 16),
-//             progress,
-//           ),
-//           alignment: Alignment.bottomCenter,
-//           child: Text(
-//             "Let's play!",
-//             style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-
-//   @override
-//   double get maxExtent => 100;
-
-//   @override
-//   double get minExtent => 0;
-
-//   @override
-//   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-//       true;
-// }

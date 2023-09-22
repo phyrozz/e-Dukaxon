@@ -1,5 +1,4 @@
-import 'package:e_dukaxon/assessment_data.dart';
-import 'package:e_dukaxon/my_pages.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -13,24 +12,33 @@ class PinAccessPage extends StatefulWidget {
 }
 
 class _PinAccessPageState extends State<PinAccessPage> {
+  bool isParentMode = false;
   bool isEnglish = true;
   late TextEditingController _pinController;
 
   @override
   void initState() {
+    getPrefValues();
     super.initState();
     _pinController = TextEditingController();
   }
 
-  Future<void> getLanguage() async {
+  Future<void> getPrefValues() async {
     final prefs = await SharedPreferences.getInstance();
     final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+    final isParentMode = prefs.getBool('isParentMode') ?? true;
 
     if (mounted) {
       setState(() {
         this.isEnglish = isEnglish;
+        this.isParentMode = isParentMode;
       });
     }
+  }
+
+  Future<void> setParentModePreferences(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isParentMode', value);
   }
 
   @override
@@ -47,11 +55,11 @@ class _PinAccessPageState extends State<PinAccessPage> {
       final int birthYear = int.parse(pin);
 
       if (birthYear >= 1920 && currentYear - birthYear >= 18) {
-        isOnParentMode = true;
-        Navigator.pushAndRemoveUntil(
-            context,
-            createRouteWithHorizontalSlideAnimation(const MyPages()),
-            (route) => false);
+        setParentModePreferences(true).then((value) =>
+            Navigator.pushAndRemoveUntil(
+                context,
+                createRouteWithHorizontalSlideAnimation(const HomePageTree()),
+                (route) => false));
       } else {
         _showErrorDialog(
             context,
@@ -110,7 +118,7 @@ class _PinAccessPageState extends State<PinAccessPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                isParent
+                isEnglish
                     ? 'Enter your 4-digit birth year to access Parent Mode:'
                     : 'Ibigay ang iyong taon ng kapanganakan upang ma-access ang Parent Mode:',
                 style: TextStyle(fontSize: 18.0),

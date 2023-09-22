@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:e_dukaxon/assessment_data.dart';
-import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/data/assessment.dart';
-import 'package:e_dukaxon/user_firestore.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,19 +17,34 @@ class AgeSelectPage extends StatefulWidget {
 }
 
 class _AgeSelectPageState extends State<AgeSelectPage> {
-  final String? _currentUserId = Auth().getCurrentUserId();
+  // final String? _currentUserId = Auth().getCurrentUserId();
   String _currentAge = '3'; // Default age value
   List<String> ageOptions = [];
   bool isEnglish = true;
+  bool isParent = false;
+  bool isLoading = true;
 
   final FixedExtentScrollController scrollController =
-      FixedExtentScrollController(initialItem: 0);
+      FixedExtentScrollController(initialItem: 2);
 
   @override
   void initState() {
+    fetchPrefValues()
+        .then((value) => fetchIsParent())
+        .then((value) => getLanguage());
     super.initState();
-    fetchIsParent();
-    getLanguage();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> fetchPrefValues() async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefValue = prefs.getBool('isParentMode') ?? false;
+
+    setState(() {
+      isParent = prefValue;
+    });
   }
 
   Future<void> getLanguage() async {
@@ -115,10 +128,10 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = isParent
-        ? (isEnglish
+        ? (isEnglish ? "What is your age?" : "Ano ang iyong edad?")
+        : (isEnglish
             ? "Please enter your child's age"
-            : "Ano ang edad ng inyong anak?")
-        : (isEnglish ? "What is your age?" : "Ano ang iyong edad?");
+            : "Ano ang edad ng inyong anak?");
 
     return Scaffold(
       body: Padding(
@@ -204,14 +217,20 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                   ),
                   onPressed: () async {
                     Navigator.pop(context, _currentAge);
-                    if (await UserFirestore(userId: _currentUserId!)
-                        .getIsParent()) {
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          '/childHomePage', (Route<dynamic> route) => false);
-                    } else {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/myPages', (Route<dynamic> route) => false);
-                    }
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const HomePageTree()),
+                        (Route<dynamic> route) => false);
+                    // if (await UserFirestore(userId: _currentUserId!)
+                    //     .getIsParent()) {
+                    //   Navigator.pushNamedAndRemoveUntil(context,
+                    //       '/childHomePage', (Route<dynamic> route) => false);
+                    // } else {
+                    //   Navigator.pushNamedAndRemoveUntil(
+                    //       context, '/myPages', (Route<dynamic> route) => false);
+                    // }
                     storeDyslexiaResult();
                     await updateIsNewAccount(false, _currentAge);
                   },

@@ -1,4 +1,3 @@
-import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/pages/assessment_questions/age.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/assessment_questions/parent_or_not.dart';
@@ -9,7 +8,6 @@ import 'package:e_dukaxon/pages/assessment_questions/question_4.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_5.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_6.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_7.dart';
-import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:e_dukaxon/pages/games/trace_letter.dart';
 import 'package:e_dukaxon/pages/highlight_reading.dart';
 import 'package:e_dukaxon/pages/login.dart';
@@ -128,8 +126,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const WidgetTree(),
         '/login': (context) => const LoginPage(),
-        '/myPages': (context) => const MyPages(),
-        '/childHomePage': (context) => const ChildHomePage(),
+        // '/myPages': (context) => const MyPages(),
+        // '/childHomePage': (context) => const ChildHomePage(),
         '/highlightReading': (context) => const HighlightReading(text: "test"),
         '/assessment/init': (context) => const LocaleSelectPage(),
         '/assessment/questionOne': (context) => const BangorQuestionOne(),

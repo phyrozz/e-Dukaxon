@@ -6,6 +6,7 @@ import 'package:e_dukaxon/pages/sign_up.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAccountPage extends StatefulWidget {
   const MyAccountPage({super.key});
@@ -20,6 +21,18 @@ class _MyAccountPageState extends State<MyAccountPage> {
   String userName = "";
   String age = "";
   bool isLoading = true;
+  bool isParentMode = false;
+
+  Future<void> getParentModeValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefValue = prefs.getBool('isParentMode');
+
+    if (mounted) {
+      setState(() {
+        isParentMode = prefValue!;
+      });
+    }
+  }
 
   Future<void> getUserAccountData() async {
     String? id = Auth().getCurrentUserId();
@@ -51,8 +64,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   void initState() {
+    getParentModeValue().then((value) => getUserAccountData());
     super.initState();
-    getUserAccountData();
   }
 
   Future<void> signOut(BuildContext context) async {
@@ -87,18 +100,12 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
     return Scaffold(
       body: isLoading
-          ? const CustomScrollView(
-              slivers: [
-                WelcomeCustomAppBar(text: "My Account"),
-                SliverFillRemaining(
-                  child: LoadingPage(),
-                ),
-              ],
-            )
+          ? const LoadingPage()
           : email == ""
               ? CustomScrollView(
                   slivers: [
-                    const WelcomeCustomAppBar(text: "My Account"),
+                    WelcomeCustomAppBar(
+                        text: "My Account", isParentMode: isParentMode),
                     SliverFillRemaining(
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -120,10 +127,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                     icon: const Icon(Icons.logout),
                                     label: const Text('Delete progress')),
                                 SizedBox(
-                                  width: orientation == Orientation.landscape
+                                  width: orientation == Orientation.portrait
                                       ? 12
                                       : 0,
-                                  height: orientation == Orientation.portrait
+                                  height: orientation == Orientation.landscape
                                       ? 12
                                       : 0,
                                 ),
@@ -148,7 +155,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 )
               : CustomScrollView(
                   slivers: [
-                    const WelcomeCustomAppBar(text: "My Account"),
+                    WelcomeCustomAppBar(
+                        text: "My Account", isParentMode: isParentMode),
                     SliverList(
                         delegate: SliverChildListDelegate.fixed([
                       Padding(

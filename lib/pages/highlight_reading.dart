@@ -100,7 +100,6 @@ class _HighlightReadingState extends State<HighlightReading> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: const CustomAppBarWithBackButton(text: 'Highlight Reading'),
       body: Container(
