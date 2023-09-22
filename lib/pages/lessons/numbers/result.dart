@@ -1,24 +1,21 @@
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
-// import 'package:e_dukaxon/firebase_storage.dart';
-import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:flutter/material.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LettersResultPage extends StatefulWidget {
+class NumbersResultPage extends StatefulWidget {
   final String lessonName;
 
-  const LettersResultPage({super.key, required this.lessonName});
+  const NumbersResultPage({super.key, required this.lessonName});
 
   @override
-  State<LettersResultPage> createState() => _LettersResultPageState();
+  State<NumbersResultPage> createState() => _NumbersResultPageState();
 }
 
-class _LettersResultPageState extends State<LettersResultPage> {
+class _NumbersResultPageState extends State<NumbersResultPage> {
   int score = 0;
   int progress = 0;
   String uid = "";
@@ -31,7 +28,7 @@ class _LettersResultPageState extends State<LettersResultPage> {
     super.initState();
     getLanguage().then((_) => getScore(widget.lessonName)).then((_) {
       if (progress >= 50) {
-        LetterLessonFirestore(userId: uid)
+        NumberLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
       }
       isParent = false;
@@ -50,36 +47,31 @@ class _LettersResultPageState extends State<LettersResultPage> {
   }
 
   void playLessonFinishedSound() {
-    if (score <= 40 && score >= 20) {
+    if (score <= 20 && score >= 10) {
       audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
       if (progress < 100) {
-        if (score == 40) {
-          LetterLessonFirestore(userId: uid).incrementProgressValue(
+        if (score == 20) {
+          NumberLessonFirestore(userId: uid).incrementProgressValue(
               widget.lessonName, isEnglish ? "en" : "ph", 20);
         } else {
-          LetterLessonFirestore(userId: uid).incrementProgressValue(
+          NumberLessonFirestore(userId: uid).incrementProgressValue(
               widget.lessonName, isEnglish ? "en" : "ph", 10);
         }
       }
     } else {
       audio.open(Audio('assets/sounds/lesson_finished_2.mp3'));
       if (progress < 100) {
-        LetterLessonFirestore(userId: uid).incrementProgressValue(
+        NumberLessonFirestore(userId: uid).incrementProgressValue(
             widget.lessonName, isEnglish ? "en" : "ph", 5);
       }
     }
   }
 
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
-
   Future<void> getScore(String lessonName) async {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
-          await LetterLessonFirestore(userId: userId!)
+          await NumberLessonFirestore(userId: userId!)
               .getUserLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null) {
@@ -106,43 +98,6 @@ class _LettersResultPageState extends State<LettersResultPage> {
     }
   }
 
-  // Future<void> getScore(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
-
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       setState(() {
-  //         progress = lesson.progress;
-  //         score = lesson.score;
-  //         isLoading = false;
-  //       });
-
-  //       // Call playLessonFinishedSound after the score is updated
-  //       playLessonFinishedSound();
-  //     } else {
-  //       print('LetterLesson with name $lessonName not found in JSON file');
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print('Error reading letter_lessons.json: $e');
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
-
   @override
   void dispose() {
     super.dispose();
@@ -166,17 +121,17 @@ class _LettersResultPageState extends State<LettersResultPage> {
                   Column(
                     children: [
                       Image.asset(
-                        score <= 40 && score >= 20
+                        score <= 20 && score >= 10
                             ? 'assets/images/lesson_finished_1.png'
                             : 'assets/images/lesson_finished_2.png',
                         width: 150,
                       ),
-                      if (score == 40)
+                      if (score == 20)
                         Text(
                           isEnglish ? 'Excellent!' : 'Napakahusay!',
                           style: Theme.of(context).textTheme.titleLarge,
                         )
-                      else if (score < 40 && score >= 20)
+                      else if (score < 20 && score >= 10)
                         Text(
                           isEnglish ? 'Good job!' : 'Mahusay!',
                           style: Theme.of(context).textTheme.titleLarge,
@@ -197,8 +152,8 @@ class _LettersResultPageState extends State<LettersResultPage> {
                           ],
                         ),
                       Text(isEnglish
-                          ? 'You got a score of $score/40!'
-                          : 'Nakakuha ka ng $score/40!'),
+                          ? 'You got a score of $score/20!'
+                          : 'Nakakuha ka ng $score/20!'),
                     ],
                   ),
                   Row(

@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_dukaxon/data/letter_lessons.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,19 +22,19 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
   }
 
-  void addLesson(String lesson, Map<String, dynamic> data) {
-    FirebaseFirestore.instance
-        .collection('letters')
-        .doc('en')
-        .collection('lessons')
-        .doc(lesson)
-        .set(data)
-        .then((value) {
-      print('Lesson added to Firestore');
-    }).catchError((error) {
-      print('Error adding lesson to Firestore: $error');
-    });
-  }
+  // void addLesson(String lesson, Map<String, dynamic> data) {
+  //   FirebaseFirestore.instance
+  //       .collection('letters')
+  //       .doc('en')
+  //       .collection('lessons')
+  //       .doc(lesson)
+  //       .set(data)
+  //       .then((value) {
+  //     print('Lesson added to Firestore');
+  //   }).catchError((error) {
+  //     print('Error adding lesson to Firestore: $error');
+  //   });
+  // }
 
   Future<void> signInAnonymously() async {
     try {
@@ -51,7 +51,10 @@ class _WelcomePageState extends State<WelcomePage> {
       String? userId = Auth().getCurrentUserId();
 
       UserFirestore(userId: userId!).createNewAnonymousAccount();
-      initLetterLessonData();
+      UserFirestore(userId: userId).initializeLessons("letters", "en");
+      UserFirestore(userId: userId).initializeLessons("letters", "ph");
+      UserFirestore(userId: userId).initializeLessons("numbers", "en");
+      // initLetterLessonData();
     } on Exception catch (e) {
       // Remove the loading widget
       Navigator.of(context).pop();

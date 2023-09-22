@@ -16,7 +16,6 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool passwordVisible = false;
   String? errorMessage = '';
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

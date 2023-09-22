@@ -5,13 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 // import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
+import 'package:e_dukaxon/pages/lessons/numbers/level_one.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:flutter/services.dart';
 // import 'package:path_provider/path_provider.dart';
-import 'package:e_dukaxon/assessment_data.dart';
+// import 'package:e_dukaxon/assessment_data.dart';
 
 class ChildHomePage extends StatefulWidget {
   const ChildHomePage({super.key});
@@ -24,6 +27,10 @@ class _ChildHomePageState extends State<ChildHomePage> {
   List letterLessonNames = [];
   List letterLessonProgress = [];
   List unlockedLetterLessons = [];
+  List numberLessonNames = [];
+  List numberLessonProgress = [];
+  List unlockedNumberLessons = [];
+  bool isEnglish = true;
 
   // Future<void> initializeGameDataOnFirestore() async {
   //   String? user = Auth().getCurrentUserId();
@@ -34,6 +41,17 @@ class _ChildHomePageState extends State<ChildHomePage> {
   //     }
   //   });
   // }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final locale = prefs.getBool('isEnglish');
+
+    if (mounted) {
+      setState(() {
+        isEnglish = locale!;
+      });
+    }
+  }
 
   Future<void> letterLessons() async {
     try {
@@ -48,7 +66,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
           .collection('users')
           .doc(userId)
           .collection('letters')
-          .doc('en')
+          .doc(isEnglish ? 'en' : 'ph')
           .collection('lessons')
           .get();
 
@@ -67,6 +85,41 @@ class _ChildHomePageState extends State<ChildHomePage> {
       });
     } catch (e) {
       print('Error updating local letter lessons: $e');
+    }
+  }
+
+  Future<void> numberLessons() async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final String? userId = Auth().getCurrentUserId();
+
+      List<String> numberNames = [];
+      List<bool> unlockedLessons = [];
+      List<int> numberProgress = [];
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('numbers')
+          .doc(isEnglish ? 'en' : 'ph')
+          .collection('lessons')
+          .get();
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in querySnapshot.docs) {
+        Map<String, dynamic> lessonData = doc.data();
+        numberNames.add(lessonData['name'] as String);
+        unlockedLessons.add(lessonData['isUnlocked'] as bool);
+        numberProgress.add(lessonData['progress'] as int);
+      }
+
+      setState(() {
+        numberLessonNames = numberNames;
+        unlockedNumberLessons = unlockedLessons;
+        numberLessonProgress = numberProgress;
+      });
+    } catch (e) {
+      print('Error updating local number lessons: $e');
     }
   }
   // try {
@@ -99,20 +152,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
   // }
   // }
 
-  List numberLessonRoutes = [
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-  ];
-  List numberLessonNames = [
-    'Lesson 1',
-    'Lesson 2',
-    'Lesson 3',
-    'Lesson 4',
-    'Lesson 5',
-  ];
   List wordLessonRoutes = [
     '/games/traceLetter',
     '/games/traceLetter',
@@ -144,7 +183,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
     'Lesson 4',
   ];
 
-  List<bool> unlockedNumberLessons = [false, false, false, false, false];
   List<bool> unlockedWordLessons = [
     false,
     false,
@@ -162,11 +200,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
   @override
   void initState() {
+    getLanguage().then((_) {
+      letterLessons();
+      numberLessons();
+    });
     super.initState();
     // initializeGameDataOnFirestore();
     // initLetterLessonData();
     // addNewLetterLesson();
-    letterLessons();
     checkNewAccountAndNavigate();
     // Rebuild the screen after 3s which will process the animation
     Future.delayed(const Duration(milliseconds: 300))
@@ -215,8 +256,8 @@ class _ChildHomePageState extends State<ChildHomePage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const WelcomeCustomAppBar(
-            text: "Let's play!",
+          WelcomeCustomAppBar(
+            text: isEnglish ? "Let's play!" : "Tayo'y maglaro!",
           ),
           SliverToBoxAdapter(
             child: SizedBox(
@@ -236,9 +277,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
                       opacity: containerOpacity,
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
-                      child: const Text(
-                        'Letters',
-                        style: TextStyle(
+                      child: Text(
+                        isEnglish ? 'Letters' : 'Mga Letra',
+                        style: const TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -267,7 +308,8 @@ class _ChildHomePageState extends State<ChildHomePage> {
                           if (letterLessonProgress[index] >= 0) {
                             await LetterLessonFirestore(
                                     userId: Auth().getCurrentUserId()!)
-                                .resetScore(letterLessonNames[index]);
+                                .resetScore(letterLessonNames[index],
+                                    isEnglish ? "en" : "ph");
                             // resetScore(letterLessonNames[index]);
                             Navigator.push(
                                 context,
@@ -376,9 +418,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
                       opacity: containerOpacity,
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
-                      child: const Text(
-                        'Numbers',
-                        style: TextStyle(
+                      child: Text(
+                        isEnglish ? 'Numbers' : 'Mga Numero',
+                        style: const TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -396,16 +438,32 @@ class _ChildHomePageState extends State<ChildHomePage> {
                   crossAxisCount: 1,
                   childAspectRatio: 1.0,
                 ),
-                itemCount: numberLessonRoutes.length,
+                itemCount: numberLessonNames.length,
                 itemBuilder: (context, index) {
                   bool isUnlocked = unlockedNumberLessons[index];
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: InkWell(
-                      onTap: isUnlocked
-                          ? () => Navigator.pushNamed(
-                              context, numberLessonRoutes[index])
-                          : null,
+                      onTap: () async {
+                        if (isUnlocked) {
+                          if (numberLessonProgress[index] >= 0) {
+                            await NumberLessonFirestore(
+                                    userId: Auth().getCurrentUserId()!)
+                                .resetScore(numberLessonNames[index],
+                                    isEnglish ? "en" : "ph");
+                            // resetScore(letterLessonNames[index]);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NumbersLevelOne(
+                                        lessonName: numberLessonNames[index])));
+                          }
+                          // else if (letterLessonProgress[index] >= 25 &&
+                          //     letterLessonProgress[index] < 50) {
+                          //   LettersLevelOne(lessonName: letterLessonNames[index]);
+                          // }
+                        }
+                      },
                       child: AnimatedOpacity(
                         opacity: isUnlocked
                             ? containerOpacity
@@ -427,7 +485,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                   child: Text(
                                     isUnlocked ? numberLessonNames[index] : '',
                                     style: const TextStyle(
-                                        fontSize: 18.0, color: Colors.white),
+                                        fontSize: 32.0, color: Colors.white),
                                   ),
                                 ),
                                 AnimatedAlign(
@@ -443,30 +501,28 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                       child: Container(
                                         width: 100.0,
                                         height: 100.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 121, 74, 25),
-                                            width: 10.0,
-                                          ),
-                                          boxShadow: const [
+                                          boxShadow: [
                                             BoxShadow(
                                               blurRadius: 20,
                                               color: Color.fromARGB(
                                                   255, 121, 74, 25),
                                             ),
                                           ],
-                                          color: const Color(0xFFDFD7BF),
+                                          color: Color(0xFFDFD7BF),
                                         ),
-                                        child: const Center(
-                                          child: Text(
-                                            '${75}%',
-                                            // '${progressPercentage.toStringAsFixed(0)}%',
-                                            style: TextStyle(
-                                              fontSize: 24.0,
-                                              color: Color(0xFF3F2305),
-                                              fontWeight: FontWeight.bold,
+                                        child: CustomPaint(
+                                          painter: CircularProgressBarPainter(
+                                              numberLessonProgress[index]),
+                                          child: Center(
+                                            child: Text(
+                                              '${numberLessonProgress[index]}%',
+                                              style: const TextStyle(
+                                                fontSize: 24.0,
+                                                color: Color(0xFF3F2305),
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -503,9 +559,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
                       opacity: containerOpacity,
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
-                      child: const Text(
-                        'Words',
-                        style: TextStyle(
+                      child: Text(
+                        isEnglish ? 'Words' : 'Mga Salita',
+                        style: const TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -630,9 +686,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
                       opacity: containerOpacity,
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
-                      child: const Text(
-                        'Sentences',
-                        style: TextStyle(
+                      child: Text(
+                        isEnglish ? 'Sentences' : 'Mga Pangungusap',
+                        style: const TextStyle(
                             fontSize: 32, fontWeight: FontWeight.bold),
                       ),
                     ),

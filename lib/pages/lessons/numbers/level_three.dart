@@ -1,29 +1,23 @@
-// import 'dart:convert';
-// import 'dart:io';
 import 'dart:math';
-
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/auth.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
-// import 'package:e_dukaxon/firebase_storage.dart';
-import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_seven.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/numbers/result.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:path_provider/path_provider.dart';
 
-class LettersLevelFive extends StatefulWidget {
+class NumbersLevelThree extends StatefulWidget {
   final String lessonName;
 
-  const LettersLevelFive({super.key, required this.lessonName});
+  const NumbersLevelThree({super.key, required this.lessonName});
 
   @override
-  State<LettersLevelFive> createState() => _LettersLevelFiveState();
+  State<NumbersLevelThree> createState() => _NumbersLevelThreeState();
 }
 
-class _LettersLevelFiveState extends State<LettersLevelFive> {
+class _NumbersLevelThreeState extends State<NumbersLevelThree> {
   String levelDescription = "";
   String uid = "";
   List<dynamic> answers = [];
@@ -39,7 +33,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
   void initState() {
     super.initState();
     getLanguage().then((value) => getLevelDataByName(widget.lessonName));
-    currentlyTracedLetter = widget.lessonName[1];
+    currentlyTracedLetter = widget.lessonName;
     _strokes.add([]);
   }
 
@@ -58,12 +52,12 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
-          await LetterLessonFirestore(userId: userId!)
+          await NumberLessonFirestore(userId: userId!)
               .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
-      if (lessonData != null && lessonData.containsKey('level5')) {
+      if (lessonData != null && lessonData.containsKey('level3')) {
         Map<String, dynamic> levelData =
-            lessonData['level5'] as Map<String, dynamic>;
+            lessonData['level3'] as Map<String, dynamic>;
         String description = levelData['description'] as String;
         Iterable<dynamic> _answers = levelData['answers'];
 
@@ -77,11 +71,11 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
         }
       } else {
         print(
-            'Letter lesson "$lessonName" was not found within the Firestore.');
+            'Numbers lesson "$lessonName" was not found within the Firestore.');
         isLoading = true;
       }
     } catch (e) {
-      print('Error reading letter_lessons.json: $e');
+      print('Error: $e');
       if (mounted) {
         setState(() {
           isLoading = true;
@@ -89,47 +83,6 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
       }
     }
   }
-
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
-
-  // void getLevelDataByName(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
-
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       Level levelData = lesson.level5;
-  //       // print('Level 3 data for $lessonName: $levelData');
-  //       setState(() {
-  //         levelDescription = levelData.description;
-  //         answers.addAll(levelData.answers!);
-  //         isLoading = false;
-  //       });
-  //     } else {
-  //       // print('LetterLesson with name $lessonName not found in JSON file');
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     // print('Error reading letter_lessons.json: $e');
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
 
   double calculateAccuracy(List<Offset> userStrokes, String letter,
       double canvasWidth, double canvasHeight) {
@@ -204,7 +157,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isPassed) {
       if (isPassed) {
-        LetterLessonFirestore(userId: uid)
+        NumberLessonFirestore(userId: uid)
             .addScoreToLessonBy(widget.lessonName, isEnglish ? "en" : "ph", 10);
         audio.open(Audio('assets/sounds/correct.mp3'));
       } else {
@@ -254,7 +207,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => LettersLevelSeven(
+                            builder: (context) => NumbersResultPage(
                                 lessonName: widget.lessonName)),
                       );
                     },
@@ -311,7 +264,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                     if (mounted) {
                       setState(() {
                         _strokes.add([]);
-                        currentlyTracedLetter = widget.lessonName[1];
+                        currentlyTracedLetter = widget.lessonName;
                       });
                     }
                   },

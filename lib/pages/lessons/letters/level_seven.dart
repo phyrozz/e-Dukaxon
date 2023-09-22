@@ -8,7 +8,9 @@ import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/result.dart';
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:path_provider/path_provider.dart';
 
 class LettersLevelSeven extends StatefulWidget {
@@ -32,16 +34,44 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
     "images/cat.png",
     "images/chair.png",
   ];
+  List<String> phImages = [
+    "images/ph/durian.png",
+    "images/ph/doktor.png",
+    "images/ph/dila.png",
+    "images/ph/dentista.png",
+    "images/ph/daga.png",
+    "images/ph/baka.png",
+    "images/ph/buko.png",
+    "images/ph/bigas.png",
+    "images/ph/berde.png",
+    "images/ph/bola.png",
+    "images/ph/bahay.png",
+    "images/ph/bag.png",
+    "images/ph/aklat.png",
+    "images/ph/aso.png",
+  ];
   List<String> imageChoices = [];
   String? selectedImage;
   bool isLoading = true;
   bool isCorrectAtFirstAttempt = true;
+  bool isEnglish = true;
   AssetsAudioPlayer audio = AssetsAudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    getLevelDataByName(widget.lessonName);
+    getLanguage().then((value) => getLevelDataByName(widget.lessonName));
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    if (mounted) {
+      setState(() {
+        this.isEnglish = isEnglish;
+      });
+    }
   }
 
   void getLevelDataByName(String lessonName) async {
@@ -49,7 +79,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
           await LetterLessonFirestore(userId: userId!)
-              .getLessonData(lessonName);
+              .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null && lessonData.containsKey('level7')) {
         Map<String, dynamic> levelData =
@@ -60,12 +90,21 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
         _correctAnswers = await Future.wait(
             _correctAnswers.map((e) => AssetFirebaseStorage().getAsset(e)));
 
-        List<Future<String>> imageFutures = images.map((e) {
-          return AssetFirebaseStorage().getAsset(e).then((String? result) {
-            // Handle the possibility of null values here, if necessary
-            return result ?? ''; // Return an empty string if the result is null
-          });
-        }).toList();
+        List<Future<String>> imageFutures = isEnglish
+            ? images.map((e) {
+                return AssetFirebaseStorage()
+                    .getAsset(e)
+                    .then((String? result) {
+                  return result ?? '';
+                });
+              }).toList()
+            : phImages.map((e) {
+                return AssetFirebaseStorage()
+                    .getAsset(e)
+                    .then((String? result) {
+                  return result ?? '';
+                });
+              }).toList();
 
         images = await Future.wait(imageFutures);
 
@@ -85,6 +124,9 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
         // Add the correct sound to the randomSounds list
         randomImages.add(correctImage);
 
+        // Shuffle the choices again
+        randomImages = randomImages..shuffle();
+
         if (mounted) {
           setState(() {
             levelDescription = description;
@@ -102,7 +144,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
       print('Error reading letter_lessons.json: $e');
       if (mounted) {
         setState(() {
-          isLoading = false;
+          isLoading = true;
         });
       }
     }
@@ -178,8 +220,8 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
       if (isCorrect) {
         if (isCorrectAtFirstAttempt) {
           print("Score updated successfully!");
-          LetterLessonFirestore(userId: uid)
-              .addScoreToLessonBy(widget.lessonName, 10);
+          LetterLessonFirestore(userId: uid).addScoreToLessonBy(
+              widget.lessonName, isEnglish ? "en" : "ph", 10);
           isCorrectAtFirstAttempt = false;
         }
         audio.open(Audio('assets/sounds/correct.mp3'));
@@ -217,7 +259,11 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        isCorrect ? 'Correct!' : 'Incorrect. Please try again.',
+                        isCorrect
+                            ? (isEnglish ? 'Correct!' : 'Tama!')
+                            : (isEnglish
+                                ? 'Incorrect. Please try again.'
+                                : 'Mali. Puwede ka pang pumili ng sagot.'),
                         style: const TextStyle(
                             fontSize: 24, fontFamily: "OpenDyslexic"),
                       ),
@@ -234,7 +280,7 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                                   lessonName: widget.lessonName)),
                         );
                       },
-                      child: const Text('Next'),
+                      child: Text(isEnglish ? 'Next' : 'Susunod'),
                     ),
                 ],
               ),
@@ -244,80 +290,87 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
       );
     }
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: isLoading
-              ? [
-                  const CircularProgressIndicator(),
-                ]
-              : [
-                  Text(
-                    levelDescription,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  // Display buttons with sounds in a 2x2 grid
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width / 4),
-                    child: GridView.count(
-                      shrinkWrap: true,
-                      crossAxisCount: 2,
-                      childAspectRatio: (1 / .5),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      children: imageChoices
-                          .asMap()
-                          .entries
-                          .map(
-                            (entry) => ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedImage = entry.value;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: selectedImage == entry.value
-                                    ? const Color.fromARGB(255, 27, 15, 2)
-                                    : null,
-                              ),
-                              child: Image.network(imageChoices[entry.key]),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton.icon(
-                        label: const Text("Check Answer"),
-                        icon: const Icon(Icons.check),
-                        style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 52, 156, 55)),
+    return isLoading
+        ? const LoadingPage()
+        : Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: isLoading
+                    ? [
+                        const CircularProgressIndicator(),
+                      ]
+                    : [
+                        Text(
+                          levelDescription,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        onPressed: () {
-                          // Check if the selected sound is correct
-                          bool isCorrect =
-                              correctAnswers.contains(selectedImage);
-                          // Display a message to the user based on the result
-                          showResultModal(context, isCorrect);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-        ),
-      ),
-    );
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        // Display buttons with sounds in a 2x2 grid
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width / 4),
+                          child: GridView.count(
+                            shrinkWrap: true,
+                            crossAxisCount: 2,
+                            childAspectRatio: (1 / .45),
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            children: imageChoices
+                                .asMap()
+                                .entries
+                                .map(
+                                  (entry) => ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedImage = entry.value;
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: selectedImage ==
+                                              entry.value
+                                          ? const Color.fromARGB(255, 27, 15, 2)
+                                          : null,
+                                    ),
+                                    child:
+                                        Image.network(imageChoices[entry.key]),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton.icon(
+                              label: Text(isEnglish
+                                  ? "Check Answer"
+                                  : "Tingnan ang Sagot"),
+                              icon: const Icon(Icons.check),
+                              style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 52, 156, 55)),
+                              ),
+                              onPressed: () {
+                                // Check if the selected sound is correct
+                                bool isCorrect =
+                                    correctAnswers.contains(selectedImage);
+                                // Display a message to the user based on the result
+                                showResultModal(context, isCorrect);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+              ),
+            ),
+          );
   }
 }

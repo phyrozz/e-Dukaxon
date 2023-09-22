@@ -3,6 +3,7 @@ import 'package:e_dukaxon/my_pages.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PinAccessPage extends StatefulWidget {
   const PinAccessPage({Key? key}) : super(key: key);
@@ -12,12 +13,24 @@ class PinAccessPage extends StatefulWidget {
 }
 
 class _PinAccessPageState extends State<PinAccessPage> {
+  bool isEnglish = true;
   late TextEditingController _pinController;
 
   @override
   void initState() {
     super.initState();
     _pinController = TextEditingController();
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    if (mounted) {
+      setState(() {
+        this.isEnglish = isEnglish;
+      });
+    }
   }
 
   @override
@@ -41,11 +54,19 @@ class _PinAccessPageState extends State<PinAccessPage> {
             (route) => false);
       } else {
         _showErrorDialog(
-            context, 'Invalid PIN', 'Invalid PIN. Please try again.');
+            context,
+            (isEnglish ? 'Invalid PIN' : 'Maling PIN'),
+            (isEnglish
+                ? 'Invalid PIN. Please try again.'
+                : 'Mali ang binigay mong PIN.'));
       }
     } else {
       _showErrorDialog(
-          context, 'Invalid PIN', 'Invalid PIN. Please try again.');
+          context,
+          (isEnglish ? 'Invalid PIN' : 'Maling PIN'),
+          (isEnglish
+              ? 'Invalid PIN. Please try again.'
+              : 'Mali ang binigay mong PIN.'));
     }
   }
 
@@ -88,8 +109,10 @@ class _PinAccessPageState extends State<PinAccessPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
-                'Enter your 4-digit birth year to access Parent Mode:',
+              Text(
+                isParent
+                    ? 'Enter your 4-digit birth year to access Parent Mode:'
+                    : 'Ibigay ang iyong taon ng kapanganakan upang ma-access ang Parent Mode:',
                 style: TextStyle(fontSize: 18.0),
                 textAlign: TextAlign.center,
               ),

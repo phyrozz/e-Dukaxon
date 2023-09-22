@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/auth.dart';
+// import 'package:e_dukaxon/pages/child_home.dart';
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
+import 'package:e_dukaxon/pages/settings.dart';
 import 'package:e_dukaxon/pages/sign_up.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
+import 'package:e_dukaxon/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,15 +21,45 @@ class WelcomeCustomAppBar extends StatefulWidget {
 }
 
 class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
+  bool isLoggedIn = false;
+  bool isLoading = true;
+
   @override
   void initState() {
+    getUserAccountData();
     super.initState();
+  }
+
+  Future<void> getUserAccountData() async {
+    String? id = Auth().getCurrentUserId();
+    if (id != null) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(id).get();
+      final data = snapshot.data();
+
+      setState(() {
+        if (data != null && data.containsKey('email')) {
+          isLoggedIn = true;
+        }
+        isLoading = false;
+      });
+    } else {
+      print("User ID is null or empty.");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Widget _menuButton(BuildContext context) {
     return IconButton(
       onPressed: () {
-        _showMenuDialog(context);
+        if (isParent) {
+          _showMenuDialog(context);
+        } else {
+          Navigator.push(context,
+              createRouteWithHorizontalSlideAnimation(const PinAccessPage()));
+        }
       },
       icon: const Icon(
         Icons.person,
@@ -42,71 +77,96 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18)),
           ),
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton.icon(
-                  onPressed: () {
-                    if (isParent) {
-                      isParent = false;
-                      Navigator.pushReplacementNamed(context, '/childHomePage');
-                    } else {
-                      Navigator.pushReplacement(
-                          context,
-                          createRouteWithHorizontalSlideAnimation(
-                              const PinAccessPage()));
-                    }
-                  },
-                  icon: isParent
-                      ? const Icon(Icons.exit_to_app_rounded)
-                      : const Icon(FontAwesomeIcons.userTie),
-                  label: isParent
-                      ? const Text(
-                          'Exit Parent Mode',
-                          style: TextStyle(fontSize: 16),
-                        )
-                      : const Text(
-                          'Parent Mode',
+          content: isLoading
+              ? const LoadingPage()
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton.icon(
+                        onPressed: () {
+                          if (isParent) {
+                            isParent = false;
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                createRouteWithHorizontalSlideAnimation(
+                                    const WidgetTree()),
+                                (route) => false);
+                          } else {
+                            Navigator.pushReplacement(
+                                context,
+                                createRouteWithHorizontalSlideAnimation(
+                                    const PinAccessPage()));
+                          }
+                        },
+                        icon: isParent
+                            ? const Icon(Icons.exit_to_app_rounded)
+                            : const Icon(FontAwesomeIcons.userTie),
+                        label: isParent
+                            ? const Text(
+                                'Exit Parent Mode',
+                                style: TextStyle(fontSize: 16),
+                              )
+                            : const Text(
+                                'Parent Mode',
+                                style: TextStyle(fontSize: 16),
+                              )),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    isLoggedIn
+                        ? Container()
+                        : ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                            icon: const Icon(
+                                FontAwesomeIcons.arrowRightToBracket),
+                            label: const Text(
+                              'Log in',
+                              style: TextStyle(fontSize: 16),
+                            )),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const SignUpPage()));
+                        },
+                        icon: const Icon(FontAwesomeIcons.userPlus),
+                        label: const Text(
+                          'Create an account',
                           style: TextStyle(fontSize: 16),
                         )),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  icon: const Icon(FontAwesomeIcons.arrowRightToBracket),
-                  label: const Text(
-                    'Log in',
-                    style: TextStyle(fontSize: 16),
-                  )),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const SignUpPage()));
-                  },
-                  icon: const Icon(FontAwesomeIcons.userPlus),
-                  label: const Text(
-                    'Create an account',
-                    style: TextStyle(fontSize: 16),
-                  )),
-              // const SizedBox(
-              //   height: 12,
-              // ),
-              // ElevatedButton.icon(
-              //     onPressed: () => signOut(context),
-              //     icon: const Icon(Icons.logout),
-              //     label: const Text('Log out')),
-            ],
-          ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const SettingsPage()));
+                        },
+                        icon: const Icon(FontAwesomeIcons.gear),
+                        label: const Text(
+                          'Settings',
+                          style: TextStyle(fontSize: 16),
+                        )),
+                    // const SizedBox(
+                    //   height: 12,
+                    // ),
+                    // ElevatedButton.icon(
+                    //     onPressed: () => signOut(context),
+                    //     icon: const Icon(Icons.logout),
+                    //     label: const Text('Log out')),
+                  ],
+                ),
         );
       },
     );

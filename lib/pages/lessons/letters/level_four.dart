@@ -9,6 +9,7 @@ import 'package:e_dukaxon/pages/lessons/letters/level_five.dart';
 import 'package:flutter/material.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:gif_view/gif_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LettersLevelFour extends StatefulWidget {
   final String lessonName;
@@ -27,13 +28,15 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
   List<dynamic> images = [];
   bool isLoading = true;
   bool showOverlay = true;
+  bool isEnglish = true;
   final List<GifController> gifControllers = [];
   final List<String> gifControllerStatuses = [];
 
   @override
   void initState() {
     super.initState();
-    getLevelDataByName(widget.lessonName);
+    getLanguage().then((value) => getLevelDataByName(widget.lessonName));
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -43,12 +46,23 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
     });
   }
 
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    if (mounted) {
+      setState(() {
+        this.isEnglish = isEnglish;
+      });
+    }
+  }
+
   void getLevelDataByName(String lessonName) async {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
           await LetterLessonFirestore(userId: userId!)
-              .getLessonData(lessonName);
+              .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null && lessonData.containsKey('level4')) {
         Map<String, dynamic> levelData =
@@ -89,7 +103,7 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
       print('Error reading letter_lessons.json: $e');
       if (mounted) {
         setState(() {
-          isLoading = false;
+          isLoading = true;
         });
       }
     }
@@ -227,8 +241,10 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                                       label: Text(
                                           gifControllerStatuses[index] ==
                                                   "playing"
-                                              ? 'Stop'
-                                              : 'Play'),
+                                              ? (isEnglish ? 'Stop' : 'Itigil')
+                                              : (isEnglish
+                                                  ? 'Play'
+                                                  : 'I-play')),
                                       icon: gifControllerStatuses[index] ==
                                               "playing"
                                           ? const Icon(Icons.stop_rounded)
@@ -255,7 +271,7 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             ElevatedButton.icon(
-                              label: const Text("Done"),
+                              label: Text(isEnglish ? "Done" : "Tapos na"),
                               icon: const Icon(Icons.check),
                               style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
@@ -291,22 +307,24 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
                     color: Colors.black.withOpacity(0.6),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(10.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Center(
                       child: Row(
                         children: [
                           Text(
-                            'Scroll down to read more',
-                            style: TextStyle(
+                            isEnglish
+                                ? 'Scroll down to read more'
+                                : 'Pumindot pababa upang mabasa lahat',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
-                          Icon(
+                          const Icon(
                             Icons.arrow_downward,
                             color: Colors.white,
                           ),

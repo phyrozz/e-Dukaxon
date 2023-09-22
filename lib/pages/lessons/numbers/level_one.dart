@@ -1,29 +1,22 @@
-// import 'dart:convert';
-// import 'dart:io';
-
-// import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
-import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/numbers/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LettersLevelOne extends StatefulWidget {
+class NumbersLevelOne extends StatefulWidget {
   final String lessonName;
 
-  const LettersLevelOne({Key? key, required this.lessonName}) : super(key: key);
+  const NumbersLevelOne({Key? key, required this.lessonName}) : super(key: key);
 
   @override
-  State<LettersLevelOne> createState() => _LettersLevelOneState();
+  State<NumbersLevelOne> createState() => _NumbersLevelOneState();
 }
 
-class _LettersLevelOneState extends State<LettersLevelOne> {
+class _NumbersLevelOneState extends State<NumbersLevelOne> {
   String levelDescription = "";
   String uid = "";
   List<dynamic> texts = [];
@@ -32,13 +25,12 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   bool isLoading = true;
   bool showOverlay = true;
   bool isEnglish = true;
-  // AssetsAudioPlayer audio = AssetsAudioPlayer();
   AudioPlayer audio = AudioPlayer();
 
   @override
   void initState() {
     getLanguage().then((value) {
-      getLevel1DataByName(widget.lessonName);
+      getLevelDataByName(widget.lessonName);
     });
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
@@ -49,12 +41,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       }
     });
   }
-
-  // Future<void> playAudio(String url) async {
-  //   AudioPlayer audio = AudioPlayer();
-
-  //   await audio.setSourceUrl(url);
-  // }
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,16 +53,11 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
     }
   }
 
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
-
-  void getLevel1DataByName(String lessonName) async {
+  void getLevelDataByName(String lessonName) async {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
-          await LetterLessonFirestore(userId: userId!)
+          await NumberLessonFirestore(userId: userId!)
               .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null && lessonData.containsKey('level1')) {
@@ -104,11 +85,11 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
         }
       } else {
         print(
-            'Letter lesson "$lessonName" was not found within the Firestore.');
+            'Number lesson "$lessonName" was not found within the Firestore.');
         isLoading = true;
       }
     } catch (e) {
-      print('Error reading letter_lessons.json: $e');
+      print('Error: $e');
       if (mounted) {
         setState(() {
           isLoading = true;
@@ -116,59 +97,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       }
     }
   }
-
-  // Local data implementation
-
-  // void getLevel1DataByName(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
-
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     // Filter the letterLessons list to include only lessons with "locale" set to "en"
-  //     final List<LetterLesson> enLessons = letterLessons
-  //         .where((lesson) =>
-  //             isEnglish ? lesson.locale == "en" : lesson.locale == "ph")
-  //         .toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       Level levelData = lesson.level1;
-  //       print('Level 1 data for $lessonName: $levelData');
-  //       if (mounted) {
-  //         setState(() {
-  //           levelDescription = levelData.description;
-  //           texts.clear();
-  //           texts.addAll(levelData.texts!);
-  //           images.addAll(levelData.images!);
-  //           sounds.addAll(levelData.sounds!);
-  //           isLoading = false;
-  //         });
-  //       }
-  //     } else {
-  //       print('LetterLesson with name $lessonName not found in JSON file');
-  //       if (mounted) {
-  //         setState(() {
-  //           isLoading = false;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('Error reading letter_lessons.json: $e');
-  //     if (mounted) {
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -218,7 +146,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                     if (images[index] is String)
                                       Image.network(
                                         images[index] as String,
-                                        width: 200,
+                                        width: 30,
                                       ),
                                     const SizedBox(height: 20),
                                     Text(
@@ -272,7 +200,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                LettersLevelTwo(
+                                                NumbersLevelTwo(
                                                     lessonName:
                                                         widget.lessonName))),
                                   ),

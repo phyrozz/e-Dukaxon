@@ -3,6 +3,7 @@ import 'package:e_dukaxon/pages/child_home.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/my_account.dart';
 import 'pages/games.dart';
 import 'pages/my_progress.dart';
@@ -16,6 +17,7 @@ class MyPages extends StatefulWidget {
 
 class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
   // int _currentIndex = 0;
+  bool isEnglish = true;
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
 
@@ -28,7 +30,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
       icon: const Icon(Icons.home),
     ),
     SideMenuItem(
-      title: "Games",
+      title: isEnglish ? "Games" : "Mga Laro",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
@@ -42,7 +44,7 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
       icon: const Icon(Icons.show_chart),
     ),
     SideMenuItem(
-      title: "My Account",
+      title: isEnglish ? "My Account" : "Aking Account",
       onTap: (index, _) {
         sideMenu.changePage(index);
       },
@@ -59,12 +61,29 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    isParent = true;
+    getLanguage().then((_) => sideMenu.addListener((index) {
+          pageController.jumpToPage(index);
+        }));
     super.initState();
     // Connect SideMenuController and PageController together
-    sideMenu.addListener((index) {
-      pageController.jumpToPage(index);
-    });
-    isParent = true;
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+
+    if (mounted) {
+      setState(() {
+        this.isEnglish = isEnglish;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    sideMenu.dispose();
+    super.dispose();
   }
 
   // void _onTabSelected(int index) {

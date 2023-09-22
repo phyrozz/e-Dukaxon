@@ -1,63 +1,52 @@
-// import 'dart:convert';
-// import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/auth.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
-import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_three.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/numbers/level_three.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:path_provider/path_provider.dart';
 
-class LettersLevelTwo extends StatefulWidget {
+class NumbersLevelTwo extends StatefulWidget {
   final String lessonName;
 
-  const LettersLevelTwo({Key? key, required this.lessonName}) : super(key: key);
+  const NumbersLevelTwo({Key? key, required this.lessonName}) : super(key: key);
 
   @override
-  State<LettersLevelTwo> createState() => _LettersLevelTwoState();
+  State<NumbersLevelTwo> createState() => _NumbersLevelTwoState();
 }
 
-class _LettersLevelTwoState extends State<LettersLevelTwo> {
+class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
   String levelDescription = "";
   String uid = "";
   List<dynamic> correctAnswers = [];
   List<String> sounds = [
-    "sounds/a_sound_female_UK.mp3",
-    "sounds/ai_sound_female_UK.mp3",
-    "sounds/air_sound_female_UK.mp3",
-    "sounds/ar_sound_female_UK.mp3",
-    "sounds/b_sound_female_UK.mp3",
-    "sounds/c_sound_female_UK.mp3",
-    "sounds/ch-chair_sound_female_UK.mp3",
-    "sounds/d_sound_female_UK.mp3",
-    "sounds/e_sound_female_UK.mp3",
-    "sounds/ear_sound_female_UK.mp3",
-    "sounds/ee_sound_female_UK.mp3",
-    "sounds/f_sound_female_UK.mp3",
-    "sounds/g_sound_female_UK.mp3",
-    "sounds/h_sound_female_UK.mp3",
-    "sounds/i_sound_female_UK.mp3",
-    "sounds/igh_sound_female_UK.mp3",
-    "sounds/j_sound_female_UK.mp3"
+    "sounds/one.wav",
+    "sounds/two.wav",
+    "sounds/three.wav",
+    "sounds/four.wav",
+    "sounds/five.wav",
+    "sounds/six.wav",
+    "sounds/seven.wav",
+    "sounds/eight.wav",
+    "sounds/nine.wav",
+    "sounds/ten.wav",
   ];
   List<String> phSounds = [
-    "sounds/ph/a.wav",
-    "sounds/ph/ba.wav",
-    "sounds/ph/be.wav",
-    "sounds/ph/bi.wav",
-    "sounds/ph/bo.wav",
-    "sounds/ph/bu.wav",
-    "sounds/ph/da.wav",
-    "sounds/ph/de.wav",
-    "sounds/ph/di.wav",
-    "sounds/ph/do.wav",
-    "sounds/ph/du.wav",
+    // Placeholder code
+    "sounds/one.wav",
+    "sounds/two.wav",
+    "sounds/three.wav",
+    "sounds/four.wav",
+    "sounds/five.wav",
+    "sounds/six.wav",
+    "sounds/seven.wav",
+    "sounds/eight.wav",
+    "sounds/nine.wav",
+    "sounds/ten.wav",
   ];
   List<String> soundChoices = []; // List to store the sound choices for buttons
   String? selectedSound; // Currently selected sound
@@ -88,7 +77,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
-          await LetterLessonFirestore(userId: userId!)
+          await NumberLessonFirestore(userId: userId!)
               .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null && lessonData.containsKey('level2')) {
@@ -149,11 +138,11 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
         print(soundChoices);
       } else {
         print(
-            'Letter lesson "$lessonName" was not found within the Firestore.');
+            'Numbers lesson "$lessonName" was not found within the Firestore.');
         isLoading = true;
       }
     } catch (e) {
-      print('Error reading letter_lessons.json: $e');
+      print('Error: $e');
       if (mounted) {
         setState(() {
           isLoading = true;
@@ -161,70 +150,6 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
       }
     }
   }
-
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
-
-  // void getLevelDataByName(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
-
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       Level levelData = lesson.level2;
-  //       print('Level 2 data for $lessonName: $levelData');
-
-  //       correctAnswers.addAll(levelData.correctAnswers!);
-
-  //       // Select a random sound from the correctAnswers list
-  //       String correctSound =
-  //           correctAnswers[Random().nextInt(correctAnswers.length)];
-
-  //       // Create a list of remaining random sounds
-  //       List<String> remainingRandomSounds = sounds..remove(correctSound);
-
-  //       // Shuffle the remainingRandomSounds list and take 3 random elements
-  //       List<String> randomSounds = List.from(remainingRandomSounds)..shuffle();
-  //       randomSounds = randomSounds.take(3).toList();
-
-  //       // Add the correct sound to the randomSounds list
-  //       randomSounds.add(correctSound);
-
-  //       if (mounted) {
-  //         setState(() {
-  //           levelDescription = levelData.description;
-  //           soundChoices = List.from(randomSounds);
-  //           isLoading = false;
-  //         });
-  //       }
-  //     } else {
-  //       print('LetterLesson with name $lessonName not found in JSON file');
-  //       if (mounted) {
-  //         setState(() {
-  //           isLoading = false;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('Error reading letter_lessons.json: $e');
-  //     if (mounted) {
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -239,7 +164,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
       if (isCorrect) {
         if (isCorrectAtFirstAttempt) {
           print("Score updated successfully!");
-          LetterLessonFirestore(userId: uid).addScoreToLessonBy(
+          NumberLessonFirestore(userId: uid).addScoreToLessonBy(
               widget.lessonName, isEnglish ? "en" : "ph", 10);
           isCorrectAtFirstAttempt = false;
         }
@@ -295,7 +220,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LettersLevelThree(
+                              builder: (context) => NumbersLevelThree(
                                   lessonName: widget.lessonName)),
                         );
                       },

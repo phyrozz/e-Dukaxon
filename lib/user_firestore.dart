@@ -37,19 +37,26 @@ class UserFirestore {
         'isParent': true,
         'hasDyslexia': true,
       });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
-      // Copy all default letter lesson data from lessons collection to users
+  Future<void> initializeLessons(String lessonCategory, String locale) async {
+    try {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
       // Reference to the source collection "letters > en > lessons"
-      CollectionReference sourceCollection =
-          firestore.collection('letters').doc('en').collection('lessons');
+      CollectionReference sourceCollection = firestore
+          .collection(lessonCategory)
+          .doc(locale)
+          .collection('lessons');
 
       // Reference to the destination collection "users > <userId> > letters > en > lessons"
       CollectionReference destinationCollection = firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
-          .doc('en')
+          .collection(lessonCategory)
+          .doc(locale)
           .collection('lessons');
 
       // Query the source collection
@@ -60,18 +67,59 @@ class UserFirestore {
         // Get the data from the source document
         Map<String, dynamic> data = sourceDoc.data() as Map<String, dynamic>;
 
+        // Extract only the necessary keys
+        Map<String, dynamic> newData = {
+          'isUnlocked': data['isUnlocked'],
+          'name': data['name'],
+          'progress': data['progress'],
+          'score': data['score'],
+        };
+
         // Get the document ID from the source document
         String documentId = sourceDoc.id;
 
         // Add the data to the destination collection with the same document ID
-        await destinationCollection.doc(documentId).set(data);
+        await destinationCollection.doc(documentId).set(newData);
       }
 
       print('Documents copied successfully');
     } catch (e) {
-      print('Error: $e');
+      print('Error copying documents: $e');
     }
   }
+
+  // Future<void> initializeLessons(String lessonCategory, String locale) async {
+  //   // Copy all default letter lesson data from lessons collection to users
+  //   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  //   // Reference to the source collection "letters > en > lessons"
+  //   CollectionReference sourceCollection =
+  //       firestore.collection(lessonCategory).doc(locale).collection('lessons');
+
+  //   // Reference to the destination collection "users > <userId> > letters > en > lessons"
+  //   CollectionReference destinationCollection = firestore
+  //       .collection('users')
+  //       .doc(userId)
+  //       .collection(lessonCategory)
+  //       .doc(locale)
+  //       .collection('lessons');
+
+  //   // Query the source collection
+  //   QuerySnapshot sourceQuery = await sourceCollection.get();
+
+  //   // Loop through the documents in the source collection
+  //   for (QueryDocumentSnapshot sourceDoc in sourceQuery.docs) {
+  //     // Get the data from the source document
+  //     Map<String, dynamic> data = sourceDoc.data() as Map<String, dynamic>;
+
+  //     // Get the document ID from the source document
+  //     String documentId = sourceDoc.id;
+
+  //     // Add the data to the destination collection with the same document ID
+  //     await destinationCollection.doc(documentId).set(data);
+  //   }
+
+  //   print('Documents copied successfully');
+  // }
 
   Future<bool> getIsParent() async {
     var data = await getDocumentData();

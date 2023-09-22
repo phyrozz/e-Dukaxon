@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LetterLessonFirestore {
+class NumberLessonFirestore {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final String userId;
 
-  LetterLessonFirestore({
+  NumberLessonFirestore({
     required this.userId,
   });
 
@@ -13,7 +13,7 @@ class LetterLessonFirestore {
       String lessonName, String locale) async {
     try {
       final DocumentSnapshot doc = await firestore
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName)
@@ -37,7 +37,7 @@ class LetterLessonFirestore {
       final DocumentSnapshot doc = await firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName)
@@ -61,7 +61,7 @@ class LetterLessonFirestore {
       await firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName)
@@ -88,7 +88,7 @@ class LetterLessonFirestore {
       final DocumentReference lessonRef = firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName);
@@ -128,7 +128,7 @@ class LetterLessonFirestore {
       final DocumentReference lessonRef = firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName);
@@ -160,7 +160,7 @@ class LetterLessonFirestore {
       final DocumentReference lessonRef = firestore
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons')
           .doc(lessonName);
@@ -195,7 +195,7 @@ class LetterLessonFirestore {
       final CollectionReference lessonsCollection = FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
-          .collection('letters')
+          .collection('numbers')
           .doc(locale)
           .collection('lessons');
 
@@ -216,30 +216,6 @@ class LetterLessonFirestore {
             'Lesson "$lessonName" and the next lesson unlocked successfully!');
       } else {
         print('Next lesson not found for "$lessonName".');
-      }
-    } catch (e) {
-      print('Error updating lesson data: $e');
-    }
-  }
-
-  Future<void> unlockFirstNumbersLesson(String locale) async {
-    try {
-      final CollectionReference firstNumbersLesson = FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection('numbers')
-          .doc(locale)
-          .collection('lessons');
-
-      QuerySnapshot querySnapshot =
-          await firstNumbersLesson.orderBy('name').limit(1).get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentReference firstLesson = querySnapshot.docs.first.reference;
-        await firstLesson.update({'isUnlocked': true});
-        print('First numbers lesson unlocked successfully.');
-      } else {
-        print('No query was returned. Unable to update any data.');
       }
     } catch (e) {
       print('Error updating lesson data: $e');
