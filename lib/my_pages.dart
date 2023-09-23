@@ -110,7 +110,6 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
         children: [
           SideMenu(
             style: SideMenuStyle(
-              displayMode: SideMenuDisplayMode.auto,
               hoverColor: Colors.black,
               selectedColor: Theme.of(context).primaryColor,
               selectedTitleTextStyle:
@@ -159,10 +158,6 @@ class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            // Notify when display mode changed
-            onDisplayModeChanged: (mode) {
-              print(mode);
-            },
             // List of SideMenuItem to show them on SideMenu
             items: items,
             footer: Padding(
