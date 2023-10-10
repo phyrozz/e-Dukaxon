@@ -186,9 +186,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person),
                         prefixIconColor: Colors.black,
-                        labelText: 'User Name',
+                        labelText: 'Username',
                       ),
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                     const SizedBox(height: 16.0),
                     TextField(
@@ -198,7 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         prefixIconColor: Colors.black,
                         labelText: 'Email',
                       ),
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                     const SizedBox(height: 16.0),
                     TextField(
@@ -220,7 +220,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                     const SizedBox(height: 16.0),
                     TextField(
@@ -231,7 +231,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         prefixIconColor: Colors.black,
                         labelText: 'Enter password again',
                       ),
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                     const SizedBox(height: 15.0),
                     ButtonBar(
@@ -245,7 +245,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           },
                         ),
                         ElevatedButton(
-                          child: const Text('Sign Up'),
+                          style: const ButtonStyle(
+                            backgroundColor:
+                                MaterialStatePropertyAll(Colors.green),
+                          ),
                           onPressed: () {
                             signUp(
                                 context,
@@ -254,6 +257,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 _passwordController.text,
                                 _confirmPasswordController.text);
                           },
+                          child: const Text('Sign Up'),
                         ),
                       ],
                     ),

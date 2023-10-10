@@ -144,22 +144,30 @@ class _LoginPageState extends State<LoginPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(),
                     Text(
-                      "Let's start learning!",
+                      "Welcome back!",
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
-                        fontSize: 48.0,
+                        fontSize: 42.0,
                         height: 1.2,
                       ),
                     ),
+                    SizedBox(
+                      height: 8,
+                    ),
                     Text(
-                      'eDukaxon v0.1.5 pre-release. For research uses only.',
-                      style: TextStyle(fontSize: 10.0),
+                      "Please log in to get started.",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 18.0,
+                        height: 1.2,
+                      ),
                     ),
                   ],
                 ),
@@ -169,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 70, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +193,8 @@ class _LoginPageState extends State<LoginPage> {
                             borderSide: BorderSide(color: Colors.white),
                           ),
                         ),
-                        style: const TextStyle(color: Colors.black),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ),
                     const SizedBox(height: 16.0),
@@ -202,14 +211,15 @@ class _LoginPageState extends State<LoginPage> {
                                 ? Icons.visibility
                                 : Icons.visibility_off),
                             onPressed: togglePasswordVisibility,
-                            color: Colors.black,
+                            color: Theme.of(context).primaryColorDark,
                           ),
                           alignLabelWithHint: false,
                           filled: true,
                         ),
                         keyboardType: TextInputType.visiblePassword,
                         textInputAction: TextInputAction.done,
-                        style: const TextStyle(color: Colors.black),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ),
                     const SizedBox(

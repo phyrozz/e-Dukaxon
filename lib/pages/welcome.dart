@@ -1,6 +1,8 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/loading.dart';
+import 'package:e_dukaxon/pages/login.dart';
+import 'package:e_dukaxon/route_anims/vertical_slide.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:e_dukaxon/auth.dart';
@@ -150,21 +152,43 @@ class _WelcomePageState extends State<WelcomePage> {
                   ElevatedButton(
                     onPressed: signInAnonymously,
                     child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      padding: EdgeInsets.symmetric(vertical: 5),
                       child: Text("Let's Go!"),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, '/login'),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 15),
-                      child: Text(
-                        "Log in",
-                        style: Theme.of(context).textTheme.bodySmall,
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already have an account? ',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ),
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            createRouteWithVerticalSlideAnimation(
+                                const LoginPage())),
+                        style: ButtonStyle(
+                          padding:
+                              const MaterialStatePropertyAll(EdgeInsets.zero),
+                          overlayColor:
+                              const MaterialStatePropertyAll(Color(0xFF3F2305)),
+                          foregroundColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Colors.white;
+                            }
+                            return const Color(0xFF3F2305);
+                          }),
+                        ),
+                        child: const Text(
+                          "Log in",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

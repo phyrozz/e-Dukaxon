@@ -62,14 +62,16 @@ class _MyProgressPageState extends State<MyProgressPage> {
     final traceLetterWrongs = await GameFirestore(userId: userId)
         .getGameScore(userId, "traceLetter", "noOfWrongs");
 
-    setState(() {
-      correctLetterGuess = letterGuessCorrects;
-      incorrectLetterGuess = letterGuessWrongs;
-      correctSoundQuiz = soundQuizCorrects;
-      incorrectSoundQuiz = soundQuizWrongs;
-      correctLetterTracing = traceLetterCorrects;
-      incorrectLetterTracing = traceLetterWrongs;
-    });
+    if (mounted) {
+      setState(() {
+        correctLetterGuess = letterGuessCorrects;
+        incorrectLetterGuess = letterGuessWrongs;
+        correctSoundQuiz = soundQuizCorrects;
+        incorrectSoundQuiz = soundQuizWrongs;
+        correctLetterTracing = traceLetterCorrects;
+        incorrectLetterTracing = traceLetterWrongs;
+      });
+    }
   }
 
   @override
