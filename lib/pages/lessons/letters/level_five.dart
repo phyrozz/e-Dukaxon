@@ -82,11 +82,12 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  LettersLevelSeven(lessonName: lessonName)));
     }
   }
 
@@ -213,7 +214,7 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFFF2EAD3),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         isDismissible: isPassed ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -317,7 +318,9 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                   },
                   child: CustomPaint(
                     painter: Painter(
-                        strokes: _strokes, letter: currentlyTracedLetter),
+                        strokes: _strokes,
+                        letter: currentlyTracedLetter,
+                        context: context),
                     size: Size.infinite,
                   ),
                 ),
@@ -369,14 +372,16 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
 
 class Painter extends CustomPainter {
   final String letter;
+  final BuildContext context;
   List<List<Offset>> strokes;
 
-  Painter({required this.strokes, required this.letter});
+  Painter({required this.strokes, required this.letter, required this.context});
 
   @override
   void paint(Canvas canvas, Size size) {
     // Draw the background color
-    Paint backgroundPaint = Paint()..color = const Color(0xFFF2EAD3);
+    Paint backgroundPaint = Paint()
+      ..color = Theme.of(context).scaffoldBackgroundColor;
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       backgroundPaint,
@@ -409,7 +414,7 @@ class Painter extends CustomPainter {
 
     // Draw the brush strokes
     Paint paint = Paint()
-      ..color = const Color(0xFF3F2305)
+      ..color = Theme.of(context).primaryColorDark
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 10.0;
 

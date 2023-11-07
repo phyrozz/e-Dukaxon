@@ -146,11 +146,12 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  LettersLevelFour(lessonName: lessonName)));
     }
   }
 
@@ -218,7 +219,7 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFFF2EAD3),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         isDismissible: isCorrect ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(

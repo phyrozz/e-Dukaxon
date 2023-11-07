@@ -6,6 +6,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: const Color.fromARGB(255, 255, 251, 238),
       primaryColorDark: const Color(0xFF3F2305),
+      primaryColorLight: const Color(0xFFDFD7BF),
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 255, 251, 238),
       textTheme: const TextTheme(
@@ -86,6 +87,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: const Color.fromARGB(255, 233, 245, 255),
       primaryColorDark: const Color.fromARGB(255, 8, 71, 180),
+      primaryColorLight: Color.fromARGB(255, 183, 223, 255),
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 233, 245, 255),
       textTheme: const TextTheme(
@@ -168,6 +170,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: const Color.fromARGB(255, 253, 244, 255),
       primaryColorDark: const Color.fromARGB(255, 87, 23, 99),
+      primaryColorLight: const Color.fromARGB(255, 248, 207, 255),
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 253, 244, 255),
       textTheme: const TextTheme(
@@ -250,6 +253,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: const Color.fromARGB(255, 231, 253, 255),
       primaryColorDark: const Color.fromARGB(255, 14, 137, 153),
+      primaryColorLight: Color.fromARGB(255, 148, 211, 219),
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 231, 253, 255),
       textTheme: const TextTheme(
@@ -332,6 +336,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: Colors.grey.shade900,
       primaryColorDark: Colors.black,
+      primaryColorLight: Colors.grey.shade800,
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: Colors.grey.shade900,
       textTheme: const TextTheme(
@@ -412,6 +417,7 @@ class AppThemes {
     return ThemeData(
       primaryColor: Colors.white,
       primaryColorDark: Colors.grey,
+      primaryColorLight: Colors.grey.shade200,
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: Colors.white,
       textTheme: const TextTheme(

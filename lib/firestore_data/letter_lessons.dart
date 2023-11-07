@@ -201,10 +201,11 @@ class LetterLessonFirestore {
 
       // Find the next lesson
       QuerySnapshot querySnapshot = await lessonsCollection
-          .where('name',
-              isGreaterThan:
-                  lessonName) // Find lessons with names greater than the current lesson
-          .orderBy('name')
+          .where('id',
+              isGreaterThan: // You can find the next lesson by "id" field
+                  lessonIdForName(
+                      lessonName)) // Define a function to get the ID for a given name
+          .orderBy('id')
           .limit(1)
           .get();
 
@@ -232,7 +233,7 @@ class LetterLessonFirestore {
           .collection('lessons');
 
       QuerySnapshot querySnapshot =
-          await firstNumbersLesson.orderBy('name').limit(1).get();
+          await firstNumbersLesson.orderBy('id').limit(1).get();
 
       if (querySnapshot.docs.isNotEmpty) {
         DocumentReference firstLesson = querySnapshot.docs.first.reference;
@@ -244,5 +245,17 @@ class LetterLessonFirestore {
     } catch (e) {
       print('Error updating lesson data: $e');
     }
+  }
+
+  int lessonIdForName(String lessonName) {
+    final Map<String, int> lessonNameToId = {
+      'Mm': 0,
+      'Ss': 1,
+      'Aa': 2,
+      'Ang': 3,
+      // Add more entries as needed
+    };
+
+    return lessonNameToId[lessonName] ?? -1;
   }
 }

@@ -18,6 +18,7 @@ class LettersResultPage extends StatefulWidget {
 }
 
 class _LettersResultPageState extends State<LettersResultPage> {
+  int totalScore = 0;
   int score = 0;
   int progress = 0;
   String uid = "";

@@ -69,6 +69,7 @@ class UserFirestore {
 
         // Extract only the necessary keys
         Map<String, dynamic> newData = {
+          'id': data['id'],
           'isUnlocked': data['isUnlocked'],
           'name': data['name'],
           'progress': data['progress'],

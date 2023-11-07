@@ -10,7 +10,6 @@ import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,10 +36,10 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
 
   @override
   void initState() {
+    super.initState();
     getLanguage().then((value) {
       getLevel1DataByName(widget.lessonName);
     });
-    super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -109,11 +108,12 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  LettersLevelTwo(lessonName: lessonName)));
     }
   }
 

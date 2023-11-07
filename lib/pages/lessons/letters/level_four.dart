@@ -101,11 +101,12 @@ class _LettersLevelFourState extends State<LettersLevelFour> {
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  LettersLevelFive(lessonName: lessonName)));
     }
   }
 

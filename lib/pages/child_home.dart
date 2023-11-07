@@ -6,6 +6,7 @@ import 'package:e_dukaxon/auth.dart';
 // import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
+import 'package:e_dukaxon/pages/assessment_questions/init.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/pages/lessons/numbers/level_one.dart';
 import 'package:e_dukaxon/pages/loading.dart';
@@ -74,9 +75,18 @@ class _ChildHomePageState extends State<ChildHomePage> {
           .collection('lessons')
           .get();
 
+      List<Map<String, dynamic>> lessonDataList = [];
+
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc
           in querySnapshot.docs) {
-        Map<String, dynamic> lessonData = doc.data();
+        lessonDataList.add(doc.data());
+      }
+
+      // Sort the lesson data list based on the "id" field
+      lessonDataList.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+      // Extract the sorted data into your lists
+      for (Map<String, dynamic> lessonData in lessonDataList) {
         letterNames.add(lessonData['name'] as String);
         unlockedLessons.add(lessonData['isUnlocked'] as bool);
         letterProgress.add(lessonData['progress'] as int);
@@ -249,7 +259,10 @@ class _ChildHomePageState extends State<ChildHomePage> {
     // Check if it's a new account
     if (await UserFirestore(userId: userId!).getIsNewAccount()) {
       // Show the assessment page
-      Navigator.pushReplacementNamed(context, '/assessment/init');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => InitAssessmentPage()));
     }
   }
 
@@ -377,28 +390,33 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             child: Container(
                                               width: 100.0,
                                               height: 100.0,
-                                              decoration: const BoxDecoration(
+                                              decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 boxShadow: [
                                                   BoxShadow(
                                                     blurRadius: 20,
-                                                    color: Color.fromARGB(
-                                                        255, 121, 74, 25),
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
                                                   ),
                                                 ],
-                                                color: Color(0xFFDFD7BF),
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
                                               ),
                                               child: CustomPaint(
                                                 painter:
                                                     CircularProgressBarPainter(
                                                         letterLessonProgress[
-                                                            index]),
+                                                            index],
+                                                        context),
                                                 child: Center(
                                                   child: Text(
                                                     '${letterLessonProgress[index]}%',
-                                                    style: const TextStyle(
-                                                      fontSize: 24.0,
-                                                      color: Color(0xFF3F2305),
+                                                    style: TextStyle(
+                                                      fontSize: 22.0,
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .labelMedium!
+                                                          .color,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
@@ -529,28 +547,33 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             child: Container(
                                               width: 100.0,
                                               height: 100.0,
-                                              decoration: const BoxDecoration(
+                                              decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 boxShadow: [
                                                   BoxShadow(
                                                     blurRadius: 20,
-                                                    color: Color.fromARGB(
-                                                        255, 121, 74, 25),
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
                                                   ),
                                                 ],
-                                                color: Color(0xFFDFD7BF),
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
                                               ),
                                               child: CustomPaint(
                                                 painter:
                                                     CircularProgressBarPainter(
                                                         numberLessonProgress[
-                                                            index]),
+                                                            index],
+                                                        context),
                                                 child: Center(
                                                   child: Text(
                                                     '${numberLessonProgress[index]}%',
-                                                    style: const TextStyle(
-                                                      fontSize: 24.0,
-                                                      color: Color(0xFF3F2305),
+                                                    style: TextStyle(
+                                                      fontSize: 22.0,
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .labelMedium!
+                                                          .color,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
@@ -671,22 +694,26 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                                       255, 121, 74, 25),
                                                   width: 10.0,
                                                 ),
-                                                boxShadow: const [
+                                                boxShadow: [
                                                   BoxShadow(
                                                     blurRadius: 20,
-                                                    color: Color.fromARGB(
-                                                        255, 121, 74, 25),
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
                                                   ),
                                                 ],
-                                                color: const Color(0xFFDFD7BF),
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
                                               ),
-                                              child: const Center(
+                                              child: Center(
                                                 child: Text(
                                                   '${75}%',
                                                   // '${progressPercentage.toStringAsFixed(0)}%',
                                                   style: TextStyle(
-                                                    fontSize: 24.0,
-                                                    color: Color(0xFF3F2305),
+                                                    fontSize: 22.0,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .labelMedium!
+                                                        .color,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -805,22 +832,26 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                                       255, 121, 74, 25),
                                                   width: 10.0,
                                                 ),
-                                                boxShadow: const [
+                                                boxShadow: [
                                                   BoxShadow(
                                                     blurRadius: 20,
-                                                    color: Color.fromARGB(
-                                                        255, 121, 74, 25),
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
                                                   ),
                                                 ],
-                                                color: const Color(0xFFDFD7BF),
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
                                               ),
-                                              child: const Center(
+                                              child: Center(
                                                 child: Text(
                                                   '${75}%',
                                                   // '${progressPercentage.toStringAsFixed(0)}%',
                                                   style: TextStyle(
-                                                    fontSize: 24.0,
-                                                    color: Color(0xFF3F2305),
+                                                    fontSize: 22.0,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .labelMedium!
+                                                        .color,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -848,19 +879,20 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
 class CircularProgressBarPainter extends CustomPainter {
   final int progress;
+  final BuildContext context;
 
-  CircularProgressBarPainter(this.progress);
+  CircularProgressBarPainter(this.progress, this.context);
 
   @override
   void paint(Canvas canvas, Size size) {
     const double strokeWidth = 10.0;
     final Paint borderPaint = Paint()
-      ..color = const Color.fromARGB(255, 121, 74, 25)
+      ..color = Theme.of(context).primaryColorDark
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 
     final Paint progressPaint = Paint()
-      ..color = const Color(0xFFDFD7BF)
+      ..color = Theme.of(context).primaryColorLight
       ..style = PaintingStyle.fill;
 
     final double center = size.width / 2;

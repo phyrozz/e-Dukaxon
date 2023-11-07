@@ -154,11 +154,12 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = true;
-        });
-      }
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  LettersLevelThree(lessonName: lessonName)));
     }
   }
 
@@ -251,7 +252,7 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFFF2EAD3),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         isDismissible: isCorrect ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -362,10 +363,12 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
                                     label: const Text(''),
                                     icon: const Icon(Icons.volume_up),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedSound ==
-                                              entry.value
-                                          ? const Color.fromARGB(255, 27, 15, 2)
-                                          : null,
+                                      backgroundColor:
+                                          selectedSound == entry.value
+                                              ? Theme.of(context)
+                                                  .primaryColorDark
+                                                  .withAlpha(100)
+                                              : null,
                                     ),
                                   ),
                                 )
