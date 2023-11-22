@@ -1,12 +1,9 @@
-// import 'dart:convert';
-// import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
-import 'package:e_dukaxon/pages/assessment_questions/init.dart';
+import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/pages/lessons/numbers/level_one.dart';
 import 'package:e_dukaxon/pages/loading.dart';
@@ -14,9 +11,6 @@ import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter/services.dart';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:e_dukaxon/assessment_data.dart';
 
 class ChildHomePage extends StatefulWidget {
   final bool isParentMode;
@@ -36,16 +30,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
   List unlockedNumberLessons = [];
   bool isEnglish = true;
   bool isLoading = true;
-
-  // Future<void> initializeGameDataOnFirestore() async {
-  //   String? user = Auth().getCurrentUserId();
-  //   await FirebaseFirestore.instance.collection('soundLessons').doc(user).set({
-  //     "lessonOne": {
-  //       "progress": 0,
-  //       "lessonStartedAt": null,
-  //     }
-  //   });
-  // }
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -119,9 +103,16 @@ class _ChildHomePageState extends State<ChildHomePage> {
           .collection('lessons')
           .get();
 
+      List<Map<String, dynamic>> lessonDataList = [];
+
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc
           in querySnapshot.docs) {
-        Map<String, dynamic> lessonData = doc.data();
+        lessonDataList.add(doc.data());
+      }
+
+      lessonDataList.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+      for (Map<String, dynamic> lessonData in lessonDataList) {
         numberNames.add(lessonData['name'] as String);
         unlockedLessons.add(lessonData['isUnlocked'] as bool);
         numberProgress.add(lessonData['progress'] as int);
@@ -233,20 +224,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
               containerPosition = Alignment.bottomCenter;
               containerOpacity = 1.0;
             }));
-
-    // if (!isParent) {
-    //   SystemChrome.setPreferredOrientations([
-    //     DeviceOrientation.landscapeLeft,
-    //     DeviceOrientation.landscapeRight,
-    //   ]);
-    // } else {
-    //   SystemChrome.setPreferredOrientations([
-    //     DeviceOrientation.landscapeLeft,
-    //     DeviceOrientation.landscapeRight,
-    //     DeviceOrientation.portraitUp,
-    //     DeviceOrientation.portraitDown
-    //   ]);
-    // }
   }
 
   Future<void> checkNewAccountAndNavigate() async {
@@ -262,7 +239,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) => InitAssessmentPage()));
+              builder: (BuildContext context) => const LocaleSelectPage()));
     }
   }
 
@@ -279,7 +256,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
             body: CustomScrollView(
               slivers: [
                 WelcomeCustomAppBar(
-                    text: isEnglish ? "Let's play!" : "Tayo'y maglaro!",
+                    text: isEnglish ? "Let's learn!" : "Tayo'y mag-aral!",
                     isParentMode: widget.isParentMode),
                 SliverToBoxAdapter(
                   child: SizedBox(
@@ -300,7 +277,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                             child: Text(
-                              isEnglish ? 'Letters' : 'Mga Letra',
+                              isEnglish ? 'Letters' : 'Mga Titik',
                               style: const TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold),
                             ),
@@ -334,6 +311,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                       .resetScore(letterLessonNames[index],
                                           isEnglish ? "en" : "ph");
                                   // resetScore(letterLessonNames[index]);
+                                  if (!context.mounted) return;
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -491,6 +469,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                       .resetScore(numberLessonNames[index],
                                           isEnglish ? "en" : "ph");
                                   // resetScore(letterLessonNames[index]);
+                                  if (!context.mounted) return;
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -887,7 +866,7 @@ class CircularProgressBarPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const double strokeWidth = 10.0;
     final Paint borderPaint = Paint()
-      ..color = Theme.of(context).primaryColorDark
+      ..color = Theme.of(context).focusColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
 

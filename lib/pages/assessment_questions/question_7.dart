@@ -36,16 +36,24 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
         padding: const EdgeInsets.all(18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(),
+            const LinearProgressIndicator(
+              value: 7 / 7,
+            ),
+            Text(
+              isEnglish ? 'Question #7' : 'Tanong #7',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
             Center(
               child: Column(children: [
                 Text(
                   isEnglish
                       ? "Alright, last one. Did you find this short quiz difficult to answer?"
                       : "Okay, huling tanong. Nahirapan ka bang sagutin itong quiz?",
-                  style: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 32.0, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(
                   height: 15,
@@ -55,6 +63,8 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
                   children: [
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.green),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
@@ -88,6 +98,7 @@ class _BangorQuestionSevenState extends State<BangorQuestionSeven> {
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(Colors.red),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {

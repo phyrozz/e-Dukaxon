@@ -41,7 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Future<void> signInAnonymously() async {
     try {
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           opaque: false, // Make the loading page non-opaque
           pageBuilder: (context, _, __) {
@@ -57,6 +57,7 @@ class _WelcomePageState extends State<WelcomePage> {
       UserFirestore(userId: userId).initializeLessons("letters", "en");
       UserFirestore(userId: userId).initializeLessons("letters", "ph");
       UserFirestore(userId: userId).initializeLessons("numbers", "en");
+      UserFirestore(userId: userId).initializeLessons("numbers", "ph");
 
       // Initialize preference values
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -65,7 +66,11 @@ class _WelcomePageState extends State<WelcomePage> {
       // initLetterLessonData();
     } on Exception catch (e) {
       // Remove the loading widget
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => const WelcomePage(),
+        ),
+      );
 
       setState(() {
         errorMessage = e.toString();
@@ -169,19 +174,8 @@ class _WelcomePageState extends State<WelcomePage> {
                             context,
                             createRouteWithVerticalSlideAnimation(
                                 const LoginPage())),
-                        style: ButtonStyle(
-                          padding:
-                              const MaterialStatePropertyAll(EdgeInsets.zero),
-                          overlayColor:
-                              const MaterialStatePropertyAll(Color(0xFF3F2305)),
-                          foregroundColor:
-                              MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed)) {
-                              return Colors.white;
-                            }
-                            return const Color(0xFF3F2305);
-                          }),
+                        style: const ButtonStyle(
+                          padding: MaterialStatePropertyAll(EdgeInsets.zero),
                         ),
                         child: const Text(
                           "Log in",

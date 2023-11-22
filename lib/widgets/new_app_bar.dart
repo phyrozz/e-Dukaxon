@@ -24,16 +24,32 @@ class WelcomeCustomAppBar extends StatefulWidget {
 class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
   bool isLoggedIn = false;
   bool isLoading = true;
+  bool isParentMode = true;
 
   @override
   void initState() {
-    getUserAccountData();
+    getUserAccountData().then((_) => getParentModePreferences());
     super.initState();
   }
 
   Future<void> setParentModePreferences(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isParentMode', value);
+  }
+
+  Future<void> getParentModePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? value = prefs.getBool('isParentMode');
+
+    if (value != null) {
+      setState(() {
+        if (value) {
+          isParentMode = true;
+        } else {
+          isParentMode = false;
+        }
+      });
+    }
   }
 
   Future<void> getUserAccountData() async {
@@ -56,18 +72,21 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
   }
 
   Widget _menuButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        if (widget.isParentMode) {
-          _showMenuDialog(context);
-        } else {
-          Navigator.push(context,
-              createRouteWithHorizontalSlideAnimation(const PinAccessPage()));
-        }
-      },
-      icon: const Icon(
-        Icons.person,
-        size: 30,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: IconButton(
+        onPressed: () {
+          if (widget.isParentMode) {
+            _showMenuDialog(context);
+          } else {
+            Navigator.push(context,
+                createRouteWithHorizontalSlideAnimation(const PinAccessPage()));
+          }
+        },
+        icon: Icon(
+          isParentMode ? Icons.settings : Icons.admin_panel_settings_rounded,
+          size: 40,
+        ),
       ),
     );
   }

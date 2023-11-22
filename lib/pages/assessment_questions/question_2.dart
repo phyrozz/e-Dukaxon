@@ -1,4 +1,3 @@
-
 import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_3.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
@@ -37,16 +36,23 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
         padding: const EdgeInsets.all(18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(),
+            const LinearProgressIndicator(
+              value: 2 / 7,
+            ),
+            Text(
+              isEnglish ? 'Question #2' : 'Tanong #2',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
             Center(
               child: Column(children: [
                 Text(
                   isEnglish
                       ? "Does spelling words fluently trouble you?"
                       : "Nahihirapan ka bang mag-spell ng mga salita?",
-                  style: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 32.0, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -57,6 +63,8 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
                   children: [
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.green),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
@@ -90,6 +98,7 @@ class _BangorQuestionTwoState extends State<BangorQuestionTwo> {
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(Colors.red),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {

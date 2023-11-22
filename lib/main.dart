@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
         future: getColorScheme(),
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            print('Snapshot data: ${snapshot.data}');
+            // print('Snapshot data: ${snapshot.data}');
             // Set the color scheme based on the selected color
             final ThemeData theme = selectTheme(snapshot.data);
 
@@ -100,14 +100,14 @@ class _MyAppState extends State<MyApp> {
               // },
             );
           } else if (snapshot.hasError) {
-            print('An error has occured while loading the app.');
+            // print('An error has occured while loading the app.');
             return const MaterialApp(
               home: Scaffold(
                 body: LoadingPage(),
               ),
             );
           } else {
-            print('Loading...');
+            // print('Loading...');
             return const MaterialApp(
               home: Scaffold(
                 body: LoadingPage(),
@@ -117,11 +117,11 @@ class _MyAppState extends State<MyApp> {
         });
   }
 
-  ThemeData selectTheme(String? _selectedColor) {
+  ThemeData selectTheme(String? selectedColor) {
     final colorSchemeProvider = Provider.of<ColorSchemeProvider>(context);
-    _selectedColor = colorSchemeProvider.selectedColor;
+    selectedColor = colorSchemeProvider.selectedColor;
 
-    switch (_selectedColor) {
+    switch (selectedColor) {
       case 'Blue':
         return AppThemes.blueTheme;
       case 'Purple':
@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> {
   // Load the selected color scheme from SharedPreferences
   Future<String> getColorScheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print('colorScheme\'s value: ${prefs.getString('colorScheme')}');
+    // print('colorScheme\'s value: ${prefs.getString('colorScheme')}');
     return prefs.getString('colorScheme') ?? 'Default';
   }
 }

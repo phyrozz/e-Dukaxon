@@ -77,38 +77,41 @@ class _ParentOrNotPageState extends State<ParentOrNotPage> {
                   children: [
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.green),
                           padding: MaterialStatePropertyAll(
                               EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 20))),
-                      onPressed: () async {
+                      onPressed: () {
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        await updateIsParent(false)
-                            .then((value) => setParentModePreferences(false));
+                        updateIsParent(true);
+                        setParentModePreferences(true);
                       },
-                      child: Text(isEnglish ? 'No' : 'Hindi'),
+                      child: Text(isEnglish ? 'Yes' : 'Opo'),
                     ),
                     const SizedBox(
                       height: 12,
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(Colors.red),
                           padding: MaterialStatePropertyAll(
                               EdgeInsets.symmetric(
                                   horizontal: 40, vertical: 20))),
-                      onPressed: () async {
+                      onPressed: () {
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
                                 const AgeSelectPage()));
 
-                        await updateIsParent(true)
-                            .then((value) => setParentModePreferences(true));
+                        updateIsParent(false);
+                        setParentModePreferences(false);
                       },
-                      child: Text(isEnglish ? 'Yes' : 'Opo'),
+                      child: Text(isEnglish ? 'No' : 'Hindi'),
                     ),
                   ],
                 ),

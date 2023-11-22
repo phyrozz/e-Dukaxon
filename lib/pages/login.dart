@@ -1,3 +1,5 @@
+import 'package:e_dukaxon/homepage_tree.dart';
+import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/volume_button.dart';
@@ -39,24 +41,18 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       // Show the loading widget
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: Color(0xFF3F2305),
-                ),
-                SizedBox(height: 16),
-                Text("Signing in"),
-              ],
-            ),
-          );
-        },
-      );
+      // Navigator.pushReplacement(context,
+      //   PageRouteBuilder(
+      //     opaque: false,
+      //     pageBuilder: (context, _, __) {
+      //       return const LoadingPage();
+      //     },
+      //   ),
+      // );
+      Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+              builder: (BuildContext context) => const LoadingPage()));
 
       // Check if the input matches a username
       String email = _controllerEmailorUsername.text;
@@ -91,8 +87,11 @@ class _LoginPageState extends State<LoginPage> {
           message: 'No user found with the provided email or username.',
         );
       }
-
-      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute<void>(
+              builder: (BuildContext context) => const HomePageTree()),
+          (route) => false);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
 

@@ -44,8 +44,9 @@ class _VolumeButtonState extends State<VolumeButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-        backgroundColor:
-            _isSpeaking ? const Color(0xFF160D02) : const Color(0xFF3F2305),
+        backgroundColor: _isSpeaking
+            ? Theme.of(context).focusColor
+            : Theme.of(context).primaryColorDark,
         onPressed: () {
           setState(() {
             _isMuted = !_isMuted;

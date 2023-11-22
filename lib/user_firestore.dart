@@ -36,6 +36,7 @@ class UserFirestore {
         'isNewAccount': true,
         'isParent': true,
         'hasDyslexia': true,
+        'name': '',
       });
     } catch (e) {
       print('Error: $e');

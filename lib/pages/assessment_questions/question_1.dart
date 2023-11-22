@@ -1,4 +1,3 @@
-
 import 'package:e_dukaxon/assessment_data.dart';
 import 'package:e_dukaxon/data/assessment.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
@@ -38,16 +37,23 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
         padding: const EdgeInsets.all(18),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(),
+            const LinearProgressIndicator(
+              value: 1 / 7,
+            ),
+            Text(
+              isEnglish ? 'Question #1' : 'Tanong #1',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
             Center(
               child: Column(children: [
                 Text(
                   isEnglish
                       ? "Do you find it difficult to determine left and right directions?"
                       : "Nahihirapan ka bang intindihin ang pinagkaiba ng kaliwa at kanan?",
-                  style: const TextStyle(fontSize: 28.0, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 28.0, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -58,6 +64,8 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                   children: [
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Colors.green),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
@@ -91,6 +99,7 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(Colors.red),
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {

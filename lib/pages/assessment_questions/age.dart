@@ -30,8 +30,8 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   @override
   void initState() {
     fetchPrefValues()
-        .then((value) => fetchIsParent())
-        .then((value) => getLanguage());
+        .then((value) => getLanguage())
+        .then((value) => fetchIsParent());
     super.initState();
     setState(() {
       isLoading = false;
@@ -58,7 +58,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
 
   void fetchIsParent() {
     // Access isParent using instance name
-    if (!isParent) {
+    if (isParent) {
       setState(() {
         _currentAge = '3';
         ageOptions = List.generate(15, (index) => (index + 3).toString());
@@ -67,7 +67,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
       setState(() {
         _currentAge = '3';
         ageOptions = List.generate(33, (index) => (index + 3).toString())
-          ..add(isEnglish ? 'Older than 35' : 'Mas matanda sa 35');
+          ..add(isEnglish ? 'Older than 35' : '35 pataas');
       });
     }
   }
@@ -128,10 +128,10 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = isParent
-        ? (isEnglish ? "What is your age?" : "Ano ang iyong edad?")
-        : (isEnglish
+        ? (isEnglish
             ? "Please enter your child's age"
-            : "Ano ang edad ng inyong anak?");
+            : "Ano ang edad ng inyong anak?")
+        : (isEnglish ? "What is your age?" : "Ano ang iyong edad?");
 
     return Scaffold(
       body: Padding(
@@ -167,7 +167,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           tileColor: _currentAge == age
-                              ? const Color(0xFF3F2305)
+                              ? Theme.of(context).focusColor
                               : Colors.transparent,
                           title: Text(
                             age,
@@ -211,6 +211,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                 ),
                 ElevatedButton(
                   style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.green),
                     padding: MaterialStatePropertyAll(
                       EdgeInsets.fromLTRB(35, 20, 35, 20),
                     ),
@@ -234,7 +235,7 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                     storeDyslexiaResult();
                     await updateIsNewAccount(false, _currentAge);
                   },
-                  child: Text(isEnglish ? 'Next' : 'Susunod'),
+                  child: Text(isEnglish ? 'Done' : 'Tapos'),
                 ),
               ],
             ),

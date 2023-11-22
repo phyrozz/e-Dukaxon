@@ -46,6 +46,36 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       );
 
+      // Check if the username already exists in the Firestore
+      // There shouldn't be the same username in the database
+      QuerySnapshot<Map<String, dynamic>> usernameCheck =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('username', isEqualTo: username)
+              .get();
+      QuerySnapshot<Map<String, dynamic>> emailCheck = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (usernameCheck.docs.isNotEmpty) {
+        if (!context.mounted) return;
+        Navigator.pop(context);
+        _showErrorDialog(
+            context, "Username already exists. Please choose a different one.");
+        print('Username already exists. Choose a different one.');
+        return;
+      }
+      if (emailCheck.docs.isNotEmpty) {
+        if (!context.mounted) return;
+        Navigator.pop(context);
+        _showErrorDialog(context,
+            "Email address already exists. Please choose a different one.");
+        print('Email address already exists. Choose a different one.');
+        return;
+      }
+
       // // Show the loading widget
       // showDialog(
       //   context: context,
@@ -283,10 +313,19 @@ class _SignUpPageState extends State<SignUpPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Hmm...'),
+          title: Text(
+            'Hmm...',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+          ),
           content: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(errorMessage),
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              errorMessage,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
           actions: [
             ElevatedButton(
