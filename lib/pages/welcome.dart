@@ -7,6 +7,7 @@ import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/speak_text.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter/services.dart';
 
@@ -18,10 +19,14 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  late int selectedPage;
+  late PageController welcomePages;
   String? errorMessage = '';
 
   @override
   void initState() {
+    selectedPage = 0;
+    welcomePages = PageController(initialPage: selectedPage);
     super.initState();
   }
 
@@ -85,6 +90,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void dispose() {
+    welcomePages.dispose();
     super.dispose();
   }
 
@@ -96,57 +102,186 @@ class _WelcomePageState extends State<WelcomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: SafeArea(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 30),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 12, 30, 12),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/app-logo.png',
-                              width: 150,
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView(
+                    controller: welcomePages,
+                    onPageChanged: (page) {
+                      setState(() {
+                        selectedPage = page;
+                      });
+                    },
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 30),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 12, 30, 12),
+                                  child: Center(
+                                    child: Image.asset(
+                                      'assets/images/app-logo.png',
+                                      width: 150,
+                                    ),
+                                  ),
+                                ),
+                                const Text(
+                                  "Let's start learning!",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 28.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  "eDukaxon provides an amazing learning platform for dyslexics of all ages. Get started by tapping the button on the right!",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 12.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                            const SizedBox(),
+                          ],
                         ),
-                        const Text(
-                          "Let's start learning!",
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 28.0,
-                            height: 1.2,
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 30),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 12, 30, 12),
+                                  child: Center(
+                                    child: Image.asset(
+                                      'assets/images/welcome2.png',
+                                      width: 150,
+                                    ),
+                                  ),
+                                ),
+                                const Text(
+                                  "Learn everywhere you go.",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 24.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  "It's already an app that's right on your phone, so you can learn and play wherever you are!",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 12.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 30),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 12, 30, 12),
+                                  child: Center(
+                                    child: Image.asset(
+                                      'assets/images/welcome3.png',
+                                      width: 150,
+                                    ),
+                                  ),
+                                ),
+                                const Text(
+                                  "For dyslexics and for everyone.",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 24.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                const Text(
+                                  "eDukaxon isn't just made for those who need to improve their reading skills, it's also for everyone who loves to learn.",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 12.0,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(),
+                          ],
                         ),
-                        const Text(
-                          "eDukaxon provides an amazing learning platform for dyslexics of all ages. Get started by tapping the button on the right!",
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 12.0,
-                            height: 1.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Text(
-                      'eDukaxon v0.2.2 pre-release. For research uses only.',
-                      style: TextStyle(fontSize: 8.0),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: PageViewDotIndicator(
+                    currentItem: selectedPage,
+                    count: 3,
+                    unselectedColor: Theme.of(context).primaryColorLight,
+                    selectedColor: Theme.of(context).primaryColorDark,
+                    duration: const Duration(milliseconds: 200),
+                    boxShape: BoxShape.circle,
+                    onItemClicked: (index) {
+                      welcomePages.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
             ),
           ),
           Expanded(

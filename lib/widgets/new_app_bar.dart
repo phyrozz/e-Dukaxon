@@ -243,6 +243,18 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
           child: _menuButton(context),
         ),
       ],
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).primaryColorLight,
+              Colors.white.withOpacity(0.0),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

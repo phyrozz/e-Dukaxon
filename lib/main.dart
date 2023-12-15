@@ -37,8 +37,12 @@ void main() async {
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight])
       .then((value) => runApp(
-            ChangeNotifierProvider(
-              create: (context) => ColorSchemeProvider(),
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => ColorSchemeProvider(),
+                ),
+              ],
               child: const MyApp(),
             ),
           ));

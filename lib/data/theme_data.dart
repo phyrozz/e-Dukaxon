@@ -552,6 +552,7 @@ class AppThemes {
 
 class ColorSchemeProvider extends ChangeNotifier {
   late String _selectedColor = "Default";
+  late String _selectedBgImage = "assets/images/bg_brown.png";
 
   ColorSchemeProvider() {
     // Initialize with the default color scheme or the one from SharedPreferences
@@ -566,12 +567,18 @@ class ColorSchemeProvider extends ChangeNotifier {
   }
 
   String get selectedColor => _selectedColor;
+  String get selectedBgImage => _selectedBgImage;
 
   set selectedColor(String color) {
     _selectedColor = color;
     // Save to SharedPreferences
     _saveSelectedColor();
     // Notify listeners to update widgets using this provider
+    notifyListeners();
+  }
+
+  set selectedBgImage(String bgImage) {
+    _selectedBgImage = bgImage;
     notifyListeners();
   }
 

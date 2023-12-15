@@ -1,4 +1,5 @@
 import 'package:e_dukaxon/data/theme_data.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/widgets/back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,13 @@ class _SettingsPageState extends State<SettingsPage> {
       selectedColorScheme = colorScheme;
       saveColorScheme(selectedColorScheme);
     });
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const HomePageTree(),
+      ),
+    );
   }
 
   @override

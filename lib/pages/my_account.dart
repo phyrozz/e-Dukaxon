@@ -22,19 +22,20 @@ class _MyAccountPageState extends State<MyAccountPage> {
   String email = "";
   String userName = "";
   String name = "";
-  String age = "";
+  String age = "3";
   bool isParent = true;
   bool isLoading = true;
   bool isParentMode = false;
   bool isOnEditMode = false;
+  bool isEnglish = true;
 
   final TextEditingController editUserName = TextEditingController();
-  final TextEditingController editAge = TextEditingController();
   final TextEditingController editName = TextEditingController();
   var editAccountOwner = [
     "Parent",
     "Adult",
   ];
+  List<String> ageOptions = [];
   bool validateUserName = false;
 
   Future<void> getParentModeValue() async {
@@ -75,6 +76,28 @@ class _MyAccountPageState extends State<MyAccountPage> {
       print("User ID is null or empty.");
       setState(() {
         isLoading = false;
+      });
+    }
+  }
+
+  Future<void> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnglish = prefs.getBool('isEnglish') ?? true;
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
+  }
+
+  void fetchAgeOptions() {
+    if (!isParent) {
+      setState(() {
+        ageOptions = List.generate(15, (index) => (index + 3).toString());
+      });
+    } else {
+      setState(() {
+        ageOptions = List.generate(33, (index) => (index + 3).toString())
+          ..add(isEnglish ? 'Older than 35' : '35 pataas');
       });
     }
   }
@@ -263,10 +286,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
           content: editDialogContent(context, content, name),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            TextButton(
               onPressed: () async {
                 switch (name) {
                   case "userName":
@@ -278,7 +297,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             .get();
 
                     if (usernameCheck.docs.isNotEmpty) {
-                      // Username already exists, handle accordingly
+                      // Username already exists
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -300,10 +319,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     Navigator.pop(context);
                     break;
                   case "age":
-                    setState(() {
-                      age = editAge.text;
-                    });
-                    updateProfile(userId, 'age', editAge.text);
+                    updateProfile(userId, 'age', age);
                     if (!context.mounted) return;
                     Navigator.pop(context);
                     break;
@@ -349,15 +365,27 @@ class _MyAccountPageState extends State<MyAccountPage> {
           style: const TextStyle(color: Colors.black, fontSize: 16),
         );
       case "age":
-        return TextField(
-          controller: editAge,
-          decoration: InputDecoration(
-            hintText: content,
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
-            ),
+        return DropdownButton(
+          value: age,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: ageOptions.map((String items) {
+            return DropdownMenuItem(value: items, child: Text(items));
+          }).toList(),
+          style: TextStyle(
+            color: Theme.of(context).focusColor,
+            fontFamily: 'OpenDyslexic',
+            fontSize: 18,
           ),
-          style: const TextStyle(color: Colors.black, fontSize: 16),
+          elevation: 16,
+          underline: Container(
+            height: 2,
+            color: Theme.of(context).primaryColorDark,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              age = newValue!;
+            });
+          },
         );
       case "name":
         return TextField(
@@ -382,12 +410,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
             fontFamily: 'OpenDyslexic',
             fontSize: 18,
           ),
-          onChanged: (String? newValue) {
+          underline: Container(
+            height: 2,
+            color: Theme.of(context).primaryColorDark,
+          ),
+          elevation: 16,
+          onChanged: (String? selectedValue) {
             setState(() {
-              if (isParent) {
-                isParent = false;
-              } else {
+              if (selectedValue == "Parent") {
+                fetchAgeOptions();
+                age = '3';
                 isParent = true;
+              } else {
+                fetchAgeOptions();
+                age = '3';
+                isParent = false;
               }
             });
           },
@@ -414,7 +451,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   void initState() {
-    getParentModeValue().then((value) => getUserAccountData());
+    getLanguage()
+        .then((value) => getUserAccountData())
+        .then((value) => getParentModeValue())
+        .then((value) => fetchAgeOptions());
     super.initState();
   }
 
@@ -458,7 +498,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
               ? CustomScrollView(
                   slivers: [
                     WelcomeCustomAppBar(
-                        text: "My Account", isParentMode: isParentMode),
+                        text: isEnglish ? "My Account" : "Aking Account",
+                        isParentMode: isParentMode),
                     SliverFillRemaining(
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -515,7 +556,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
               : CustomScrollView(
                   slivers: [
                     WelcomeCustomAppBar(
-                        text: "My Account", isParentMode: isParentMode),
+                        text: isEnglish ? "My Account" : "Aking Account",
+                        isParentMode: isParentMode),
                     SliverList(
                       delegate: SliverChildListDelegate.fixed([
                         Padding(
@@ -536,18 +578,26 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                   icon: Icon(isOnEditMode
                                       ? Icons.check_rounded
                                       : Icons.edit),
-                                  label: Text(isOnEditMode ? 'Done' : 'Edit')),
+                                  label: Text(isOnEditMode
+                                      ? (isEnglish ? 'Done' : 'Tapos')
+                                      : (isEnglish ? 'Edit' : 'I-edit'))),
                               const SizedBox(
                                 width: 18,
                               ),
                               Text(
-                                isOnEditMode ? 'Choose a card to edit' : '',
+                                isOnEditMode
+                                    ? (isEnglish
+                                        ? 'Choose a card to edit'
+                                        : 'Pumili ng card na ieedit')
+                                    : '',
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],
                           ),
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: Column(
@@ -628,7 +678,11 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                         ),
                                       ),
                                       title: Text(
-                                        isParent ? "Child's age" : "Age",
+                                        isParent
+                                            ? (isEnglish
+                                                ? "Child's age"
+                                                : "Edad ng bata")
+                                            : (isEnglish ? "Age" : "Edad"),
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleSmall,
@@ -664,7 +718,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                         ),
                                       ),
                                       title: Text(
-                                        "Name",
+                                        isEnglish ? "Name" : "Pangalan",
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleSmall,
@@ -691,7 +745,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                             ),
                                           ),
                                           title: Text(
-                                            "Achievements",
+                                            isEnglish
+                                                ? "Achievements"
+                                                : "Mga Tagumpay",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .titleSmall,
@@ -723,13 +779,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                         ),
                                       ),
                                       title: Text(
-                                        "Account Owner",
+                                        isEnglish
+                                            ? "Account Owner"
+                                            : "May-ari ng Account",
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleSmall,
                                       ),
                                       subtitle: Text(
-                                        isParent ? 'Parent' : 'Adult',
+                                        isParent
+                                            ? isEnglish
+                                                ? 'Parent'
+                                                : 'Magulang'
+                                            : isEnglish
+                                                ? 'Adult'
+                                                : 'Hustong Gulang',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall,

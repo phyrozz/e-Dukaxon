@@ -1,5 +1,6 @@
 import 'package:e_dukaxon/pages/games/letter_guess.dart';
 import 'package:e_dukaxon/pages/games/sound_quiz.dart';
+import 'package:e_dukaxon/pages/games/story_building.dart';
 import 'package:e_dukaxon/pages/games/trace_letter.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
@@ -63,6 +64,11 @@ class _GamesPageState extends State<GamesPage> {
       iconImageUrl: 'assets/images/letter_guess_icon.png',
       routePage: LetterGuessPage(),
     ),
+    const Button(
+      title: 'Story Building',
+      iconImageUrl: 'assets/images/story_building_icon.png',
+      routePage: StoryBuildingGame(),
+    ),
     // Add more game buttons as needed
   ];
 
@@ -76,7 +82,25 @@ class _GamesPageState extends State<GamesPage> {
                 WelcomeCustomAppBar(
                     text: isEnglish ? "Games" : "Mga Laro",
                     isParentMode: isParentMode),
-                SliverList(delegate: SliverChildListDelegate(gameButtons)),
+                // SliverList(delegate: SliverChildListDelegate(gameButtons)),
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 250.0,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0,
+                    childAspectRatio: 1.0,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      return Button(
+                        title: gameButtons[index].title,
+                        iconImageUrl: gameButtons[index].iconImageUrl,
+                        routePage: gameButtons[index].routePage,
+                      );
+                    },
+                    childCount: gameButtons.length,
+                  ),
+                ),
               ],
             ),
     );
@@ -117,55 +141,53 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: InkWell(
-        onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => widget.routePage)),
-        child: AnimatedOpacity(
-          opacity: containerOpacity,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOutCubic,
-          child: Container(
-            decoration: BoxDecoration(
+    return InkWell(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => widget.routePage)),
+      child: AnimatedOpacity(
+        opacity: containerOpacity,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOutCubic,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Card(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Row(
-                children: [
-                  AnimatedAlign(
-                    alignment: containerPosition,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(),
+                AnimatedAlign(
+                  alignment: containerPosition,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOutCubic,
+                  child: AnimatedOpacity(
+                    opacity: containerOpacity,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOutCubic,
-                    child: AnimatedOpacity(
-                      opacity: containerOpacity,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOutCubic,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Container(
-                          width: 60.0,
-                          height: 60.0,
-                          child: Image.asset(widget.iconImageUrl),
-                        ),
+                    child: Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 10,
+                        height: MediaQuery.of(context).size.width / 10,
+                        child: Image.asset(widget.iconImageUrl),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      widget.title,
-                      style:
-                          const TextStyle(fontSize: 18.0, color: Colors.white),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(fontSize: 14.0, color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

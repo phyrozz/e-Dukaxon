@@ -4,6 +4,8 @@
 // The rest are quiz-type games that the user must answer to proceed to the next level
 // With the exception of level 5, which is a letter-tracing quiz.
 
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:convert';
 import 'dart:io';
 

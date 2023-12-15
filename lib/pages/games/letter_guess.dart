@@ -20,6 +20,8 @@ class LetterGuessPage extends StatefulWidget {
 class _LetterGuessPageState extends State<LetterGuessPage> {
   String levelDescription = "";
   String uid = "";
+
+  // TODO: Store these lists on Firestore and retrieve them here
   List<dynamic> correctAnswers = [];
   List<String> letters = ['Aa', 'Bb', 'Cc', 'Dd', 'Ee'];
   List<String> images = [
@@ -187,7 +189,7 @@ class _LetterGuessPageState extends State<LetterGuessPage> {
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFFF2EAD3),
+        backgroundColor: Theme.of(context).primaryColorLight,
         isDismissible: isCorrect ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(

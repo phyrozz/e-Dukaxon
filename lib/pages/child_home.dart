@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/data/theme_data.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
@@ -10,6 +11,7 @@ import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChildHomePage extends StatefulWidget {
@@ -30,16 +32,61 @@ class _ChildHomePageState extends State<ChildHomePage> {
   List unlockedNumberLessons = [];
   bool isEnglish = true;
   bool isLoading = true;
+  String currentColorScheme = "Default";
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    final locale = prefs.getBool('isEnglish');
+    final locale = prefs.getBool('isEnglish') ?? true;
 
     if (mounted) {
       setState(() {
-        isEnglish = locale!;
+        isEnglish = locale;
       });
     }
+  }
+
+  Future<void> getColorScheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final colorScheme = prefs.getString('colorScheme') ?? "Default";
+
+    onColorSchemeSelected(colorScheme);
+
+    if (mounted) {
+      setState(() {
+        currentColorScheme = colorScheme;
+      });
+    }
+  }
+
+  String setBackgroundByColorScheme(String currentColorScheme) {
+    final colorSchemeProvider = Provider.of<ColorSchemeProvider>(context);
+    currentColorScheme = colorSchemeProvider.selectedColor;
+
+    switch (currentColorScheme) {
+      case "Blue":
+        return "assets/images/bg_blue.png";
+      case "Purple":
+        return "assets/images/bg_purple.png";
+      case "Cyan":
+        return "assets/images/bg_cyan.png";
+      case "Black":
+        return "assets/images/bg_dark.png";
+      case "White":
+        return "assets/images/bg_light.png";
+      default:
+        return "assets/images/bg_brown.png";
+    }
+  }
+
+  // Handle color scheme selection
+  void onColorSchemeSelected(String colorScheme) {
+    final colorSchemeProvider =
+        Provider.of<ColorSchemeProvider>(context, listen: false);
+    colorSchemeProvider.selectedColor = colorScheme;
+
+    setState(() {
+      currentColorScheme = colorScheme;
+    });
   }
 
   Future<void> letterLessons() async {
@@ -211,7 +258,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
       setState(() {
         isLoading = false;
       });
-    });
+    }).then((_) => getColorScheme());
     super.initState();
     // initializeGameDataOnFirestore();
     // initLetterLessonData();
@@ -234,12 +281,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
     // await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
     // Check if it's a new account
-    if (await UserFirestore(userId: userId!).getIsNewAccount()) {
-      // Show the assessment page
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => const LocaleSelectPage()));
+    if (userId != null) {
+      if (await UserFirestore(userId: userId).getIsNewAccount()) {
+        // Show the assessment page
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const LocaleSelectPage()));
+      }
     }
   }
 
@@ -253,142 +302,422 @@ class _ChildHomePageState extends State<ChildHomePage> {
     return isLoading
         ? const LoadingPage()
         : Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                WelcomeCustomAppBar(
-                    text: isEnglish ? "Let's learn!" : "Tayo'y mag-aral!",
-                    isParentMode: widget.isParentMode),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        AnimatedAlign(
-                          alignment: headerPosition,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic,
-                          child: AnimatedOpacity(
-                            opacity: containerOpacity,
+            body: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage(
+                        setBackgroundByColorScheme(currentColorScheme)),
+                    fit: BoxFit.contain,
+                    alignment: Alignment.centerRight),
+              ),
+              child: CustomScrollView(
+                slivers: [
+                  WelcomeCustomAppBar(
+                      text: isEnglish ? "Let's learn!" : "Tayo'y mag-aral!",
+                      isParentMode: widget.isParentMode),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 100.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          AnimatedAlign(
+                            alignment: headerPosition,
                             duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
-                            child: Text(
-                              isEnglish ? 'Letters' : 'Mga Titik',
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            curve: Curves.easeInOutCubic,
+                            child: AnimatedOpacity(
+                              opacity: containerOpacity,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              child: Text(
+                                isEnglish ? 'Letters' : 'Mga Titik',
+                                style: const TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 200.0,
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: 1.0,
-                      ),
-                      itemCount: letterLessonNames.length,
-                      itemBuilder: (context, index) {
-                        bool isUnlocked = unlockedLetterLessons[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: InkWell(
-                            onTap: () async {
-                              if (isUnlocked) {
-                                if (letterLessonProgress[index] >= 0) {
-                                  await LetterLessonFirestore(
-                                          userId: Auth().getCurrentUserId()!)
-                                      .resetScore(letterLessonNames[index],
-                                          isEnglish ? "en" : "ph");
-                                  // resetScore(letterLessonNames[index]);
-                                  if (!context.mounted) return;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => LettersLevelOne(
-                                              lessonName:
-                                                  letterLessonNames[index])));
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200.0,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: letterLessonNames.length,
+                        itemBuilder: (context, index) {
+                          bool isUnlocked = unlockedLetterLessons[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: () async {
+                                if (isUnlocked) {
+                                  if (letterLessonProgress[index] >= 0) {
+                                    await LetterLessonFirestore(
+                                            userId: Auth().getCurrentUserId()!)
+                                        .resetScore(letterLessonNames[index],
+                                            isEnglish ? "en" : "ph");
+                                    // resetScore(letterLessonNames[index]);
+                                    if (!context.mounted) return;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                LettersLevelOne(
+                                                    lessonName:
+                                                        letterLessonNames[
+                                                            index])));
+                                  }
+                                  // else if (letterLessonProgress[index] >= 25 &&
+                                  //     letterLessonProgress[index] < 50) {
+                                  //   LettersLevelOne(lessonName: letterLessonNames[index]);
+                                  // }
                                 }
-                                // else if (letterLessonProgress[index] >= 25 &&
-                                //     letterLessonProgress[index] < 50) {
-                                //   LettersLevelOne(lessonName: letterLessonNames[index]);
-                                // }
-                              }
-                            },
-                            child: AnimatedOpacity(
-                              opacity: isUnlocked
-                                  ? containerOpacity
-                                  : containerOpacity / 2,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOutCubic,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
+                              },
+                              child: AnimatedOpacity(
+                                opacity: isUnlocked
+                                    ? containerOpacity
+                                    : containerOpacity / 2,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic,
+                                child: Container(
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          isUnlocked
-                                              ? letterLessonNames[index]
-                                              : '',
-                                          style: const TextStyle(
-                                              fontSize: 32.0,
-                                              color: Colors.white),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            isUnlocked
+                                                ? letterLessonNames[index]
+                                                : '',
+                                            style: const TextStyle(
+                                                fontSize: 32.0,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      AnimatedAlign(
-                                        alignment: containerPosition,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutCubic,
-                                        child: AnimatedOpacity(
-                                          opacity:
-                                              isUnlocked ? containerOpacity : 0,
+                                        AnimatedAlign(
+                                          alignment: containerPosition,
                                           duration:
                                               const Duration(milliseconds: 500),
                                           curve: Curves.easeInOutCubic,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Container(
-                                              width: 100.0,
-                                              height: 100.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    blurRadius: 20,
+                                          child: AnimatedOpacity(
+                                            opacity: isUnlocked
+                                                ? containerOpacity
+                                                : 0,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            curve: Curves.easeInOutCubic,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Container(
+                                                  width: 100.0,
+                                                  height: 100.0,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        blurRadius: 20,
+                                                        color: Theme.of(context)
+                                                            .primaryColorLight,
+                                                      ),
+                                                    ],
                                                     color: Theme.of(context)
                                                         .primaryColorLight,
                                                   ),
-                                                ],
-                                                color: Theme.of(context)
-                                                    .primaryColorLight,
-                                              ),
-                                              child: CustomPaint(
-                                                painter:
-                                                    CircularProgressBarPainter(
-                                                        letterLessonProgress[
-                                                            index],
-                                                        context),
+                                                  child: CircularProgressBar(
+                                                      progress:
+                                                          letterLessonProgress[
+                                                              index])),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 100.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          AnimatedAlign(
+                            alignment: headerPosition,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOutCubic,
+                            child: AnimatedOpacity(
+                              opacity: containerOpacity,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              child: Text(
+                                isEnglish ? 'Numbers' : 'Mga Numero',
+                                style: const TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200.0,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: numberLessonNames.length,
+                        itemBuilder: (context, index) {
+                          bool isUnlocked = unlockedNumberLessons[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: () async {
+                                if (isUnlocked) {
+                                  if (numberLessonProgress[index] >= 0) {
+                                    await NumberLessonFirestore(
+                                            userId: Auth().getCurrentUserId()!)
+                                        .resetScore(numberLessonNames[index],
+                                            isEnglish ? "en" : "ph");
+                                    // resetScore(letterLessonNames[index]);
+                                    if (!context.mounted) return;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                NumbersLevelOne(
+                                                    lessonName:
+                                                        numberLessonNames[
+                                                            index])));
+                                  }
+                                  // else if (letterLessonProgress[index] >= 25 &&
+                                  //     letterLessonProgress[index] < 50) {
+                                  //   LettersLevelOne(lessonName: letterLessonNames[index]);
+                                  // }
+                                }
+                              },
+                              child: AnimatedOpacity(
+                                opacity: isUnlocked
+                                    ? containerOpacity
+                                    : containerOpacity / 2,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            isUnlocked
+                                                ? numberLessonNames[index]
+                                                : '',
+                                            style: const TextStyle(
+                                                fontSize: 32.0,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        AnimatedAlign(
+                                          alignment: containerPosition,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOutCubic,
+                                          child: AnimatedOpacity(
+                                            opacity: isUnlocked
+                                                ? containerOpacity
+                                                : 0,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            curve: Curves.easeInOutCubic,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Container(
+                                                  width: 100.0,
+                                                  height: 100.0,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        blurRadius: 20,
+                                                        color: Theme.of(context)
+                                                            .primaryColorLight,
+                                                      ),
+                                                    ],
+                                                    color: Theme.of(context)
+                                                        .primaryColorLight,
+                                                  ),
+                                                  child: CircularProgressBar(
+                                                      progress:
+                                                          numberLessonProgress[
+                                                              index])),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 100.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          AnimatedAlign(
+                            alignment: headerPosition,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOutCubic,
+                            child: AnimatedOpacity(
+                              opacity: containerOpacity,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              child: Text(
+                                isEnglish ? 'Words' : 'Mga Salita',
+                                style: const TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200.0,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: wordLessonRoutes.length,
+                        itemBuilder: (context, index) {
+                          bool isUnlocked = unlockedWordLessons[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: isUnlocked
+                                  ? () => Navigator.pushNamed(
+                                      context, wordLessonRoutes[index])
+                                  : null,
+                              child: AnimatedOpacity(
+                                opacity: isUnlocked
+                                    ? containerOpacity
+                                    : containerOpacity / 2,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            isUnlocked
+                                                ? wordLessonNames[index]
+                                                : '',
+                                            style: const TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        AnimatedAlign(
+                                          alignment: containerPosition,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOutCubic,
+                                          child: AnimatedOpacity(
+                                            opacity: isUnlocked
+                                                ? containerOpacity
+                                                : 0,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            curve: Curves.easeInOutCubic,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Container(
+                                                width: 100.0,
+                                                height: 100.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: const Color.fromARGB(
+                                                        255, 121, 74, 25),
+                                                    width: 10.0,
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      blurRadius: 20,
+                                                      color: Theme.of(context)
+                                                          .primaryColorLight,
+                                                    ),
+                                                  ],
+                                                  color: Theme.of(context)
+                                                      .primaryColorLight,
+                                                ),
                                                 child: Center(
                                                   child: Text(
-                                                    '${letterLessonProgress[index]}%',
+                                                    '${75}%',
+                                                    // '${progressPercentage.toStringAsFixed(0)}%',
                                                     style: TextStyle(
                                                       fontSize: 22.0,
                                                       color: Theme.of(context)
@@ -404,149 +733,132 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        AnimatedAlign(
-                          alignment: headerPosition,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic,
-                          child: AnimatedOpacity(
-                            opacity: containerOpacity,
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 100.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          AnimatedAlign(
+                            alignment: headerPosition,
                             duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
-                            child: Text(
-                              isEnglish ? 'Numbers' : 'Mga Numero',
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            curve: Curves.easeInOutCubic,
+                            child: AnimatedOpacity(
+                              opacity: containerOpacity,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              child: Text(
+                                isEnglish ? 'Sentences' : 'Mga Pangungusap',
+                                style: const TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 200.0,
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: 1.0,
-                      ),
-                      itemCount: numberLessonNames.length,
-                      itemBuilder: (context, index) {
-                        bool isUnlocked = unlockedNumberLessons[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: InkWell(
-                            onTap: () async {
-                              if (isUnlocked) {
-                                if (numberLessonProgress[index] >= 0) {
-                                  await NumberLessonFirestore(
-                                          userId: Auth().getCurrentUserId()!)
-                                      .resetScore(numberLessonNames[index],
-                                          isEnglish ? "en" : "ph");
-                                  // resetScore(letterLessonNames[index]);
-                                  if (!context.mounted) return;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => NumbersLevelOne(
-                                              lessonName:
-                                                  numberLessonNames[index])));
-                                }
-                                // else if (letterLessonProgress[index] >= 25 &&
-                                //     letterLessonProgress[index] < 50) {
-                                //   LettersLevelOne(lessonName: letterLessonNames[index]);
-                                // }
-                              }
-                            },
-                            child: AnimatedOpacity(
-                              opacity: isUnlocked
-                                  ? containerOpacity
-                                  : containerOpacity / 2,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOutCubic,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200.0,
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.0,
+                        ),
+                        itemCount: sentenceLessonRoutes.length,
+                        itemBuilder: (context, index) {
+                          bool isUnlocked = unlockedSentenceLessons[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: InkWell(
+                              onTap: isUnlocked
+                                  ? () => Navigator.pushNamed(
+                                      context, sentenceLessonRoutes[index])
+                                  : null,
+                              child: AnimatedOpacity(
+                                opacity: isUnlocked
+                                    ? containerOpacity
+                                    : containerOpacity / 2,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOutCubic,
+                                child: Container(
+                                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20.0),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          isUnlocked
-                                              ? numberLessonNames[index]
-                                              : '',
-                                          style: const TextStyle(
-                                              fontSize: 32.0,
-                                              color: Colors.white),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            isUnlocked
+                                                ? sentenceLessonNames[index]
+                                                : '',
+                                            style: const TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      AnimatedAlign(
-                                        alignment: containerPosition,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutCubic,
-                                        child: AnimatedOpacity(
-                                          opacity:
-                                              isUnlocked ? containerOpacity : 0,
+                                        AnimatedAlign(
+                                          alignment: containerPosition,
                                           duration:
                                               const Duration(milliseconds: 500),
                                           curve: Curves.easeInOutCubic,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Container(
-                                              width: 100.0,
-                                              height: 100.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    blurRadius: 20,
-                                                    color: Theme.of(context)
-                                                        .primaryColorLight,
+                                          child: AnimatedOpacity(
+                                            opacity: isUnlocked
+                                                ? containerOpacity
+                                                : 0,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            curve: Curves.easeInOutCubic,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Container(
+                                                width: 100.0,
+                                                height: 100.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: const Color.fromARGB(
+                                                        255, 121, 74, 25),
+                                                    width: 10.0,
                                                   ),
-                                                ],
-                                                color: Theme.of(context)
-                                                    .primaryColorLight,
-                                              ),
-                                              child: CustomPaint(
-                                                painter:
-                                                    CircularProgressBarPainter(
-                                                        numberLessonProgress[
-                                                            index],
-                                                        context),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      blurRadius: 20,
+                                                      color: Theme.of(context)
+                                                          .primaryColorLight,
+                                                    ),
+                                                  ],
+                                                  color: Theme.of(context)
+                                                      .primaryColorLight,
+                                                ),
                                                 child: Center(
                                                   child: Text(
-                                                    '${numberLessonProgress[index]}%',
+                                                    '${75}%',
+                                                    // '${progressPercentage.toStringAsFixed(0)}%',
                                                     style: TextStyle(
                                                       fontSize: 22.0,
                                                       color: Theme.of(context)
@@ -562,297 +874,45 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        AnimatedAlign(
-                          alignment: headerPosition,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic,
-                          child: AnimatedOpacity(
-                            opacity: containerOpacity,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
-                            child: Text(
-                              isEnglish ? 'Words' : 'Mga Salita',
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 200.0,
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: 1.0,
+                          );
+                        },
                       ),
-                      itemCount: wordLessonRoutes.length,
-                      itemBuilder: (context, index) {
-                        bool isUnlocked = unlockedWordLessons[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: InkWell(
-                            onTap: isUnlocked
-                                ? () => Navigator.pushNamed(
-                                    context, wordLessonRoutes[index])
-                                : null,
-                            child: AnimatedOpacity(
-                              opacity: isUnlocked
-                                  ? containerOpacity
-                                  : containerOpacity / 2,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOutCubic,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          isUnlocked
-                                              ? wordLessonNames[index]
-                                              : '',
-                                          style: const TextStyle(
-                                              fontSize: 18.0,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      AnimatedAlign(
-                                        alignment: containerPosition,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutCubic,
-                                        child: AnimatedOpacity(
-                                          opacity:
-                                              isUnlocked ? containerOpacity : 0,
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                          curve: Curves.easeInOutCubic,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Container(
-                                              width: 100.0,
-                                              height: 100.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: const Color.fromARGB(
-                                                      255, 121, 74, 25),
-                                                  width: 10.0,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    blurRadius: 20,
-                                                    color: Theme.of(context)
-                                                        .primaryColorLight,
-                                                  ),
-                                                ],
-                                                color: Theme.of(context)
-                                                    .primaryColorLight,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '${75}%',
-                                                  // '${progressPercentage.toStringAsFixed(0)}%',
-                                                  style: TextStyle(
-                                                    fontSize: 22.0,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .labelMedium!
-                                                        .color,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 100.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        AnimatedAlign(
-                          alignment: headerPosition,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOutCubic,
-                          child: AnimatedOpacity(
-                            opacity: containerOpacity,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
-                            child: Text(
-                              isEnglish ? 'Sentences' : 'Mga Pangungusap',
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 200.0,
-                    child: GridView.builder(
-                      scrollDirection: Axis.horizontal,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1,
-                        childAspectRatio: 1.0,
-                      ),
-                      itemCount: sentenceLessonRoutes.length,
-                      itemBuilder: (context, index) {
-                        bool isUnlocked = unlockedSentenceLessons[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: InkWell(
-                            onTap: isUnlocked
-                                ? () => Navigator.pushNamed(
-                                    context, sentenceLessonRoutes[index])
-                                : null,
-                            child: AnimatedOpacity(
-                              opacity: isUnlocked
-                                  ? containerOpacity
-                                  : containerOpacity / 2,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOutCubic,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          isUnlocked
-                                              ? sentenceLessonNames[index]
-                                              : '',
-                                          style: const TextStyle(
-                                              fontSize: 18.0,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      AnimatedAlign(
-                                        alignment: containerPosition,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        curve: Curves.easeInOutCubic,
-                                        child: AnimatedOpacity(
-                                          opacity:
-                                              isUnlocked ? containerOpacity : 0,
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                          curve: Curves.easeInOutCubic,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15.0),
-                                            child: Container(
-                                              width: 100.0,
-                                              height: 100.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: const Color.fromARGB(
-                                                      255, 121, 74, 25),
-                                                  width: 10.0,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    blurRadius: 20,
-                                                    color: Theme.of(context)
-                                                        .primaryColorLight,
-                                                  ),
-                                                ],
-                                                color: Theme.of(context)
-                                                    .primaryColorLight,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '${75}%',
-                                                  // '${progressPercentage.toStringAsFixed(0)}%',
-                                                  style: TextStyle(
-                                                    fontSize: 22.0,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .labelMedium!
-                                                        .color,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
+  }
+}
+
+class CircularProgressBar extends StatelessWidget {
+  final int progress;
+
+  const CircularProgressBar({Key? key, required this.progress})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: CircularProgressBarPainter(progress, context),
+      child: Center(
+        child: Text(
+          '$progress%',
+          style: TextStyle(
+            fontSize: 22.0,
+            color: Theme.of(context).textTheme.labelMedium!.color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
   }
 }
 

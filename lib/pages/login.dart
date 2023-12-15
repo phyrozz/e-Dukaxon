@@ -256,8 +256,17 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Hmm...'),
-          content: Text(errorMessage),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            'Hmm...',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          content: Text(
+            errorMessage,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           actions: [
             ElevatedButton(
               onPressed: () {
