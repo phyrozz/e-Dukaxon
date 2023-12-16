@@ -77,31 +77,45 @@ class _GamesPageState extends State<GamesPage> {
     return Scaffold(
       body: isLoading
           ? const LoadingPage()
-          : CustomScrollView(
-              slivers: [
-                WelcomeCustomAppBar(
-                    text: isEnglish ? "Games" : "Mga Laro",
-                    isParentMode: isParentMode),
-                // SliverList(delegate: SliverChildListDelegate(gameButtons)),
-                SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 250.0,
-                    mainAxisSpacing: 10.0,
-                    crossAxisSpacing: 10.0,
-                    childAspectRatio: 1.0,
+          : Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: const AssetImage("assets/images/my_games_bg.png"),
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).scaffoldBackgroundColor.withOpacity(
+                          0.5), // Adjust the opacity value as needed
+                      BlendMode.srcOver,
+                    ),
+                    fit: BoxFit.contain,
+                    alignment: Alignment.centerRight),
+              ),
+              child: CustomScrollView(
+                slivers: [
+                  WelcomeCustomAppBar(
+                      text: isEnglish ? "Games" : "Mga Laro",
+                      isParentMode: isParentMode),
+                  // SliverList(delegate: SliverChildListDelegate(gameButtons)),
+                  SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 250.0,
+                      mainAxisSpacing: 10.0,
+                      crossAxisSpacing: 10.0,
+                      childAspectRatio: 1.0,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        return Button(
+                          title: gameButtons[index].title,
+                          iconImageUrl: gameButtons[index].iconImageUrl,
+                          routePage: gameButtons[index].routePage,
+                        );
+                      },
+                      childCount: gameButtons.length,
+                    ),
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return Button(
-                        title: gameButtons[index].title,
-                        iconImageUrl: gameButtons[index].iconImageUrl,
-                        routePage: gameButtons[index].routePage,
-                      );
-                    },
-                    childCount: gameButtons.length,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
@@ -130,12 +144,15 @@ class _ButtonState extends State<Button> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 300))
-        .then((value) => setState(() {
-              headerPosition = Alignment.centerLeft;
-              containerPosition = Alignment.centerLeft;
-              containerOpacity = 1.0;
-            }));
+    Future.delayed(const Duration(milliseconds: 300)).then((value) {
+      if (mounted) {
+        setState(() {
+          headerPosition = Alignment.centerLeft;
+          containerPosition = Alignment.centerLeft;
+          containerOpacity = 1.0;
+        });
+      }
+    });
     super.initState();
   }
 

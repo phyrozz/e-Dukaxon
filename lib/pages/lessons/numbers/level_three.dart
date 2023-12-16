@@ -281,6 +281,12 @@ class _NumbersLevelThreeState extends State<NumbersLevelThree> {
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.check_rounded),
                       label: Text(isEnglish ? 'Done' : 'Tapos na'),
+                      style: const ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            Color.fromARGB(255, 52, 156, 55)),
+                      ).copyWith(
+                          textStyle: const MaterialStatePropertyAll(TextStyle(
+                              fontFamily: "OpenDyslexic", fontSize: 18))),
                       onPressed: () {
                         if (accuracy > 80) {
                           showResultModal(context, true);
@@ -298,7 +304,10 @@ class _NumbersLevelThreeState extends State<NumbersLevelThree> {
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         levelDescription,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontSize: 26),
                       ),
                     ),
                   ],

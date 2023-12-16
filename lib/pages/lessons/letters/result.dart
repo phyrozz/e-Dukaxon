@@ -208,10 +208,14 @@ class _LettersResultPageState extends State<LettersResultPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton.icon(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.green[600]),
-                          ),
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(
+                                Color.fromARGB(255, 52, 156, 55)),
+                          ).copyWith(
+                              textStyle: const MaterialStatePropertyAll(
+                                  TextStyle(
+                                      fontFamily: "OpenDyslexic",
+                                      fontSize: 18))),
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,

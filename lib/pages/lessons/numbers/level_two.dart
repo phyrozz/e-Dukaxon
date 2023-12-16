@@ -250,7 +250,10 @@ class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
                         Text(
                           levelDescription,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontSize: 26),
                         ),
                         const SizedBox(
                           height: 40,
@@ -309,7 +312,11 @@ class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
                               style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
                                     Color.fromARGB(255, 52, 156, 55)),
-                              ),
+                              ).copyWith(
+                                  textStyle: const MaterialStatePropertyAll(
+                                      TextStyle(
+                                          fontFamily: "OpenDyslexic",
+                                          fontSize: 18))),
                               onPressed: () {
                                 // Check if the selected sound is correct
                                 bool isCorrect =

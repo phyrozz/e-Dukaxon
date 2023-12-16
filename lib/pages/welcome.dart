@@ -1,5 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:e_dukaxon/data/letter_lessons.dart';
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/route_anims/vertical_slide.dart';
@@ -46,7 +47,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   Future<void> signInAnonymously() async {
     try {
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).push(
         PageRouteBuilder(
           opaque: false, // Make the loading page non-opaque
           pageBuilder: (context, _, __) {
@@ -58,24 +59,26 @@ class _WelcomePageState extends State<WelcomePage> {
       await Auth().signInAnonymously();
       String? userId = Auth().getCurrentUserId();
 
-      UserFirestore(userId: userId!).createNewAnonymousAccount();
-      UserFirestore(userId: userId).initializeLessons("letters", "en");
-      UserFirestore(userId: userId).initializeLessons("letters", "ph");
-      UserFirestore(userId: userId).initializeLessons("numbers", "en");
-      UserFirestore(userId: userId).initializeLessons("numbers", "ph");
+      await UserFirestore(userId: userId!).createNewAnonymousAccount();
+      await UserFirestore(userId: userId).initializeLessons("letters", "en");
+      await UserFirestore(userId: userId).initializeLessons("letters", "ph");
+      await UserFirestore(userId: userId).initializeLessons("numbers", "en");
+      await UserFirestore(userId: userId).initializeLessons("numbers", "ph");
 
       // Initialize preference values
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isParentMode', false);
 
-      // initLetterLessonData();
+      // Remove the loading widget and navigate to the next page
+      Navigator.of(context).pop(); // Pop the loading page
+      // You can replace the next line with the appropriate navigation logic
+      Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+        builder: (BuildContext context) =>
+            const HomePageTree(), // Replace with the next page
+      ));
     } on Exception catch (e) {
       // Remove the loading widget
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => const WelcomePage(),
-        ),
-      );
+      Navigator.of(context).pop();
 
       setState(() {
         errorMessage = e.toString();

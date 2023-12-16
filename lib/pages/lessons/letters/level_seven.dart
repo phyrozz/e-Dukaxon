@@ -307,7 +307,10 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                         Text(
                           levelDescription,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontSize: 26),
                         ),
                         const SizedBox(
                           height: 20,
@@ -360,7 +363,11 @@ class _LettersLevelSevenState extends State<LettersLevelSeven> {
                               style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
                                     Color.fromARGB(255, 52, 156, 55)),
-                              ),
+                              ).copyWith(
+                                  textStyle: const MaterialStatePropertyAll(
+                                      TextStyle(
+                                          fontFamily: "OpenDyslexic",
+                                          fontSize: 18))),
                               onPressed: () {
                                 // Check if the selected sound is correct
                                 bool isCorrect =

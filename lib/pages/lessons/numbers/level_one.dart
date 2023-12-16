@@ -182,7 +182,8 @@ class _NumbersLevelOneState extends State<NumbersLevelOne> {
                                           : 'Pindutin ito upang magsimulang maglaro',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall),
+                                          .bodySmall!
+                                          .copyWith(fontSize: 18)),
                                   const Icon(
                                     Icons.arrow_right_alt_rounded,
                                     size: 40,

@@ -1,10 +1,10 @@
+import 'package:collapsible_sidebar/collapsible_sidebar.dart';
 import 'package:e_dukaxon/pages/child_home.dart';
-import 'package:easy_sidemenu/easy_sidemenu.dart';
+import 'package:e_dukaxon/pages/games.dart';
+import 'package:e_dukaxon/pages/my_account.dart';
+import 'package:e_dukaxon/pages/my_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'pages/my_account.dart';
-import 'pages/games.dart';
-import 'pages/my_progress.dart';
 
 class MyPages extends StatefulWidget {
   final bool isParentMode;
@@ -15,179 +15,149 @@ class MyPages extends StatefulWidget {
   State<MyPages> createState() => _MyPagesState();
 }
 
-class _MyPagesState extends State<MyPages> with TickerProviderStateMixin {
-  // int _currentIndex = 0;
+class _MyPagesState extends State<MyPages> {
+  late List<CollapsibleItem> items;
+  late String currentPage;
+  late PageController pageController;
+
   bool isEnglish = true;
-  PageController pageController = PageController();
-  SideMenuController sideMenu = SideMenuController();
-
-  late List<SideMenuItem> items = [
-    SideMenuItem(
-      title: "Home",
-      onTap: (index, _) {
-        sideMenu.changePage(index);
-      },
-      icon: const Icon(Icons.home),
-    ),
-    SideMenuItem(
-      title: isEnglish ? "Games" : "Mga Laro",
-      onTap: (index, _) {
-        sideMenu.changePage(index);
-      },
-      icon: const Icon(Icons.games),
-    ),
-    SideMenuItem(
-      title: "Progress",
-      onTap: (index, _) {
-        sideMenu.changePage(index);
-      },
-      icon: const Icon(Icons.show_chart),
-    ),
-    SideMenuItem(
-      title: isEnglish ? "My Account" : "Aking Account",
-      onTap: (index, _) {
-        sideMenu.changePage(index);
-      },
-      icon: const Icon(Icons.account_circle),
-    ),
-  ];
-
-  late List<Widget> pages = [
-    ChildHomePage(
-      isParentMode: widget.isParentMode,
-    ),
-    const GamesPage(),
-    const MyProgressPage(),
-    const MyAccountPage(),
-  ];
-
-  @override
-  void initState() {
-    setParentModePreferences(true)
-        .then((_) => getLanguage())
-        .then((_) => sideMenu.addListener((index) {
-              pageController.jumpToPage(index);
-            }));
-    super.initState();
-    // Connect SideMenuController and PageController together
-  }
+  bool isDarkMode = false;
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    final isEnglish = prefs.getBool('isEnglish') ?? true; // Default to English.
+    final isEnglish = prefs.getBool('isEnglish') ?? true;
+
+    setState(() {
+      this.isEnglish = isEnglish;
+    });
+  }
+
+  Future<void> getColorScheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('colorScheme');
 
     if (mounted) {
       setState(() {
-        this.isEnglish = isEnglish;
+        if (value == "Black") {
+          isDarkMode = true;
+        } else {
+          isDarkMode = false;
+        }
       });
     }
   }
 
-  Future<void> setParentModePreferences(bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isParentMode', value);
-  }
-
   @override
-  void dispose() {
-    sideMenu.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    getLanguage().then((_) => getColorScheme());
+    pageController = PageController();
+    items = _generateItems();
+    currentPage = items.isNotEmpty ? items[0].text : '';
+    pageController.addListener(_onPageChanged);
   }
 
-  // void _onTabSelected(int index) {
-  //   setState(() {
-  //     _currentIndex = index;
-  //   });
-  // }
+  List<CollapsibleItem> _generateItems() {
+    return [
+      CollapsibleItem(
+        text: 'Home',
+        icon: Icons.home,
+        onPressed: () => _updateCurrentPage('Home', 0),
+        isSelected: true,
+      ),
+      CollapsibleItem(
+        text: 'Games',
+        icon: Icons.games,
+        onPressed: () => _updateCurrentPage('Games', 1),
+      ),
+      CollapsibleItem(
+        text: 'My Progress',
+        icon: Icons.show_chart,
+        onPressed: () => _updateCurrentPage('My Progress', 2),
+      ),
+      CollapsibleItem(
+        text: 'My Account',
+        icon: Icons.account_circle,
+        onPressed: () => _updateCurrentPage('My Account', 3),
+      ),
+    ];
+  }
+
+  void _updateCurrentPage(String pageName, int pageIndex) {
+    setState(() {
+      currentPage = pageName;
+      pageController.jumpToPage(pageIndex);
+    });
+  }
+
+  void _onPageChanged() {
+    int pageIndex = pageController.page?.round() ?? 0;
+    if (pageIndex >= 0 && pageIndex < items.length) {
+      setState(() {
+        items.forEach((item) => item.isSelected = false);
+        items[pageIndex].isSelected = true;
+        currentPage = items[pageIndex].text;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Orientation orientation = MediaQuery.of(context).orientation;
-
     return Scaffold(
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SideMenu(
-            style: SideMenuStyle(
-              hoverColor: Colors.black,
-              selectedColor: Theme.of(context).primaryColor,
-              selectedTitleTextStyle:
-                  TextStyle(color: Theme.of(context).primaryColorDark),
-              selectedIconColor: Theme.of(context).primaryColorDark,
-              unselectedIconColor: Colors.white,
-              unselectedTitleTextStyle: const TextStyle(color: Colors.white),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(8),
-                      bottomRight: Radius.circular(8)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromARGB(255, 79, 117, 134),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                    ),
-                  ]),
-              backgroundColor: Theme.of(context).primaryColorDark,
-              openSideMenuWidth: 200,
-            ),
-            // Page controller to manage a PageView
-            controller: sideMenu,
-            // Will shows on top of all items, it can be a logo or a Title text
-            title: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
+      body: Container(
+        decoration:
+            BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 90),
+              child: PageView(
+                controller: pageController,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Image.asset(
-                    'assets/images/app-logo.png',
-                    width: 26,
+                  ChildHomePage(
+                    isParentMode: widget.isParentMode,
                   ),
-                  SizedBox(
-                    height: orientation == Orientation.portrait ? 12 : 0,
-                    width: orientation == Orientation.landscape ? 12 : 0,
-                  ),
-                  Text(
-                    orientation == Orientation.portrait ? '' : 'eDukaxon',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
+                  const GamesPage(),
+                  const MyProgressPage(),
+                  const MyAccountPage(),
                 ],
               ),
             ),
-            // List of SideMenuItem to show them on SideMenu
-            items: items,
-            footer: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Theme.of(context).primaryColor),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.lock_open_rounded),
-                      Text(
-                        'Parent mode',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
-                  ),
+            CollapsibleSidebar(
+              items: items,
+              title: 'Parent Mode',
+              avatarImg: const AssetImage("assets/images/my_account_bg.png"),
+              backgroundColor: Theme.of(context).primaryColorDark,
+              unselectedIconColor: isDarkMode
+                  ? Theme.of(context).secondaryHeaderColor
+                  : Theme.of(context).primaryColor,
+              selectedIconColor: isDarkMode
+                  ? Theme.of(context).secondaryHeaderColor
+                  : Theme.of(context).primaryColorLight,
+              avatarBackgroundColor: Colors.transparent,
+              unselectedTextColor: isDarkMode
+                  ? Theme.of(context).secondaryHeaderColor
+                  : Theme.of(context).primaryColor,
+              selectedIconBox: Theme.of(context).focusColor,
+              selectedTextColor: isDarkMode
+                  ? Theme.of(context).secondaryHeaderColor
+                  : Theme.of(context).primaryColorLight,
+              titleStyle:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              sidebarBoxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).focusColor,
+                  blurRadius: 20,
+                  spreadRadius: 0.01,
+                  offset: const Offset(3, 3),
                 ),
-              ),
+              ],
+              collapseOnBodyTap: true,
+              body: Container(),
             ),
-          ),
-          Expanded(
-            child: PageView(
-              controller: pageController,
-              children: pages,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

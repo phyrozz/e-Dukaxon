@@ -25,10 +25,13 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
   bool isLoggedIn = false;
   bool isLoading = true;
   bool isParentMode = true;
+  bool isDarkMode = false;
 
   @override
   void initState() {
-    getUserAccountData().then((_) => getParentModePreferences());
+    getUserAccountData()
+        .then((_) => getParentModePreferences())
+        .then((_) => getColorScheme());
     super.initState();
   }
 
@@ -52,6 +55,21 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
     }
   }
 
+  Future<void> getColorScheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('colorScheme');
+
+    if (mounted) {
+      setState(() {
+        if (value == "Black") {
+          isDarkMode = true;
+        } else {
+          isDarkMode = false;
+        }
+      });
+    }
+  }
+
   Future<void> getUserAccountData() async {
     String? id = Auth().getCurrentUserId();
     if (id != null) {
@@ -59,12 +77,14 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
           await FirebaseFirestore.instance.collection('users').doc(id).get();
       final data = snapshot.data();
 
-      setState(() {
-        if (data != null && data.containsKey('email')) {
-          isLoggedIn = true;
-        }
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          if (data != null && data.containsKey('email')) {
+            isLoggedIn = true;
+          }
+          isLoading = false;
+        });
+      }
     } else {
       print("User ID is null or empty.");
       isLoading = false;
@@ -86,6 +106,9 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
         icon: Icon(
           isParentMode ? Icons.settings : Icons.admin_panel_settings_rounded,
           size: 40,
+          color: isDarkMode
+              ? Theme.of(context).secondaryHeaderColor
+              : Theme.of(context).focusColor,
         ),
       ),
     );
@@ -243,18 +266,6 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
           child: _menuButton(context),
         ),
       ],
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).primaryColorLight,
-              Colors.white.withOpacity(0.0),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

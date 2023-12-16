@@ -10,41 +10,6 @@ class AppThemes {
       focusColor: const Color.fromARGB(255, 34, 19, 3),
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 255, 251, 238),
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -101,41 +66,7 @@ class AppThemes {
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 233, 245, 255),
       focusColor: const Color.fromARGB(255, 7, 52, 131),
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -195,41 +126,7 @@ class AppThemes {
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 253, 244, 255),
       focusColor: const Color.fromARGB(255, 57, 15, 65),
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -289,41 +186,7 @@ class AppThemes {
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: const Color.fromARGB(255, 231, 253, 255),
       focusColor: const Color.fromARGB(255, 10, 93, 104),
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -383,41 +246,8 @@ class AppThemes {
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: Color.fromARGB(255, 19, 19, 19),
       focusColor: Colors.black,
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+      secondaryHeaderColor: Colors.white,
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -466,41 +296,7 @@ class AppThemes {
       primaryColorLight: Colors.grey.shade200,
       // backgroundColor: Colors.grey[900],
       scaffoldBackgroundColor: Colors.white,
-      textTheme: const TextTheme(
-        displayLarge:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displaySmall:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        displayMedium:
-            TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
-        labelLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 20),
-        labelSmall: TextStyle(
-            color: Colors.white, fontFamily: 'OpenDyslexic', fontSize: 20),
-        bodySmall: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 18),
-        bodyLarge: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 24),
-        bodyMedium: TextStyle(
-            color: Colors.black, fontFamily: 'OpenDyslexic', fontSize: 28),
-        titleLarge: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 36,
-            fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            color: Colors.white,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 24,
-            fontWeight: FontWeight.bold),
-        titleSmall: TextStyle(
-            color: Colors.black,
-            fontFamily: 'OpenDyslexic',
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -550,6 +346,7 @@ class AppThemes {
   }
 }
 
+// Provider for the color scheme theme setting on the Settings page
 class ColorSchemeProvider extends ChangeNotifier {
   late String _selectedColor = "Default";
   late String _selectedBgImage = "assets/images/bg_brown.png";
@@ -585,5 +382,17 @@ class ColorSchemeProvider extends ChangeNotifier {
   Future<void> _saveSelectedColor() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('colorScheme', _selectedColor);
+  }
+}
+
+// Provider for the Text Size settings on the Settings page
+class TextSizeProvider extends ChangeNotifier {
+  double _textSize = 16.0; // Default text size
+
+  double get textSize => _textSize;
+
+  set textSize(double size) {
+    _textSize = size;
+    notifyListeners();
   }
 }

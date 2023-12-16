@@ -42,6 +42,9 @@ void main() async {
                 ChangeNotifierProvider(
                   create: (context) => ColorSchemeProvider(),
                 ),
+                ChangeNotifierProvider(
+                  create: (context) => TextSizeProvider(),
+                ),
               ],
               child: const MyApp(),
             ),
@@ -123,21 +126,314 @@ class _MyAppState extends State<MyApp> {
 
   ThemeData selectTheme(String? selectedColor) {
     final colorSchemeProvider = Provider.of<ColorSchemeProvider>(context);
+    final textSizeProvider = Provider.of<TextSizeProvider>(context);
     selectedColor = colorSchemeProvider.selectedColor;
 
+    double textSize = textSizeProvider.textSize;
+
+    // TODO: This might look ugly but it works... for now. Will find a more code-efficient way to deal
+    // with this text size provider mess
     switch (selectedColor) {
       case 'Blue':
-        return AppThemes.blueTheme;
+        return AppThemes.blueTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displaySmall: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displayMedium: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
       case 'Purple':
-        return AppThemes.purpleTheme;
+        return AppThemes.purpleTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displaySmall: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displayMedium: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
       case 'Cyan':
-        return AppThemes.cyanTheme;
+        return AppThemes.cyanTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displaySmall: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displayMedium: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
       case 'Black':
-        return AppThemes.blackTheme;
+        return AppThemes.blackTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge:
+                TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+            displaySmall:
+                TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+            displayMedium:
+                TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
       case 'White':
-        return AppThemes.whiteTheme;
+        return AppThemes.whiteTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge:
+                TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displaySmall:
+                TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displayMedium:
+                TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
       default:
-        return AppThemes.defaultTheme;
+        return AppThemes.defaultTheme.copyWith(
+          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+            displayLarge: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displaySmall: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            displayMedium: const TextStyle(
+                color: Colors.black, fontFamily: 'OpenDyslexic'),
+            labelLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            labelSmall: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2),
+            bodySmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize),
+            bodyLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6),
+            bodyMedium: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 8),
+            titleLarge: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 18,
+                fontWeight: FontWeight.bold),
+            titleMedium: TextStyle(
+                color: Colors.white,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 6,
+                fontWeight: FontWeight.bold),
+            titleSmall: TextStyle(
+                color: Colors.black,
+                fontFamily: 'OpenDyslexic',
+                fontSize: textSize + 2,
+                fontWeight: FontWeight.bold),
+          ),
+        );
     }
   }
 

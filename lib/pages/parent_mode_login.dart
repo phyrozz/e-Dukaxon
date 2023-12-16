@@ -109,43 +109,53 @@ class _PinAccessPageState extends State<PinAccessPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarWithBackButton(text: 'Parent Mode'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                isEnglish
-                    ? 'Enter your 4-digit birth year to access Parent Mode:'
-                    : 'Ibigay ang iyong taon ng kapanganakan upang ma-access ang Parent Mode:',
-                style: TextStyle(fontSize: 18.0),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 4,
-                child: TextField(
-                  controller: _pinController,
-                  decoration: const InputDecoration(
-                    hintText: 'YYYY',
-                  ),
-                  style: TextStyle(color: Theme.of(context).primaryColorDark),
-                  keyboardType: TextInputType.number,
-                  maxLength: 4,
+      body: CustomScrollView(
+        slivers: [
+          CustomAppBarWithBackButton(
+              text: isEnglish
+                  ? 'Access Parent Mode'
+                  : 'i-Access ang Parent Mode'),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      isEnglish
+                          ? 'Enter your 4-digit birth year to access Parent Mode:'
+                          : 'Ibigay ang iyong taon ng kapanganakan upang ma-access ang Parent Mode:',
+                      style: const TextStyle(fontSize: 18.0),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: TextField(
+                        controller: _pinController,
+                        decoration: const InputDecoration(
+                          hintText: 'YYYY',
+                        ),
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorDark),
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: _verifyPin,
+                      child: const Text('Enter'),
+                    ),
+                  ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: _verifyPin,
-                child: const Text('Enter'),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

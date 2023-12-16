@@ -495,63 +495,82 @@ class _MyAccountPageState extends State<MyAccountPage> {
       body: isLoading
           ? const LoadingPage()
           : email == ""
-              ? CustomScrollView(
-                  slivers: [
-                    WelcomeCustomAppBar(
-                        text: isEnglish ? "My Account" : "Aking Account",
-                        isParentMode: isParentMode),
-                    SliverFillRemaining(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Create an account now to save your progress',
-                              style: Theme.of(context).textTheme.bodySmall,
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 20),
-                            ButtonBar(
-                              alignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton.icon(
-                                    onPressed: () =>
-                                        showDeleteProgressConfirmation(context),
-                                    icon: const Icon(
-                                        Icons.delete_forever_rounded),
-                                    style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
-                                                Colors.red)),
-                                    label: const Text('Delete progress')),
-                                SizedBox(
-                                  width: orientation == Orientation.portrait
-                                      ? 12
-                                      : 0,
-                                  height: orientation == Orientation.landscape
-                                      ? 12
-                                      : 0,
-                                ),
-                                ElevatedButton.icon(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const SignUpPage()));
-                                    },
-                                    icon: const Icon(
-                                        FontAwesomeIcons.arrowRightToBracket),
-                                    label: const Text('Sign up')),
-                              ],
-                            ),
-                          ],
-                        ),
+              ? Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image:
+                          const AssetImage("assets/images/my_account_bg.png"),
+                      fit: BoxFit.contain,
+                      alignment: Alignment.centerRight,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .withOpacity(0.5),
+                        BlendMode.srcOver,
                       ),
                     ),
-                  ],
+                  ),
+                  child: CustomScrollView(
+                    slivers: [
+                      WelcomeCustomAppBar(
+                          text: isEnglish ? "My Account" : "Aking Account",
+                          isParentMode: isParentMode),
+                      SliverFillRemaining(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                isEnglish
+                                    ? 'Create an account now to save your progress'
+                                    : 'Gumawa na ng account para hindi mawala ang iyong progress',
+                                style: Theme.of(context).textTheme.bodySmall,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 20),
+                              ButtonBar(
+                                alignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton.icon(
+                                      onPressed: () =>
+                                          showDeleteProgressConfirmation(
+                                              context),
+                                      icon: const Icon(
+                                          Icons.delete_forever_rounded),
+                                      style: const ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.red)),
+                                      label: const Text('Delete progress')),
+                                  SizedBox(
+                                    width: orientation == Orientation.portrait
+                                        ? 12
+                                        : 0,
+                                    height: orientation == Orientation.landscape
+                                        ? 12
+                                        : 0,
+                                  ),
+                                  ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const SignUpPage()));
+                                      },
+                                      icon: const Icon(
+                                          FontAwesomeIcons.arrowRightToBracket),
+                                      label: const Text('Sign up')),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : CustomScrollView(
                   slivers: [
@@ -578,9 +597,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                   icon: Icon(isOnEditMode
                                       ? Icons.check_rounded
                                       : Icons.edit),
-                                  label: Text(isOnEditMode
-                                      ? (isEnglish ? 'Done' : 'Tapos')
-                                      : (isEnglish ? 'Edit' : 'I-edit'))),
+                                  label: Text(
+                                    isOnEditMode
+                                        ? (isEnglish ? 'Done' : 'Tapos')
+                                        : (isEnglish ? 'Edit' : 'I-edit'),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color:
+                                            Theme.of(context).primaryColorDark),
+                                  )),
                               const SizedBox(
                                 width: 18,
                               ),
@@ -590,7 +615,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                         ? 'Choose a card to edit'
                                         : 'Pumili ng card na ieedit')
                                     : '',
-                                style: Theme.of(context).textTheme.titleSmall,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall!
+                                    .copyWith(fontSize: 18),
                               ),
                             ],
                           ),
@@ -602,96 +630,133 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  InkWell(
-                                    onTap: () => isOnEditMode
-                                        ? showEditProfileDialog(
-                                            context,
-                                            "Edit Profile",
-                                            userName,
-                                            "userName")
-                                        : null,
-                                    child: ListTile(
-                                      leading: Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: const CircleAvatar(
-                                          child: Icon(
-                                            Icons.account_box_outlined,
-                                            size: 30,
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: () => isOnEditMode
+                                          ? showEditProfileDialog(
+                                              context,
+                                              "Edit Profile",
+                                              userName,
+                                              "userName")
+                                          : null,
+                                      child: ListTile(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        tileColor:
+                                            Theme.of(context).primaryColorLight,
+                                        leading: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircleAvatar(
+                                            backgroundColor: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            child: const Icon(
+                                              Icons.account_box_outlined,
+                                              size: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        "User name",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall,
-                                      ),
-                                      subtitle: Text(
-                                        userName,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
+                                        title: Text(
+                                          "User name",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                        subtitle: Text(
+                                          userName,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(fontSize: 16),
+                                        ),
                                       ),
                                     ),
                                   ),
                                   isOnEditMode
                                       ? const SizedBox()
-                                      : ListTile(
-                                          leading: Container(
-                                            width: 50,
-                                            height: 50,
-                                            child: const CircleAvatar(
-                                              child: Icon(
-                                                Icons.email_outlined,
-                                                size: 30,
+                                      : Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: ListTile(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12))),
+                                            tileColor: Theme.of(context)
+                                                .primaryColorLight,
+                                            leading: Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: CircleAvatar(
+                                                backgroundColor: Theme.of(
+                                                        context)
+                                                    .scaffoldBackgroundColor,
+                                                child: const Icon(
+                                                  Icons.email_outlined,
+                                                  size: 30,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          title: Text(
-                                            "Email",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          ),
-                                          subtitle: Text(
-                                            email,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                        ),
-                                  InkWell(
-                                    onTap: () => isOnEditMode
-                                        ? showEditProfileDialog(
-                                            context, "Edit Profile", age, "age")
-                                        : null,
-                                    child: ListTile(
-                                      leading: Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: const CircleAvatar(
-                                          child: Icon(
-                                            Icons.cake_outlined,
-                                            size: 30,
+                                            title: Text(
+                                              "Email",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall!
+                                                  .copyWith(fontSize: 18),
+                                            ),
+                                            subtitle: Text(
+                                              email,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(fontSize: 16),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        isParent
-                                            ? (isEnglish
-                                                ? "Child's age"
-                                                : "Edad ng bata")
-                                            : (isEnglish ? "Age" : "Edad"),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall,
-                                      ),
-                                      subtitle: Text(
-                                        age,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: () => isOnEditMode
+                                          ? showEditProfileDialog(context,
+                                              "Edit Profile", age, "age")
+                                          : null,
+                                      child: ListTile(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        tileColor:
+                                            Theme.of(context).primaryColorLight,
+                                        leading: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircleAvatar(
+                                            backgroundColor: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            child: const Icon(
+                                              Icons.cake_outlined,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          isParent
+                                              ? (isEnglish
+                                                  ? "Child's age"
+                                                  : "Edad ng bata")
+                                              : (isEnglish ? "Age" : "Edad"),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                        subtitle: Text(
+                                          age,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(fontSize: 16),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -701,102 +766,139 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             Expanded(
                               child: Column(
                                 children: [
-                                  InkWell(
-                                    onTap: () => isOnEditMode
-                                        ? showEditProfileDialog(context,
-                                            "Edit Profile", name, "name")
-                                        : null,
-                                    child: ListTile(
-                                      leading: Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: const CircleAvatar(
-                                          child: Icon(
-                                            Icons.person_outline_outlined,
-                                            size: 30,
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: () => isOnEditMode
+                                          ? showEditProfileDialog(context,
+                                              "Edit Profile", name, "name")
+                                          : null,
+                                      child: ListTile(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        tileColor:
+                                            Theme.of(context).primaryColorLight,
+                                        leading: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircleAvatar(
+                                            backgroundColor: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            child: const Icon(
+                                              Icons.person_outline_outlined,
+                                              size: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        isEnglish ? "Name" : "Pangalan",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall,
-                                      ),
-                                      subtitle: Text(
-                                        name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
+                                        title: Text(
+                                          isEnglish ? "Name" : "Pangalan",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                        subtitle: Text(
+                                          name == "" ? "-" : name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(fontSize: 16),
+                                        ),
                                       ),
                                     ),
                                   ),
                                   isOnEditMode
                                       ? const SizedBox()
-                                      : ListTile(
-                                          leading: Container(
-                                            width: 50,
-                                            height: 50,
-                                            child: const CircleAvatar(
-                                              child: Icon(
-                                                Icons.emoji_events_outlined,
-                                                size: 30,
+                                      : Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: ListTile(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12))),
+                                            tileColor: Theme.of(context)
+                                                .primaryColorLight,
+                                            leading: Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: CircleAvatar(
+                                                backgroundColor: Theme.of(
+                                                        context)
+                                                    .scaffoldBackgroundColor,
+                                                child: const Icon(
+                                                  Icons.emoji_events_outlined,
+                                                  size: 30,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          title: Text(
-                                            isEnglish
-                                                ? "Achievements"
-                                                : "Mga Tagumpay",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          ),
-                                          subtitle: Text(
-                                            'N/A',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                        ),
-                                  InkWell(
-                                    onTap: () => isOnEditMode
-                                        ? showEditProfileDialog(
-                                            context,
-                                            "Edit Profile",
-                                            isParent ? "Parent" : "Adult",
-                                            "accountOwner")
-                                        : null,
-                                    child: ListTile(
-                                      leading: Container(
-                                        width: 50,
-                                        height: 50,
-                                        child: const CircleAvatar(
-                                          child: Icon(
-                                            Icons.supervisor_account_outlined,
-                                            size: 30,
+                                            title: Text(
+                                              isEnglish
+                                                  ? "Achievements"
+                                                  : "Mga Tagumpay",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall!
+                                                  .copyWith(fontSize: 18),
+                                            ),
+                                            subtitle: Text(
+                                              '-',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .copyWith(fontSize: 16),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        isEnglish
-                                            ? "Account Owner"
-                                            : "May-ari ng Account",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall,
-                                      ),
-                                      subtitle: Text(
-                                        isParent
-                                            ? isEnglish
-                                                ? 'Parent'
-                                                : 'Magulang'
-                                            : isEnglish
-                                                ? 'Adult'
-                                                : 'Hustong Gulang',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: () => isOnEditMode
+                                          ? showEditProfileDialog(
+                                              context,
+                                              "Edit Profile",
+                                              isParent ? "Parent" : "Adult",
+                                              "accountOwner")
+                                          : null,
+                                      child: ListTile(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        tileColor:
+                                            Theme.of(context).primaryColorLight,
+                                        leading: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: CircleAvatar(
+                                            backgroundColor: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            child: const Icon(
+                                              Icons.supervisor_account_outlined,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          isEnglish
+                                              ? "Account Owner"
+                                              : "May-ari ng Account",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(fontSize: 18),
+                                        ),
+                                        subtitle: Text(
+                                          isParent
+                                              ? isEnglish
+                                                  ? 'Parent'
+                                                  : 'Magulang'
+                                              : isEnglish
+                                                  ? 'Adult'
+                                                  : 'Hustong Gulang',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(fontSize: 16),
+                                        ),
                                       ),
                                     ),
                                   ),

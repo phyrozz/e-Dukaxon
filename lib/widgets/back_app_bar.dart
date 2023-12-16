@@ -14,12 +14,39 @@ class CustomAppBarWithBackButton extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      key: key,
-      automaticallyImplyLeading: true,
-      title: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium,
+    return SliverAppBar(
+      automaticallyImplyLeading: false,
+      snap: false,
+      pinned: false,
+      floating: false,
+      centerTitle: false,
+      leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: Theme.of(context).primaryColorDark,
+            size: 48,
+          )),
+      title: Align(
+        alignment: Alignment.centerRight,
+        child: Text(
+          text,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
+      toolbarHeight: 80,
+      backgroundColor: Colors.transparent,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).primaryColorLight,
+              Colors.white.withOpacity(0.0),
+            ],
+          ),
+        ),
       ),
     );
   }

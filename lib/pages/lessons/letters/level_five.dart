@@ -348,7 +348,10 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         levelDescription,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontSize: 26),
                       ),
                     ),
                   ],
