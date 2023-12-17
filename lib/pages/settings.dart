@@ -106,193 +106,200 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          CustomAppBarWithBackButton(
-              text: isEnglish ? "Settings" : "Mga Setting"),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: ShapeDecoration(
-                        color: Theme.of(context).primaryColorLight,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            isEnglish ? "Language" : "Wika",
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: Theme.of(context).cardColor),
-                            textAlign: TextAlign.right,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Filipino',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              Switch(
-                                value: isEnglish,
-                                onChanged: toggleLanguage,
-                                activeColor: Theme.of(context).focusColor,
-                                inactiveThumbColor:
-                                    Theme.of(context).focusColor,
-                              ),
-                              Text(
-                                'English',
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ],
+      body: GlowingOverscrollIndicator(
+        color: Theme.of(context).primaryColorDark,
+        axisDirection: AxisDirection.down,
+        child: CustomScrollView(
+          slivers: [
+            CustomAppBarWithBackButton(
+                text: isEnglish ? "Settings" : "Mga Setting"),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: ShapeDecoration(
+                          color: Theme.of(context).primaryColorLight,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              isEnglish ? "Language" : "Wika",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Theme.of(context).cardColor),
+                              textAlign: TextAlign.right,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Filipino',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Switch(
+                                  value: isEnglish,
+                                  onChanged: toggleLanguage,
+                                  activeColor: Theme.of(context).focusColor,
+                                  inactiveThumbColor:
+                                      Theme.of(context).focusColor,
+                                ),
+                                Text(
+                                  'English',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: ShapeDecoration(
-                        color: Theme.of(context).primaryColorLight,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                            text: "Theme: ",
-                            style: TextStyle(
-                                fontFamily: "OpenDyslexic",
-                                color: Theme.of(context).cardColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                            children: [
-                              TextSpan(
-                                text: selectedColorScheme,
-                                style: TextStyle(
-                                    fontFamily: "OpenDyslexic",
-                                    color: Theme.of(context).cardColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )),
-                          Row(
-                            children: [
-                              ColorSchemeOption(
-                                color: const Color(0xFF3F2305),
-                                name: 'Default',
-                                isSelected: selectedColorScheme == 'Default',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                              ColorSchemeOption(
-                                color: const Color.fromARGB(255, 8, 71, 180),
-                                name: 'Blue',
-                                isSelected: selectedColorScheme == 'Blue',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                              ColorSchemeOption(
-                                color: const Color.fromARGB(255, 87, 23, 99),
-                                name: 'Purple',
-                                isSelected: selectedColorScheme == 'Purple',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                              ColorSchemeOption(
-                                color: const Color.fromARGB(255, 14, 137, 153),
-                                name: 'Cyan',
-                                isSelected: selectedColorScheme == 'Cyan',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                              ColorSchemeOption(
-                                color: Colors.black,
-                                name: 'Black',
-                                isSelected: selectedColorScheme == 'Black',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                              ColorSchemeOption(
-                                color: Colors.white,
-                                name: 'White',
-                                isSelected: selectedColorScheme == 'White',
-                                onSelected: onColorSchemeSelected,
-                              ),
-                            ],
-                          ),
-                        ],
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: ShapeDecoration(
+                          color: Theme.of(context).primaryColorLight,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RichText(
+                                text: TextSpan(
+                              text: "Theme: ",
+                              style: TextStyle(
+                                  fontFamily: "OpenDyslexic",
+                                  color: Theme.of(context).cardColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal),
+                              children: [
+                                TextSpan(
+                                  text: selectedColorScheme,
+                                  style: TextStyle(
+                                      fontFamily: "OpenDyslexic",
+                                      color: Theme.of(context).cardColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )),
+                            Row(
+                              children: [
+                                ColorSchemeOption(
+                                  color: const Color(0xFF3F2305),
+                                  name: 'Default',
+                                  isSelected: selectedColorScheme == 'Default',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                                ColorSchemeOption(
+                                  color: const Color.fromARGB(255, 8, 71, 180),
+                                  name: 'Blue',
+                                  isSelected: selectedColorScheme == 'Blue',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                                ColorSchemeOption(
+                                  color: const Color.fromARGB(255, 87, 23, 99),
+                                  name: 'Purple',
+                                  isSelected: selectedColorScheme == 'Purple',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                                ColorSchemeOption(
+                                  color:
+                                      const Color.fromARGB(255, 14, 137, 153),
+                                  name: 'Cyan',
+                                  isSelected: selectedColorScheme == 'Cyan',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                                ColorSchemeOption(
+                                  color: Colors.black,
+                                  name: 'Black',
+                                  isSelected: selectedColorScheme == 'Black',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                                ColorSchemeOption(
+                                  color: Colors.white,
+                                  name: 'White',
+                                  isSelected: selectedColorScheme == 'White',
+                                  onSelected: onColorSchemeSelected,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: ShapeDecoration(
-                        color: Theme.of(context).primaryColorLight,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                            text:
-                                isEnglish ? "Text size: " : "Laki ng teksto: ",
-                            style: TextStyle(
-                                fontFamily: "OpenDyslexic",
-                                color: Theme.of(context).cardColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                            children: [
-                              TextSpan(
-                                text: (currentTextSize.toInt()).toString(),
-                                style: TextStyle(
-                                    fontFamily: "OpenDyslexic",
-                                    color: Theme.of(context).cardColor,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )),
-                          Slider(
-                            activeColor: Theme.of(context).primaryColorDark,
-                            overlayColor: MaterialStatePropertyAll(
-                                Theme.of(context)
-                                    .primaryColorDark
-                                    .withOpacity(0.3)),
-                            thumbColor: Theme.of(context).focusColor,
-                            value: currentTextSize,
-                            min: 12,
-                            max: 42,
-                            divisions: 15,
-                            onChanged: (value) {
-                              setState(() {
-                                currentTextSize = value;
-                              });
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: ShapeDecoration(
+                          color: Theme.of(context).primaryColorLight,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RichText(
+                                text: TextSpan(
+                              text: isEnglish
+                                  ? "Text size: "
+                                  : "Laki ng teksto: ",
+                              style: TextStyle(
+                                  fontFamily: "OpenDyslexic",
+                                  color: Theme.of(context).cardColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal),
+                              children: [
+                                TextSpan(
+                                  text: (currentTextSize.toInt()).toString(),
+                                  style: TextStyle(
+                                      fontFamily: "OpenDyslexic",
+                                      color: Theme.of(context).cardColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )),
+                            Slider(
+                              activeColor: Theme.of(context).primaryColorDark,
+                              overlayColor: MaterialStatePropertyAll(
+                                  Theme.of(context)
+                                      .primaryColorDark
+                                      .withOpacity(0.3)),
+                              thumbColor: Theme.of(context).focusColor,
+                              value: currentTextSize,
+                              min: 12,
+                              max: 42,
+                              divisions: 15,
+                              onChanged: (value) {
+                                setState(() {
+                                  currentTextSize = value;
+                                });
 
-                              onTextSizeSliderChange(value);
-                            },
-                          ),
-                        ],
+                                onTextSizeSliderChange(value);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

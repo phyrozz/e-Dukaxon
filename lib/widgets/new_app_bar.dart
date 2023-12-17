@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/pages/loading.dart';
+import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:e_dukaxon/pages/settings.dart';
 import 'package:e_dukaxon/pages/sign_up.dart';
@@ -164,7 +165,13 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                         ? Container()
                         : ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const LoginPage(),
+                                ),
+                              );
                             },
                             icon: const Icon(
                                 FontAwesomeIcons.arrowRightToBracket),

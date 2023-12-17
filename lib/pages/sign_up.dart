@@ -190,111 +190,119 @@ class _SignUpPageState extends State<SignUpPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      "Create an account",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 36.0,
-                      ),
-                    ),
-                    Text(
-                      "By creating an account, your games and progress will be saved.",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    const SizedBox(height: 60.0),
-                    TextField(
-                      controller: _userNameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        prefixIconColor: Colors.black,
-                        labelText: 'Username',
-                      ),
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    const SizedBox(height: 16.0),
-                    TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email),
-                        prefixIconColor: Colors.black,
-                        labelText: 'Email',
-                      ),
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    const SizedBox(height: 16.0),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: passwordVisible,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        prefixIconColor: Colors.black,
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: togglePasswordVisibility,
-                          color: Colors.black,
+            GlowingOverscrollIndicator(
+              color: Theme.of(context).primaryColorDark,
+              axisDirection: AxisDirection.down,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
+                child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        "Create an account",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 36.0,
                         ),
-                        alignLabelWithHint: false,
-                        filled: true,
                       ),
-                      keyboardType: TextInputType.visiblePassword,
-                      textInputAction: TextInputAction.done,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    const SizedBox(height: 16.0),
-                    TextField(
-                      controller: _confirmPasswordController,
-                      obscureText: passwordVisible,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.lock),
-                        prefixIconColor: Colors.black,
-                        labelText: 'Enter password again',
+                      Text(
+                        "By creating an account, your games and progress will be saved.",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    const SizedBox(height: 15.0),
-                    ButtonBar(
-                      alignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton.icon(
-                          label: const Text("Back"),
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                      const SizedBox(height: 60.0),
+                      TextField(
+                        controller: _userNameController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.person),
+                          prefixIconColor: Colors.black,
+                          labelText: 'Username',
                         ),
-                        ElevatedButton(
-                          style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.green),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.email),
+                          prefixIconColor: Colors.black,
+                          labelText: 'Email',
+                        ),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: passwordVisible,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock),
+                          prefixIconColor: Colors.black,
+                          labelText: 'Password',
+                          suffixIcon: IconButton(
+                            icon: Icon(passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: togglePasswordVisibility,
+                            color: Colors.black,
                           ),
-                          onPressed: () {
-                            signUp(
-                                context,
-                                _emailController.text,
-                                _userNameController.text,
-                                _passwordController.text,
-                                _confirmPasswordController.text);
-                          },
-                          child: const Text('Sign Up'),
+                          alignLabelWithHint: false,
+                          filled: true,
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 80,
-                    ),
-                  ],
+                        keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.done,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: passwordVisible,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          prefixIconColor: Colors.black,
+                          labelText: 'Enter password again',
+                        ),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      const SizedBox(height: 15.0),
+                      ButtonBar(
+                        alignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton.icon(
+                            label: const Text("Back"),
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ElevatedButton(
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.green),
+                            ),
+                            onPressed: () {
+                              signUp(
+                                  context,
+                                  _emailController.text,
+                                  _userNameController.text,
+                                  _passwordController.text,
+                                  _confirmPasswordController.text);
+                            },
+                            child: const Text('Sign Up'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 80,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -89,32 +89,36 @@ class _GamesPageState extends State<GamesPage> {
                     fit: BoxFit.contain,
                     alignment: Alignment.centerRight),
               ),
-              child: CustomScrollView(
-                slivers: [
-                  WelcomeCustomAppBar(
-                      text: isEnglish ? "Games" : "Mga Laro",
-                      isParentMode: isParentMode),
-                  // SliverList(delegate: SliverChildListDelegate(gameButtons)),
-                  SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 250.0,
-                      mainAxisSpacing: 10.0,
-                      crossAxisSpacing: 10.0,
-                      childAspectRatio: 1.0,
+              child: GlowingOverscrollIndicator(
+                color: Theme.of(context).primaryColorDark,
+                axisDirection: AxisDirection.down,
+                child: CustomScrollView(
+                  slivers: [
+                    WelcomeCustomAppBar(
+                        text: isEnglish ? "Games" : "Mga Laro",
+                        isParentMode: isParentMode),
+                    // SliverList(delegate: SliverChildListDelegate(gameButtons)),
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 250.0,
+                        mainAxisSpacing: 10.0,
+                        crossAxisSpacing: 10.0,
+                        childAspectRatio: 1.0,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return Button(
+                            title: gameButtons[index].title,
+                            iconImageUrl: gameButtons[index].iconImageUrl,
+                            routePage: gameButtons[index].routePage,
+                          );
+                        },
+                        childCount: gameButtons.length,
+                      ),
                     ),
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        return Button(
-                          title: gameButtons[index].title,
-                          iconImageUrl: gameButtons[index].iconImageUrl,
-                          routePage: gameButtons[index].routePage,
-                        );
-                      },
-                      childCount: gameButtons.length,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );

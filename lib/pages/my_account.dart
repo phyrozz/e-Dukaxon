@@ -510,66 +510,71 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       ),
                     ),
                   ),
-                  child: CustomScrollView(
-                    slivers: [
-                      WelcomeCustomAppBar(
-                          text: isEnglish ? "My Account" : "Aking Account",
-                          isParentMode: isParentMode),
-                      SliverFillRemaining(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                isEnglish
-                                    ? 'Create an account now to save your progress'
-                                    : 'Gumawa na ng account para hindi mawala ang iyong progress',
-                                style: Theme.of(context).textTheme.bodySmall,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              ButtonBar(
-                                alignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton.icon(
-                                      onPressed: () =>
-                                          showDeleteProgressConfirmation(
-                                              context),
-                                      icon: const Icon(
-                                          Icons.delete_forever_rounded),
-                                      style: const ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStatePropertyAll(
-                                                  Colors.red)),
-                                      label: const Text('Delete progress')),
-                                  SizedBox(
-                                    width: orientation == Orientation.portrait
-                                        ? 12
-                                        : 0,
-                                    height: orientation == Orientation.landscape
-                                        ? 12
-                                        : 0,
-                                  ),
-                                  ElevatedButton.icon(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const SignUpPage()));
-                                      },
-                                      icon: const Icon(
-                                          FontAwesomeIcons.arrowRightToBracket),
-                                      label: const Text('Sign up')),
-                                ],
-                              ),
-                            ],
+                  child: GlowingOverscrollIndicator(
+                    color: Theme.of(context).primaryColorDark,
+                    axisDirection: AxisDirection.down,
+                    child: CustomScrollView(
+                      slivers: [
+                        WelcomeCustomAppBar(
+                            text: isEnglish ? "My Account" : "Aking Account",
+                            isParentMode: isParentMode),
+                        SliverFillRemaining(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isEnglish
+                                      ? 'Create an account now to save your progress'
+                                      : 'Gumawa na ng account para hindi mawala ang iyong progress',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                ButtonBar(
+                                  alignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton.icon(
+                                        onPressed: () =>
+                                            showDeleteProgressConfirmation(
+                                                context),
+                                        icon: const Icon(
+                                            Icons.delete_forever_rounded),
+                                        style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.red)),
+                                        label: const Text('Delete progress')),
+                                    SizedBox(
+                                      width: orientation == Orientation.portrait
+                                          ? 12
+                                          : 0,
+                                      height:
+                                          orientation == Orientation.landscape
+                                              ? 12
+                                              : 0,
+                                    ),
+                                    ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const SignUpPage()));
+                                        },
+                                        icon: const Icon(FontAwesomeIcons
+                                            .arrowRightToBracket),
+                                        label: const Text('Sign up')),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )
               : CustomScrollView(
