@@ -37,6 +37,8 @@ class UserFirestore {
         'isParent': true,
         'hasDyslexia': true,
         'name': '',
+        'hasViewedTutorialFirstTime': false,
+        'accountCreatedAt': Timestamp.now(),
       });
     } catch (e) {
       print('Error: $e');

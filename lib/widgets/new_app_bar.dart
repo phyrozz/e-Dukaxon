@@ -5,6 +5,7 @@ import 'package:e_dukaxon/pages/login.dart';
 import 'package:e_dukaxon/pages/parent_mode_login.dart';
 import 'package:e_dukaxon/pages/settings.dart';
 import 'package:e_dukaxon/pages/sign_up.dart';
+import 'package:e_dukaxon/pages/tutorial.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
 import 'package:e_dukaxon/widget_tree.dart';
 import 'package:flutter/material.dart';
@@ -92,13 +93,30 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
     }
   }
 
-  Widget _menuButton(BuildContext context) {
+  Widget helpButton(BuildContext context) {
+    return IconButton(
+        onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const TutorialPage(),
+              ),
+            ),
+        icon: Icon(
+          Icons.help_rounded,
+          size: 40,
+          color: isDarkMode
+              ? Theme.of(context).secondaryHeaderColor
+              : Theme.of(context).focusColor,
+        ));
+  }
+
+  Widget menuButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: IconButton(
         onPressed: () {
           if (widget.isParentMode) {
-            _showMenuDialog(context);
+            showMenuDialog(context);
           } else {
             Navigator.push(context,
                 createRouteWithHorizontalSlideAnimation(const PinAccessPage()));
@@ -115,7 +133,7 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
     );
   }
 
-  Future<void> _showMenuDialog(BuildContext context) async {
+  Future<void> showMenuDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -270,7 +288,13 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
           data: ThemeData(
             canvasColor: Colors.grey[900],
           ),
-          child: _menuButton(context),
+          child: helpButton(context),
+        ),
+        Theme(
+          data: ThemeData(
+            canvasColor: Colors.grey[900],
+          ),
+          child: menuButton(context),
         ),
       ],
     );
