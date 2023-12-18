@@ -1,3 +1,4 @@
+import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,7 +117,11 @@ class _TutorialPageState extends State<TutorialPage> {
         visible: selectedPage == 6,
         child: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => const HomePageTree()),
+                (Route<dynamic> route) => false);
           },
           label: Text(isEnglish ? 'Let\'s go!' : 'Tara na!'),
           icon: const Icon(Icons.check),

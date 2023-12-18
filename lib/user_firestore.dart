@@ -31,14 +31,18 @@ class UserFirestore {
           FirebaseFirestore.instance.collection('users');
       DocumentReference userDocRef = users.doc(userId);
 
+      // Initialize the questions array with all values set to 0
+      List<int> initialQuestions = List.filled(7, 0);
+
       await userDocRef.set({
         'isAccountAnon': true,
         'isNewAccount': true,
         'isParent': true,
         'hasDyslexia': true,
+        'dyslexiaScore': 0,
         'name': '',
-        'hasViewedTutorialFirstTime': false,
         'accountCreatedAt': Timestamp.now(),
+        'questions': initialQuestions,
       });
     } catch (e) {
       print('Error: $e');
@@ -124,6 +128,27 @@ class UserFirestore {
 
   //   print('Documents copied successfully');
   // }
+
+  Future<void> updateQuestionScore(int index, int score) async {
+    try {
+      final userDoc =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      final userData = await userDoc.get();
+
+      if (!userData.exists) {
+        // If the user document doesn't exist, create it
+        await userDoc.set({'questions': List<int>.filled(7, 0)});
+      }
+
+      // Update the score at the specified index in the 'questions' array
+      List<int> questions = List<int>.from(userData['questions']);
+      questions[index] = score;
+
+      await userDoc.update({'questions': questions});
+    } catch (e) {
+      print('Error updating Firestore question score: $e');
+    }
+  }
 
   Future<bool> getIsParent() async {
     var data = await getDocumentData();

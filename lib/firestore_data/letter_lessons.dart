@@ -223,6 +223,52 @@ class LetterLessonFirestore {
     }
   }
 
+  // Call this function when initializing the unlocking of lessons based on the user's dyslexia score
+  Future<void> initUnlockLessons() async {
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    try {
+      // Get the current user document from Firestore
+      DocumentSnapshot userDocSnapshot = await userDocRef.get();
+      int dyslexiaScore = userDocSnapshot['dyslexiaScore'] ?? 0;
+
+      // Unlock lessons based on dyslexiaScore
+      List<int> unlockedLessons = [];
+
+      if (dyslexiaScore >= 14 && dyslexiaScore <= 12) {
+        unlockedLessons = [0, 1, 2, 3, 4];
+      } else if (dyslexiaScore < 12 && dyslexiaScore >= 9) {
+        unlockedLessons = [0, 1, 2];
+      } else if (dyslexiaScore < 9) {
+        unlockedLessons = [0];
+      }
+
+      // Unlock lessons in both en and ph locales
+      for (String locale in ['en', 'ph']) {
+        for (int lessonId in unlockedLessons) {
+          CollectionReference lessonsCollectionRef = FirebaseFirestore.instance
+              .collection('users/$userId/letters/$locale/lessons');
+
+          QuerySnapshot lessonSnapshot =
+              await lessonsCollectionRef.where('id', isEqualTo: lessonId).get();
+
+          for (QueryDocumentSnapshot lessonDocSnapshot in lessonSnapshot.docs) {
+            // Update the "isUnlocked" field for the lesson
+            await lessonDocSnapshot.reference.set(
+              {'isUnlocked': true},
+              SetOptions(merge: true),
+            );
+          }
+        }
+      }
+
+      print('Letter lessons unlocked successfully!');
+    } catch (e) {
+      print('Error unlocking letter lessons: $e');
+    }
+  }
+
   Future<void> unlockFirstNumbersLesson(String locale) async {
     try {
       final CollectionReference firstNumbersLesson = FirebaseFirestore.instance

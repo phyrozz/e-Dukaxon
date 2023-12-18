@@ -1,7 +1,7 @@
-import 'package:e_dukaxon/assessment_data.dart';
-import 'package:e_dukaxon/data/assessment.dart';
+import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/pages/assessment_questions/question_2.dart';
 import 'package:e_dukaxon/route_anims/horizontal_slide.dart';
+import 'package:e_dukaxon/user_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -69,7 +69,10 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
-                        updateDyslexiaScore(1, 2);
+                        String? userId = Auth().getCurrentUserId();
+
+                        await UserFirestore(userId: userId!)
+                            .updateQuestionScore(0, 2);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -85,7 +88,10 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
-                        updateDyslexiaScore(1, 1);
+                        String? userId = Auth().getCurrentUserId();
+
+                        await UserFirestore(userId: userId!)
+                            .updateQuestionScore(0, 1);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(
@@ -103,8 +109,10 @@ class _BangorQuestionOneState extends State<BangorQuestionOne> {
                           padding:
                               MaterialStatePropertyAll(EdgeInsets.all(20))),
                       onPressed: () async {
-                        updateDyslexiaScore(1, 0);
-                        question1 = 0;
+                        String? userId = Auth().getCurrentUserId();
+
+                        await UserFirestore(userId: userId!)
+                            .updateQuestionScore(0, 0);
                         Navigator.push(
                             context,
                             createRouteWithHorizontalSlideAnimation(

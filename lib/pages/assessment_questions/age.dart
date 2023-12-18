@@ -1,12 +1,9 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:e_dukaxon/data/assessment.dart';
-import 'package:e_dukaxon/homepage_tree.dart';
+import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/pages/tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AgeSelectPage extends StatefulWidget {
@@ -89,36 +86,34 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
   }
 
   Future<void> storeDyslexiaResult() async {
-    // Retrieve the values of each question and store them as a dyslexiaScore variable
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
-    final file = File('$path/assessment_data.json');
-
-    final jsonString = await file.readAsString();
-    final assessment = Assessment.fromJson(json.decode(jsonString));
-    int sum = assessment.questions.fold(0, (prev, element) => prev + element);
-
-    // Update the dyslexiaScore with the sum value
-    assessment.dyslexiaScore = sum;
-
-    final updatedJsonString = json.encode(assessment.toJson());
-    await file.writeAsString(updatedJsonString);
-
     // Get the current user ID
-    String userId = FirebaseAuth.instance.currentUser!.uid;
+    String? userId = Auth().getCurrentUserId();
 
     // Reference to the document in the "users" collection
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('users').doc(userId);
 
-    bool hasDyslexia = assessment.dyslexiaScore >=
-        7; // Determine if user has dyslexia based on score threshold
-
     try {
-      // Create or update the document with the "hasDyslexia" field
+      // Get the current user document from Firestore
+      DocumentSnapshot userDocSnapshot = await userDocRef.get();
+      List<int> questions = List<int>.from(userDocSnapshot['questions'] ?? []);
+
+      // Calculate the sum of values in the questions array
+      int newDyslexiaScore =
+          questions.fold(0, (prev, element) => prev + element);
+
+      // Determine if the user has dyslexia based on the new score threshold
+      bool hasDyslexia = newDyslexiaScore >= 7;
+
+      // Create or update the document with the new "dyslexiaScore" and "hasDyslexia" fields
       await userDocRef.set(
-          {'hasDyslexia': hasDyslexia, 'questions': assessment.questions},
-          SetOptions(merge: true));
+        {
+          'dyslexiaScore': newDyslexiaScore,
+          'hasDyslexia': hasDyslexia,
+        },
+        SetOptions(merge: true),
+      );
+
       print('Dyslexia result stored successfully!');
     } catch (e) {
       print('Error storing dyslexia result: $e');
@@ -217,12 +212,14 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                     ),
                   ),
                   onPressed: () async {
+                    String? userId = Auth().getCurrentUserId();
+
                     Navigator.pop(context, _currentAge);
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                const HomePageTree()),
+                                const TutorialPage()),
                         (Route<dynamic> route) => false);
                     // if (await UserFirestore(userId: _currentUserId!)
                     //     .getIsParent()) {
@@ -232,7 +229,9 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                     //   Navigator.pushNamedAndRemoveUntil(
                     //       context, '/myPages', (Route<dynamic> route) => false);
                     // }
-                    storeDyslexiaResult();
+                    storeDyslexiaResult().then((_) =>
+                        LetterLessonFirestore(userId: userId!)
+                            .initUnlockLessons());
                     await updateIsNewAccount(false, _currentAge);
                   },
                   child: Text(isEnglish ? 'Done' : 'Tapos'),
