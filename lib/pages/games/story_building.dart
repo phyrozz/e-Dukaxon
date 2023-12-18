@@ -15,14 +15,16 @@ class StoryBuildingGame extends StatefulWidget {
   State<StoryBuildingGame> createState() => _StoryBuildingGameState();
 }
 
-class _StoryBuildingGameState extends State<StoryBuildingGame> {
+class _StoryBuildingGameState extends State<StoryBuildingGame>
+    with TickerProviderStateMixin {
   List<dynamic> sentenceList = [];
-  List<String?> placedSentences = [];
   List<dynamic> storyList = [];
 
   AssetsAudioPlayer audio = AssetsAudioPlayer();
   bool isLoading = true;
   bool isEnglish = true;
+
+  final List<AnimationController> _controllers = [];
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -57,16 +59,11 @@ class _StoryBuildingGameState extends State<StoryBuildingGame> {
       List<dynamic> randomStory = randomDocument['story'];
 
       setState(() {
-        sentenceList = randomStory;
+        sentenceList = randomStory; // original unshuffled list
       });
     } else {
       print('No documents found in the collection');
     }
-  }
-
-  List<dynamic> buildSentenceList(List<dynamic> story) {
-    story.shuffle();
-    return story;
   }
 
   @override
@@ -75,12 +72,19 @@ class _StoryBuildingGameState extends State<StoryBuildingGame> {
     getLanguage().then((_) {
       getRandomStory(isEnglish).then((_) {
         setState(() {
-          storyList = buildSentenceList(sentenceList);
-          placedSentences = List.filled(storyList.length, null);
+          storyList = List.from(sentenceList)..shuffle();
           isLoading = false;
         });
       });
     });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -215,14 +219,12 @@ class _StoryBuildingGameState extends State<StoryBuildingGame> {
                                 onWillAccept: (data) => true,
                                 onAccept: (data) {
                                   setState(() {
-                                    if (data != null) {
-                                      final int oldIndex =
-                                          storyList.indexOf(data);
-                                      final int newIndex =
-                                          storyList.indexOf(word);
-                                      storyList.removeAt(oldIndex);
-                                      storyList.insert(newIndex, data);
-                                    }
+                                    final int oldIndex =
+                                        storyList.indexOf(data);
+                                    final int newIndex =
+                                        storyList.indexOf(word);
+                                    storyList.removeAt(oldIndex);
+                                    storyList.insert(newIndex, data);
                                   });
                                 },
                               ),
@@ -236,7 +238,7 @@ class _StoryBuildingGameState extends State<StoryBuildingGame> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          bool isCorrect = ListEquality().equals(placedSentences, storyList);
+          bool isCorrect = const ListEquality().equals(sentenceList, storyList);
 
           if (isCorrect) {
             showResultModal(context, true); // Answer is correct
@@ -253,27 +255,49 @@ class _StoryBuildingGameState extends State<StoryBuildingGame> {
 
   Widget buildWordTile(String word, {bool isFeedback = false}) {
     Color backgroundColor;
+    double fontSize;
+    double padding;
 
     if (isFeedback) {
-      backgroundColor = Theme.of(context).primaryColorDark.withOpacity(0.7);
+      padding = 10;
+      fontSize = 16;
+      backgroundColor = Theme.of(context).focusColor.withOpacity(1);
     } else {
+      padding = 4;
+      fontSize = 14;
       backgroundColor = Theme.of(context).primaryColorDark;
     }
 
-    return Container(
-      key: ValueKey(word),
-      padding: const EdgeInsets.all(4.0),
-      margin: const EdgeInsets.all(4.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(8.0),
-        color: backgroundColor,
+    AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    )..forward();
+
+    _controllers.add(controller);
+
+    return ScaleTransition(
+      scale: CurvedAnimation(
+        parent: controller,
+        curve: Curves.bounceOut,
       ),
-      child: Text(
-        word,
-        style: TextStyle(
-          fontSize: 12,
-          color: Theme.of(context).scaffoldBackgroundColor,
+      child: AnimatedContainer(
+        duration: const Duration(seconds: 300),
+        curve: Curves.bounceIn,
+        key: ValueKey(word),
+        padding: EdgeInsets.all(padding),
+        margin: EdgeInsets.all(padding),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(8.0),
+          color: backgroundColor,
+        ),
+        child: Text(
+          word,
+          style: TextStyle(
+            fontSize: fontSize,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            decoration: TextDecoration.none,
+          ),
         ),
       ),
     );

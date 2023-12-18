@@ -107,7 +107,7 @@ class _GamesPageState extends State<GamesPage> {
                     SliverGrid(
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 250.0,
+                        maxCrossAxisExtent: 200.0,
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
                         childAspectRatio: 1.0,
@@ -154,7 +154,7 @@ class _ButtonState extends State<Button> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 300)).then((value) {
+    Future.delayed(const Duration(milliseconds: 150)).then((value) {
       if (mounted) {
         setState(() {
           headerPosition = Alignment.centerLeft;
@@ -175,7 +175,7 @@ class _ButtonState extends State<Button> {
               builder: (BuildContext context) => widget.routePage)),
       child: AnimatedOpacity(
         opacity: containerOpacity,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOutCubic,
         child: Container(
           decoration: BoxDecoration(
@@ -191,11 +191,11 @@ class _ButtonState extends State<Button> {
                 const SizedBox(),
                 AnimatedAlign(
                   alignment: containerPosition,
-                  duration: const Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 250),
                   curve: Curves.easeInOutCubic,
                   child: AnimatedOpacity(
                     opacity: containerOpacity,
-                    duration: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 250),
                     curve: Curves.easeInOutCubic,
                     child: Center(
                       child: Container(

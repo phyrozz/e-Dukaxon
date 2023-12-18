@@ -66,17 +66,17 @@ class _MyPagesState extends State<MyPages> {
         isSelected: true,
       ),
       CollapsibleItem(
-        text: 'Games',
+        text: isEnglish ? 'Games' : 'Mga Laro',
         icon: Icons.games,
         onPressed: () => _updateCurrentPage('Games', 1),
       ),
       CollapsibleItem(
-        text: 'My Progress',
+        text: isEnglish ? 'My Progress' : 'Aking Progress',
         icon: Icons.show_chart,
         onPressed: () => _updateCurrentPage('My Progress', 2),
       ),
       CollapsibleItem(
-        text: 'My Account',
+        text: isEnglish ? 'My Account' : 'Aking Account',
         icon: Icons.account_circle,
         onPressed: () => _updateCurrentPage('My Account', 3),
       ),

@@ -16,7 +16,8 @@ class WordPlaceGame extends StatefulWidget {
   State<WordPlaceGame> createState() => _WordPlaceGameState();
 }
 
-class _WordPlaceGameState extends State<WordPlaceGame> {
+class _WordPlaceGameState extends State<WordPlaceGame>
+    with TickerProviderStateMixin {
   String sentence = "";
   int difficulty = 0;
   List<String> wordList = [];
@@ -27,6 +28,8 @@ class _WordPlaceGameState extends State<WordPlaceGame> {
   AssetsAudioPlayer audio = AssetsAudioPlayer();
   bool isLoading = true;
   bool isEnglish = true;
+
+  final List<AnimationController> _controllers = [];
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -150,6 +153,14 @@ class _WordPlaceGameState extends State<WordPlaceGame> {
   }
 
   @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     void showResultModal(BuildContext context, bool isPassed) {
       if (isPassed) {
@@ -254,6 +265,7 @@ class _WordPlaceGameState extends State<WordPlaceGame> {
                       // List of drag targets
                       Wrap(
                         alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: sentenceList.asMap().entries.map((entry) {
                           int index = entry.key;
                           String word = entry.value;
@@ -369,30 +381,55 @@ class _WordPlaceGameState extends State<WordPlaceGame> {
   Widget buildWordTile(String word,
       {bool isFeedback = false, bool isDragTarget = false}) {
     Color backgroundColor;
+    double fontSize;
+    double padding;
 
     if (isFeedback) {
+      padding = 14;
+      fontSize = 20;
       backgroundColor = Theme.of(context).primaryColorDark.withOpacity(0.7);
     } else if (isDragTarget) {
+      padding = 8;
+      fontSize = 16;
       backgroundColor = placedWords.contains(word)
           ? Theme.of(context).primaryColorDark
           : Theme.of(context).primaryColorLight;
     } else {
+      padding = 8;
+      fontSize = 16;
       backgroundColor = Theme.of(context).primaryColorDark;
     }
 
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      margin: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(8.0),
-        color: backgroundColor,
+    AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    )..forward();
+
+    _controllers.add(controller);
+
+    return ScaleTransition(
+      scale: CurvedAnimation(
+        parent: controller,
+        curve: Curves.bounceOut,
       ),
-      child: Text(
-        word,
-        style: TextStyle(
-          fontSize: 16,
-          color: Theme.of(context).scaffoldBackgroundColor,
+      child: AnimatedContainer(
+        duration: const Duration(seconds: 300),
+        curve: Curves.bounceIn,
+        key: ValueKey(word),
+        padding: EdgeInsets.all(padding),
+        margin: EdgeInsets.all(padding),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(8.0),
+          color: backgroundColor,
+        ),
+        child: Text(
+          word,
+          style: TextStyle(
+            fontSize: fontSize,
+            color: Theme.of(context).scaffoldBackgroundColor,
+            decoration: TextDecoration.none,
+          ),
         ),
       ),
     );
