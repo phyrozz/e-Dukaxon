@@ -15,6 +15,7 @@ class NumbersResultPage extends StatefulWidget {
 }
 
 class _NumbersResultPageState extends State<NumbersResultPage> {
+  int totalScore = 0;
   int score = 0;
   int progress = 0;
   String uid = "";
@@ -26,7 +27,10 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
   @override
   void initState() {
     super.initState();
-    getPrefValues().then((_) => getScore(widget.lessonName)).then((_) {
+    getPrefValues()
+        .then((_) => getTotalScore(widget.lessonName))
+        .then((_) => getScore(widget.lessonName))
+        .then((_) {
       if (progress >= 50) {
         NumberLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
@@ -49,10 +53,10 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
   }
 
   void playLessonFinishedSound() {
-    if (score <= 20 && score >= 10) {
+    if (score <= totalScore && score >= totalScore / 2) {
       audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
       if (progress < 100) {
-        if (score == 20) {
+        if (score == totalScore) {
           NumberLessonFirestore(userId: uid).incrementProgressValue(
               widget.lessonName, isEnglish ? "en" : "ph", 20);
         } else {
@@ -93,7 +97,34 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
         isLoading = true;
       }
     } catch (e) {
-      print('Error reading letter_lessons.json: $e');
+      print('Error: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> getTotalScore(String lessonName) async {
+    try {
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await NumberLessonFirestore(userId: userId!)
+              .getLessonData(lessonName, isEnglish ? "en" : "ph");
+
+      if (lessonData != null) {
+        if (mounted) {
+          setState(() {
+            totalScore = lessonData['total'];
+            isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
+      }
+    } catch (e) {
+      print('Error: $e');
       setState(() {
         isLoading = false;
       });

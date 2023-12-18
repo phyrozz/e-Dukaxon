@@ -30,7 +30,10 @@ class _LettersResultPageState extends State<LettersResultPage> {
   @override
   void initState() {
     super.initState();
-    getPrefValues().then((_) => getScore(widget.lessonName)).then((_) {
+    getPrefValues()
+        .then((_) => getTotalScore(widget.lessonName))
+        .then((_) => getScore(widget.lessonName))
+        .then((_) {
       if (progress >= 50) {
         LetterLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
@@ -53,10 +56,10 @@ class _LettersResultPageState extends State<LettersResultPage> {
   }
 
   void playLessonFinishedSound() {
-    if (score <= 40 && score >= 20) {
+    if (score <= totalScore && score >= totalScore / 2) {
       audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
       if (progress < 100) {
-        if (score == 40) {
+        if (score == totalScore) {
           LetterLessonFirestore(userId: uid).incrementProgressValue(
               widget.lessonName, isEnglish ? "en" : "ph", 20);
         } else {
@@ -72,11 +75,6 @@ class _LettersResultPageState extends State<LettersResultPage> {
       }
     }
   }
-
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
 
   Future<void> getScore(String lessonName) async {
     try {
@@ -109,42 +107,32 @@ class _LettersResultPageState extends State<LettersResultPage> {
     }
   }
 
-  // Future<void> getScore(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
+  Future<void> getTotalScore(String lessonName) async {
+    try {
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? lessonData =
+          await LetterLessonFirestore(userId: userId!)
+              .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       setState(() {
-  //         progress = lesson.progress;
-  //         score = lesson.score;
-  //         isLoading = false;
-  //       });
-
-  //       // Call playLessonFinishedSound after the score is updated
-  //       playLessonFinishedSound();
-  //     } else {
-  //       print('LetterLesson with name $lessonName not found in JSON file');
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print('Error reading letter_lessons.json: $e');
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
+      if (lessonData != null) {
+        if (mounted) {
+          setState(() {
+            totalScore = lessonData['total'];
+            isLoading = false;
+          });
+        }
+      } else {
+        print(
+            'Letter lesson "$lessonName" was not found within the Firestore.');
+        isLoading = true;
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -169,17 +157,17 @@ class _LettersResultPageState extends State<LettersResultPage> {
                   Column(
                     children: [
                       Image.asset(
-                        score <= 40 && score >= 20
+                        score <= totalScore && score >= totalScore / 2
                             ? 'assets/images/lesson_finished_1.png'
                             : 'assets/images/lesson_finished_2.png',
                         width: 150,
                       ),
-                      if (score == 40)
+                      if (score == totalScore)
                         Text(
                           isEnglish ? 'Excellent!' : 'Napakahusay!',
                           style: Theme.of(context).textTheme.titleLarge,
                         )
-                      else if (score < 40 && score >= 20)
+                      else if (score < totalScore && score >= totalScore / 2)
                         Text(
                           isEnglish ? 'Good job!' : 'Mahusay!',
                           style: Theme.of(context).textTheme.titleLarge,
@@ -195,13 +183,13 @@ class _LettersResultPageState extends State<LettersResultPage> {
                               isEnglish
                                   ? 'You can play this lesson again to get a higher score.'
                                   : 'Puwede mo ulit laruin ang lesson na ito para makakuha ng mas mataas na marka.',
-                              style: TextStyle(fontSize: 20),
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ],
                         ),
                       Text(isEnglish
-                          ? 'You got a score of $score/40!'
-                          : 'Nakakuha ka ng $score/40!'),
+                          ? 'You got a score of $score/$totalScore!'
+                          : 'Nakakuha ka ng $score/$totalScore!'),
                     ],
                   ),
                   Row(

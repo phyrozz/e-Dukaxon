@@ -2,6 +2,7 @@ import 'package:e_dukaxon/pages/games/letter_guess.dart';
 import 'package:e_dukaxon/pages/games/sound_quiz.dart';
 import 'package:e_dukaxon/pages/games/story_building.dart';
 import 'package:e_dukaxon/pages/games/trace_letter.dart';
+import 'package:e_dukaxon/pages/games/word_place.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,11 @@ class _GamesPageState extends State<GamesPage> {
       title: 'Guess the Letter',
       iconImageUrl: 'assets/images/letter_guess_icon.png',
       routePage: LetterGuessPage(),
+    ),
+    const Button(
+      title: 'Word Place',
+      iconImageUrl: 'assets/images/word_place_icon.png',
+      routePage: WordPlaceGame(),
     ),
     const Button(
       title: 'Story Building',
