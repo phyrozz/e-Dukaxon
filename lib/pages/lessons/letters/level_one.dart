@@ -1,16 +1,10 @@
-// import 'dart:convert';
-// import 'dart:io';
-
-// import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-// import 'package:e_dukaxon/data/letter_lessons.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LettersLevelOne extends StatefulWidget {
@@ -31,7 +25,8 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   bool isLoading = true;
   bool showOverlay = true;
   bool isEnglish = true;
-  // AssetsAudioPlayer audio = AssetsAudioPlayer();
+  bool isLoadingAudio = false;
+  bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
 
   @override
@@ -40,6 +35,16 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
     getLanguage().then((value) {
       getLevel1DataByName(widget.lessonName);
     });
+
+    // Add event listener for playback status
+    audio.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -48,12 +53,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       }
     });
   }
-
-  // Future<void> playAudio(String url) async {
-  //   AudioPlayer audio = AudioPlayer();
-
-  //   await audio.setSourceUrl(url);
-  // }
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -65,11 +64,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
       });
     }
   }
-
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
 
   void getLevel1DataByName(String lessonName) async {
     try {
@@ -116,59 +110,6 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                   LettersLevelTwo(lessonName: lessonName)));
     }
   }
-
-  // Local data implementation
-
-  // void getLevel1DataByName(String lessonName) async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   final file = File('${directory.path}/letter_lessons.json');
-
-  //   try {
-  //     final jsonString = await file.readAsString();
-  //     final List<dynamic> jsonData = json.decode(jsonString);
-
-  //     List<LetterLesson> letterLessons = jsonData.map((lesson) {
-  //       return LetterLesson.fromJson(lesson);
-  //     }).toList();
-
-  //     // Filter the letterLessons list to include only lessons with "locale" set to "en"
-  //     final List<LetterLesson> enLessons = letterLessons
-  //         .where((lesson) =>
-  //             isEnglish ? lesson.locale == "en" : lesson.locale == "ph")
-  //         .toList();
-
-  //     LetterLesson? lesson = getLetterLessonByName(letterLessons, lessonName);
-
-  //     if (lesson != null) {
-  //       Level levelData = lesson.level1;
-  //       print('Level 1 data for $lessonName: $levelData');
-  //       if (mounted) {
-  //         setState(() {
-  //           levelDescription = levelData.description;
-  //           texts.clear();
-  //           texts.addAll(levelData.texts!);
-  //           images.addAll(levelData.images!);
-  //           sounds.addAll(levelData.sounds!);
-  //           isLoading = false;
-  //         });
-  //       }
-  //     } else {
-  //       print('LetterLesson with name $lessonName not found in JSON file');
-  //       if (mounted) {
-  //         setState(() {
-  //           isLoading = false;
-  //         });
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print('Error reading letter_lessons.json: $e');
-  //     if (mounted) {
-  //       setState(() {
-  //         isLoading = false;
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -217,8 +158,33 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                     const SizedBox(height: 20),
                                     if (images[index] is String)
                                       Image.network(
-                                        images[index] as String,
+                                        images[index] is String
+                                            ? images[index] as String
+                                            : '', // Use an empty string if the image is not a String (placeholder)
                                         width: 200,
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            // Image has finished loading
+                                            return child;
+                                          } else {
+                                            // Image is still loading, show a CircularProgressIndicator
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        (loadingProgress
+                                                                .expectedTotalBytes ??
+                                                            1)
+                                                    : null,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     const SizedBox(height: 20),
                                     Text(
@@ -231,12 +197,36 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                     const SizedBox(height: 20),
                                     if (sounds[index] is String)
                                       ElevatedButton.icon(
-                                          onPressed: () => audio
-                                              .play(UrlSource(sounds[index])),
-                                          icon: const Icon(Icons.volume_up),
-                                          label: Text(isEnglish
-                                              ? "Listen"
-                                              : "Pakinggan")),
+                                        onPressed: () async {
+                                          if (isPlaying) {
+                                            // If currently in playback state, stop the audio
+                                            await audio.stop();
+                                          } else {
+                                            // If not in playback state, start playing the audio
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = true;
+                                              });
+                                            }
+
+                                            await audio
+                                                .play(UrlSource(sounds[index]));
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = false;
+                                              });
+                                            }
+                                          }
+                                        },
+                                        icon: isPlaying
+                                            ? const Icon(Icons.stop)
+                                            : const Icon(Icons.volume_up),
+                                        label: isPlaying
+                                            ? const Text("Stop")
+                                            : Text(isEnglish
+                                                ? "Listen"
+                                                : "Pakinggan"),
+                                      ),
                                     const SizedBox(height: 50),
                                   ];
                                   return Column(

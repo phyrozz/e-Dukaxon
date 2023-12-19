@@ -160,11 +160,11 @@ class _MyProgressPageState extends State<MyProgressPage> {
                                 height: 8,
                               ),
                               // TODO: add these widgets if the lessons on these are done
-                              // progressCard(
-                              //     isEnglish ? "Words" : "Mga Salita", "words"),
-                              // const SizedBox(
-                              //   height: 8,
-                              // ),
+                              progressCard(
+                                  isEnglish ? "Words" : "Mga Salita", "words"),
+                              const SizedBox(
+                                height: 8,
+                              ),
                               // progressCard(
                               //     isEnglish ? "Sentences" : "Mga Pangungusap",
                               //     "sentences"),
@@ -229,6 +229,11 @@ class _MyProgressPageState extends State<MyProgressPage> {
                               children: [
                                 LinearProgressIndicator(
                                     color: Theme.of(context).primaryColorDark,
+                                    backgroundColor: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(15)),
+                                    minHeight: 15,
                                     value: snapshot.data),
                                 Text(
                                   '${(snapshot.data! * 100).toStringAsFixed(2)}% complete',

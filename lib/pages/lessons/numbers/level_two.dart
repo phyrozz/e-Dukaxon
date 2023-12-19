@@ -33,20 +33,20 @@ class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
     "sounds/seven.wav",
     "sounds/eight.wav",
     "sounds/nine.wav",
-    "sounds/ten.wav",
+    "sounds/zero.wav",
   ];
   List<String> phSounds = [
     // Placeholder code
-    "sounds/one.wav",
-    "sounds/two.wav",
-    "sounds/three.wav",
-    "sounds/four.wav",
-    "sounds/five.wav",
-    "sounds/six.wav",
-    "sounds/seven.wav",
-    "sounds/eight.wav",
-    "sounds/nine.wav",
-    "sounds/ten.wav",
+    "sounds/ph/isa.wav",
+    "sounds/ph/dalawa.wav",
+    "sounds/ph/tatlo.wav",
+    "sounds/ph/apat.wav",
+    "sounds/ph/lima.wav",
+    "sounds/ph/anim.wav",
+    "sounds/ph/pito.wav",
+    "sounds/ph/walo.wav",
+    "sounds/ph/siyam.wav",
+    "sounds/ph/zero.wav",
   ];
   List<String> soundChoices = []; // List to store the sound choices for buttons
   String? selectedSound; // Currently selected sound
@@ -176,7 +176,7 @@ class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: const Color(0xFFF2EAD3),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         isDismissible: isCorrect ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -290,10 +290,12 @@ class _NumbersLevelTwoState extends State<NumbersLevelTwo> {
                                     label: const Text(''),
                                     icon: const Icon(Icons.volume_up),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedSound ==
-                                              entry.value
-                                          ? const Color.fromARGB(255, 27, 15, 2)
-                                          : null,
+                                      backgroundColor:
+                                          selectedSound == entry.value
+                                              ? Theme.of(context)
+                                                  .primaryColorDark
+                                                  .withAlpha(100)
+                                              : null,
                                     ),
                                   ),
                                 )

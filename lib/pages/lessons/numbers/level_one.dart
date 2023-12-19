@@ -25,6 +25,8 @@ class _NumbersLevelOneState extends State<NumbersLevelOne> {
   bool isLoading = true;
   bool showOverlay = true;
   bool isEnglish = true;
+  bool isLoadingAudio = false;
+  bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
 
   @override
@@ -33,6 +35,16 @@ class _NumbersLevelOneState extends State<NumbersLevelOne> {
       getLevelDataByName(widget.lessonName);
     });
     super.initState();
+
+    // Add event listener for playback status
+    audio.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -159,12 +171,36 @@ class _NumbersLevelOneState extends State<NumbersLevelOne> {
                                     const SizedBox(height: 20),
                                     if (sounds[index] is String)
                                       ElevatedButton.icon(
-                                          onPressed: () => audio
-                                              .play(UrlSource(sounds[index])),
-                                          icon: const Icon(Icons.volume_up),
-                                          label: Text(isEnglish
-                                              ? "Listen"
-                                              : "Pakinggan")),
+                                        onPressed: () async {
+                                          if (isPlaying) {
+                                            // If currently in playback state, stop the audio
+                                            await audio.stop();
+                                          } else {
+                                            // If not in playback state, start playing the audio
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = true;
+                                              });
+                                            }
+
+                                            await audio
+                                                .play(UrlSource(sounds[index]));
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = false;
+                                              });
+                                            }
+                                          }
+                                        },
+                                        icon: isPlaying
+                                            ? const Icon(Icons.stop)
+                                            : const Icon(Icons.volume_up),
+                                        label: isPlaying
+                                            ? const Text("Stop")
+                                            : Text(isEnglish
+                                                ? "Listen"
+                                                : "Pakinggan"),
+                                      ),
                                     const SizedBox(height: 50),
                                   ];
                                   return Column(

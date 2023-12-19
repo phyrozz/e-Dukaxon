@@ -1,7 +1,7 @@
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
-import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
+import 'package:e_dukaxon/firestore_data/word_lessons.dart';
+import 'package:e_dukaxon/pages/lessons/words/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +25,8 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
   bool isLoading = true;
   bool showOverlay = true;
   bool isEnglish = true;
+  bool isLoadingAudio = false;
+  bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
 
   @override
@@ -33,6 +35,16 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
     getLanguage().then((value) {
       getLevel1DataByName(widget.lessonName);
     });
+
+    // Add event listener for playback status
+    audio.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
+
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -57,7 +69,7 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
     try {
       final userId = Auth().getCurrentUserId();
       Map<String, dynamic>? lessonData =
-          await LetterLessonFirestore(userId: userId!)
+          await WordLessonFirestore(userId: userId!)
               .getLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (lessonData != null && lessonData.containsKey('level1')) {
@@ -95,7 +107,7 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
           context,
           MaterialPageRoute(
               builder: (BuildContext context) =>
-                  LettersLevelTwo(lessonName: lessonName)));
+                  WordsLevelTwo(lessonName: lessonName)));
     }
   }
 
@@ -146,8 +158,33 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
                                     const SizedBox(height: 20),
                                     if (images[index] is String)
                                       Image.network(
-                                        images[index] as String,
+                                        images[index] is String
+                                            ? images[index] as String
+                                            : '', // Use an empty string if the image is not a String (placeholder)
                                         width: 200,
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            // Image has finished loading
+                                            return child;
+                                          } else {
+                                            // Image is still loading, show a CircularProgressIndicator
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        (loadingProgress
+                                                                .expectedTotalBytes ??
+                                                            1)
+                                                    : null,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
                                     const SizedBox(height: 20),
                                     Text(
@@ -160,12 +197,36 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
                                     const SizedBox(height: 20),
                                     if (sounds[index] is String)
                                       ElevatedButton.icon(
-                                          onPressed: () => audio
-                                              .play(UrlSource(sounds[index])),
-                                          icon: const Icon(Icons.volume_up),
-                                          label: Text(isEnglish
-                                              ? "Listen"
-                                              : "Pakinggan")),
+                                        onPressed: () async {
+                                          if (isPlaying) {
+                                            // If currently in playback state, stop the audio
+                                            await audio.stop();
+                                          } else {
+                                            // If not in playback state, start playing the audio
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = true;
+                                              });
+                                            }
+
+                                            await audio
+                                                .play(UrlSource(sounds[index]));
+                                            if (mounted) {
+                                              setState(() {
+                                                isLoadingAudio = false;
+                                              });
+                                            }
+                                          }
+                                        },
+                                        icon: isPlaying
+                                            ? const Icon(Icons.stop)
+                                            : const Icon(Icons.volume_up),
+                                        label: isPlaying
+                                            ? const Text("Stop")
+                                            : Text(isEnglish
+                                                ? "Listen"
+                                                : "Pakinggan"),
+                                      ),
                                     const SizedBox(height: 50),
                                   ];
                                   return Column(
@@ -201,10 +262,9 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
                                     onPressed: () => Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                LettersLevelTwo(
-                                                    lessonName:
-                                                        widget.lessonName))),
+                                            builder: (context) => WordsLevelTwo(
+                                                lessonName:
+                                                    widget.lessonName))),
                                   ),
                                 ],
                               ),

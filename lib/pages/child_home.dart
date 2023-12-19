@@ -4,9 +4,11 @@ import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/data/theme_data.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
+import 'package:e_dukaxon/firestore_data/word_lessons.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/pages/lessons/numbers/level_one.dart';
+import 'package:e_dukaxon/pages/lessons/words/level_one.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:e_dukaxon/user_firestore.dart';
 import 'package:e_dukaxon/widgets/new_app_bar.dart';
@@ -30,6 +32,9 @@ class _ChildHomePageState extends State<ChildHomePage> {
   List numberLessonNames = [];
   List numberLessonProgress = [];
   List unlockedNumberLessons = [];
+  List wordLessonNames = [];
+  List wordLessonProgress = [];
+  List unlockedWordLessons = [];
   bool isEnglish = true;
   bool isLoading = true;
   String currentColorScheme = "Default";
@@ -129,7 +134,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
         letterLessonProgress = letterProgress;
       });
     } catch (e) {
-      print('Error updating local letter lessons: $e');
+      print('Error: $e');
     }
   }
 
@@ -171,7 +176,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
         numberLessonProgress = numberProgress;
       });
     } catch (e) {
-      print('Error updating local number lessons: $e');
+      print('Error: $e');
     }
   }
   // try {
@@ -204,24 +209,50 @@ class _ChildHomePageState extends State<ChildHomePage> {
   // }
   // }
 
-  List wordLessonRoutes = [
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-    '/games/traceLetter',
-  ];
-  List wordLessonNames = [
-    'Lesson 1',
-    'Lesson 2',
-    'Lesson 3',
-    'Lesson 4',
-    'Lesson 5',
-    'Lesson 6',
-    'Lesson 7',
-  ];
+  Future<void> wordLessons() async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final String? userId = Auth().getCurrentUserId();
+
+      List<String> wordNames = [];
+      List<bool> unlockedLessons = [];
+      List<int> wordProgress = [];
+
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('words')
+          .doc(isEnglish ? 'en' : 'ph')
+          .collection('lessons')
+          .get();
+
+      List<Map<String, dynamic>> lessonDataList = [];
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in querySnapshot.docs) {
+        lessonDataList.add(doc.data());
+      }
+
+      // Sort the lesson data list based on the "id" field
+      lessonDataList.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+      // Extract the sorted data into your lists
+      for (Map<String, dynamic> lessonData in lessonDataList) {
+        wordNames.add(lessonData['name'] as String);
+        unlockedLessons.add(lessonData['isUnlocked'] as bool);
+        wordProgress.add(lessonData['progress'] as int);
+      }
+
+      setState(() {
+        wordLessonNames = wordNames;
+        unlockedWordLessons = unlockedLessons;
+        wordLessonProgress = wordProgress;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   List sentenceLessonRoutes = [
     '/games/traceLetter',
     '/games/traceLetter',
@@ -235,15 +266,6 @@ class _ChildHomePageState extends State<ChildHomePage> {
     'Lesson 4',
   ];
 
-  List<bool> unlockedWordLessons = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
   List<bool> unlockedSentenceLessons = [false, false, false, false];
 
   Alignment headerPosition = Alignment.topLeft;
@@ -252,12 +274,14 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
   late Future<void> letterLessonsFuture;
   late Future<void> numberLessonsFuture;
+  late Future<void> wordLessonsFuture;
 
   @override
   void initState() {
     getLanguage().then((_) {
       letterLessonsFuture = letterLessons();
       numberLessonsFuture = numberLessons();
+      wordLessonsFuture = wordLessons();
       setState(() {
         isLoading = false;
       });
@@ -717,17 +741,36 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                     crossAxisCount: 1,
                                     childAspectRatio: 1.0,
                                   ),
-                                  itemCount: wordLessonRoutes.length,
+                                  itemCount: wordLessonNames.length,
                                   itemBuilder: (context, index) {
                                     bool isUnlocked =
                                         unlockedWordLessons[index];
                                     return Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: InkWell(
-                                        onTap: isUnlocked
-                                            ? () => Navigator.pushNamed(context,
-                                                wordLessonRoutes[index])
-                                            : null,
+                                        onTap: () async {
+                                          if (isUnlocked) {
+                                            if (wordLessonProgress[index] >=
+                                                0) {
+                                              await WordLessonFirestore(
+                                                      userId: Auth()
+                                                          .getCurrentUserId()!)
+                                                  .resetScore(
+                                                      wordLessonNames[index],
+                                                      isEnglish ? "en" : "ph");
+                                              // resetScore(letterLessonNames[index]);
+                                              if (!context.mounted) return;
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WordsLevelOne(
+                                                              lessonName:
+                                                                  wordLessonNames[
+                                                                      index])));
+                                            }
+                                          }
+                                        },
                                         child: AnimatedOpacity(
                                           opacity: isUnlocked
                                               ? containerOpacity
@@ -757,7 +800,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                                               index]
                                                           : '',
                                                       style: const TextStyle(
-                                                          fontSize: 18.0,
+                                                          fontSize: 20.0,
                                                           color: Colors.white),
                                                     ),
                                                   ),
@@ -781,48 +824,29 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                                             const EdgeInsets
                                                                 .all(15.0),
                                                         child: Container(
-                                                          width: 100.0,
-                                                          height: 100.0,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            border: Border.all(
-                                                              color: const Color
-                                                                  .fromARGB(255,
-                                                                  121, 74, 25),
-                                                              width: 10.0,
+                                                            width: 100.0,
+                                                            height: 100.0,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  blurRadius:
+                                                                      20,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .primaryColorLight,
+                                                                ),
+                                                              ],
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .primaryColorLight,
                                                             ),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                blurRadius: 20,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .primaryColorLight,
-                                                              ),
-                                                            ],
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .primaryColorLight,
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              '${75}%',
-                                                              // '${progressPercentage.toStringAsFixed(0)}%',
-                                                              style: TextStyle(
-                                                                fontSize: 22.0,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .labelMedium!
-                                                                    .color,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
+                                                            child: CircularProgressBar(
+                                                                progress:
+                                                                    wordLessonProgress[
+                                                                        index])),
                                                       ),
                                                     ),
                                                   ),

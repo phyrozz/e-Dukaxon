@@ -1,6 +1,5 @@
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
-import '../widgets/volume_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
@@ -308,10 +307,6 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: const VolumeButton(
-        text:
-            "Let's create an account! To get started, type in whatever username you wish to name yourself for the app. Just make sure not to inlude spaces and special characters. Next, enter your email address. If you don't have one, ask your parents to enter one for you. Then, enter your password. Make sure you to keep note of it so you wouldn't forget. Then, enter your password again to confirm that the password you typed is correct. Once you're done, hit the button that says: Create account, and you're ready to log in to the app.",
       ),
     );
   }

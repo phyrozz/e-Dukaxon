@@ -1,5 +1,6 @@
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/pages/tutorial.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -229,8 +230,10 @@ class _AgeSelectPageState extends State<AgeSelectPage> {
                     //   Navigator.pushNamedAndRemoveUntil(
                     //       context, '/myPages', (Route<dynamic> route) => false);
                     // }
-                    storeDyslexiaResult().then((_) =>
-                        LetterLessonFirestore(userId: userId!)
+                    storeDyslexiaResult()
+                        .then((_) => LetterLessonFirestore(userId: userId!)
+                            .initUnlockLessons())
+                        .then((_) => NumberLessonFirestore(userId: userId!)
                             .initUnlockLessons());
                     await updateIsNewAccount(false, _currentAge);
                   },

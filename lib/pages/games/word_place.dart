@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
+import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/games.dart';
 import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/pages/loading.dart';
@@ -24,6 +25,7 @@ class _WordPlaceGameState extends State<WordPlaceGame>
   List<String?> placedWords = [];
   List<String> sentenceList = [];
   List<String?> incompleteSentenceList = [];
+  String imageUri = "";
 
   AssetsAudioPlayer audio = AssetsAudioPlayer();
   bool isLoading = true;
@@ -61,10 +63,16 @@ class _WordPlaceGameState extends State<WordPlaceGame>
       var randomDocument = documents.docs[randomIndex];
 
       // Get the "sentence" field value from the random document
+      String? image;
+      var randomImageUri = randomDocument['image'];
       var randomSentence = randomDocument['sentence'];
       var docDifficulty = randomDocument['difficulty'];
 
+      image = await AssetFirebaseStorage().getAsset(randomImageUri);
+      print(image);
+
       setState(() {
+        imageUri = image!;
         difficulty = docDifficulty;
         sentence = randomSentence;
       });
@@ -261,76 +269,91 @@ class _WordPlaceGameState extends State<WordPlaceGame>
                         fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // List of drag targets
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: sentenceList.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          String word = entry.value;
-                          if (incompleteSentenceList[index] != null) {
-                            return Draggable<String>(
-                              data: placedWords[index] ?? "",
-                              feedback: buildWordTile(placedWords[index] ?? "",
-                                  isDragTarget: true),
-                              child: DragTarget<String>(
-                                builder: (BuildContext context,
-                                    List<String?> candidateData,
-                                    List<dynamic> rejectedData) {
-                                  return placedWords[index] != null
-                                      ? buildWordTile(placedWords[index]!,
-                                          isDragTarget: true)
-                                      : inactiveDragTarget();
-                                },
-                                onWillAccept: (data) => true,
-                                onAccept: (data) {
-                                  setState(() {
-                                    // Check if the word is already placed in any of the targets
-                                    for (int i = 0;
-                                        i < placedWords.length;
-                                        i++) {
-                                      if (placedWords[i] == data) {
-                                        // If yes, remove it from the target
-                                        placedWords[i] = null;
-                                        // Add it back to the wordList
-                                        wordList.add(data);
-                                        break; // Break the loop once the word is found and removed
-                                      }
-                                    }
-                                    // Place the new word on the current target
-                                    placedWords[index] = data;
-                                    // Remove the accepted word from the wordList
-                                    wordList.remove(data);
-                                  });
-                                },
-                              ),
-                            );
-                          } else {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
-                              child: Text(
-                                word,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            );
-                          }
-                        }).toList(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: wordList.map((word) {
-                          return Visibility(
-                            visible: !placedWords.contains(word),
-                            child: Draggable<String>(
-                              data: word,
-                              feedback: buildWordTile(word, isFeedback: true),
-                              childWhenDragging: buildEmptyWordTile(),
-                              child: buildWordTile(word),
-                            ),
-                          );
-                        }).toList(),
+                      Column(
+                        children: [
+                          Image.network(
+                            imageUri, // Use the image URL retrieved from Firestore // Adjust the height as needed
+                            width:
+                                100, // Make the width fill the available space
+                            fit: BoxFit.cover, // Adjust the fit as needed
+                          ),
+                          // List of drag targets
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: sentenceList.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              String word = entry.value;
+                              if (incompleteSentenceList[index] != null) {
+                                return Draggable<String>(
+                                  data: placedWords[index] ?? "",
+                                  feedback: buildWordTile(
+                                      placedWords[index] ?? "",
+                                      isDragTarget: true),
+                                  child: DragTarget<String>(
+                                    builder: (BuildContext context,
+                                        List<String?> candidateData,
+                                        List<dynamic> rejectedData) {
+                                      return placedWords[index] != null
+                                          ? buildWordTile(placedWords[index]!,
+                                              isDragTarget: true)
+                                          : inactiveDragTarget();
+                                    },
+                                    onWillAccept: (data) => true,
+                                    onAccept: (data) {
+                                      setState(() {
+                                        // Check if the word is already placed in any of the targets
+                                        for (int i = 0;
+                                            i < placedWords.length;
+                                            i++) {
+                                          if (placedWords[i] == data) {
+                                            // If yes, remove it from the target
+                                            placedWords[i] = null;
+                                            // Add it back to the wordList
+                                            wordList.add(data);
+                                            break; // Break the loop once the word is found and removed
+                                          }
+                                        }
+                                        // Place the new word on the current target
+                                        placedWords[index] = data;
+                                        // Remove the accepted word from the wordList
+                                        wordList.remove(data);
+                                      });
+                                    },
+                                  ),
+                                );
+                              } else {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Text(
+                                    word,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                );
+                              }
+                            }).toList(),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: wordList.map((word) {
+                              return Visibility(
+                                visible: !placedWords.contains(word),
+                                child: Draggable<String>(
+                                  data: word,
+                                  feedback:
+                                      buildWordTile(word, isFeedback: true),
+                                  childWhenDragging: buildEmptyWordTile(),
+                                  child: buildWordTile(word),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ],
                   ),

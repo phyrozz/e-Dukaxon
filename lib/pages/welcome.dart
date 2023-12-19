@@ -64,13 +64,15 @@ class _WelcomePageState extends State<WelcomePage> {
       await UserFirestore(userId: userId).initializeLessons("letters", "ph");
       await UserFirestore(userId: userId).initializeLessons("numbers", "en");
       await UserFirestore(userId: userId).initializeLessons("numbers", "ph");
+      await UserFirestore(userId: userId).initializeLessons("words", "en");
+      await UserFirestore(userId: userId).initializeLessons("words", "ph");
 
       // Initialize preference values
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isParentMode', false);
 
       // Remove the loading widget and navigate to the next page
-      Navigator.of(context).pop(); // Pop the loading page
+      // Navigator.of(context).pop(); // Pop the loading page
       // You can replace the next line with the appropriate navigation logic
       Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
         builder: (BuildContext context) =>

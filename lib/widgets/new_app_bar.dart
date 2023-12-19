@@ -197,9 +197,11 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
                               'Log in',
                               style: TextStyle(fontSize: 16),
                             )),
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    isLoggedIn
+                        ? Container()
+                        : const SizedBox(
+                            height: 12,
+                          ),
                     ElevatedButton.icon(
                         onPressed: () {
                           Navigator.push(
