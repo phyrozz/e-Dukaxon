@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
+import 'package:e_dukaxon/main.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:just_audio/just_audio.dart' as just_audio;
+import 'package:http/http.dart' as http;
 
 class LettersLevelOne extends StatefulWidget {
   final String lessonName;
@@ -17,6 +22,9 @@ class LettersLevelOne extends StatefulWidget {
 }
 
 class _LettersLevelOneState extends State<LettersLevelOne> {
+  late ScrollController scrollController;
+  final ttsPlayer = just_audio.AudioPlayer();
+
   String levelDescription = "";
   String uid = "";
   List<dynamic> texts = [];
@@ -28,10 +36,13 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   bool isLoadingAudio = false;
   bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
+
     getLanguage().then((value) {
       getLevel1DataByName(widget.lessonName);
     });
@@ -111,9 +122,69 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
     }
   }
 
+  // Function to scroll through the page
+  void scrollPage(double scrollValue) {
+    scrollController.animateTo(
+      scrollController.offset + scrollValue,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  Future<void> playTextsAndScroll() async {
+    for (int i = 0; i < texts.length; i++) {
+      // Play TTS for the current text
+      await playTextToSpeech(texts[i]).then((value) => {
+            // Scroll the page
+            if (i < texts.length - 1)
+              {
+                // Scroll down for all texts except the last one
+                scrollPage(500)
+              }
+          });
+    }
+  }
+
+  //For the Text To Speech
+  Future<void> playTextToSpeech(String text) async {
+    try {
+      String voiceRachel =
+          '21m00Tcm4TlvDq8ikWAM'; //Rachel voice - change if you know another Voice ID
+
+      String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voiceRachel';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'audio/mpeg',
+          'xi-api-key': EL_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          "text": text,
+          "model_id": "eleven_multilingual_v2",
+          "voice_settings": {"stability": 1, "similarity_boost": 1}
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes; //get the bytes ElevenLabs sent back
+        await ttsPlayer.setAudioSource(MyCustomSource(
+            bytes)); //send the bytes to be read from the JustAudio library
+        ttsPlayer.play(); //play the audio
+      } else {
+        // throw Exception('Failed to load audio');
+        print('Failed to load audio');
+        return;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
+    scrollController.dispose();
     audio.dispose();
   }
 
@@ -125,6 +196,7 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
           : Stack(
               children: [
                 SingleChildScrollView(
+                  controller: scrollController,
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
@@ -269,6 +341,9 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(
+                                height: 80,
+                              ),
                             ],
                     ),
                   ),
@@ -318,6 +393,39 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Play TTS for the page's description
+          playTextToSpeech(levelDescription).then((_) {
+            // Scroll down after the description is finished
+            scrollPage(200);
+
+            // Play TTS for the texts and scroll
+            playTextsAndScroll();
+          });
+        },
+        label: const Text("Play"),
+        icon: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+
+// Feed the retrieved AI TTS audio bytes into the player
+class MyCustomSource extends just_audio.StreamAudioSource {
+  final List<int> bytes;
+  MyCustomSource(this.bytes);
+
+  @override
+  Future<just_audio.StreamAudioResponse> request([int? start, int? end]) async {
+    start ??= 0;
+    end ??= bytes.length;
+    return just_audio.StreamAudioResponse(
+      sourceLength: bytes.length,
+      contentLength: end - start,
+      offset: start,
+      stream: Stream.value(bytes.sublist(start, end)),
+      contentType: 'audio/mpeg',
     );
   }
 }

@@ -201,7 +201,7 @@ class WordLessonFirestore {
 
       // Find the next lesson
       QuerySnapshot querySnapshot = await lessonsCollection
-          .where('id', isGreaterThan: (lessonName))
+          .where('id', isGreaterThan: lessonIdForName(lessonName, locale))
           .orderBy('id')
           .limit(1)
           .get();
@@ -264,5 +264,15 @@ class WordLessonFirestore {
     } catch (e) {
       print('Error unlocking letter lessons: $e');
     }
+  }
+
+  int lessonIdForName(String lessonName, String locale) {
+    final Map<String, int> lessonNameToId = {
+      locale == 'en' ? 'Animals' : 'Mga Hayop': 0,
+      locale == 'en' ? 'Colors' : 'Mga Kulay': 1,
+      // Add more entries as needed
+    };
+
+    return lessonNameToId[lessonName] ?? -1;
   }
 }

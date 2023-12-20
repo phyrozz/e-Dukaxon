@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/word_lessons.dart';
@@ -6,6 +9,9 @@ import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:e_dukaxon/main.dart';
+import 'package:just_audio/just_audio.dart' as just_audio;
+import 'package:http/http.dart' as http;
 
 class WordsLevelOne extends StatefulWidget {
   final String lessonName;
@@ -17,6 +23,9 @@ class WordsLevelOne extends StatefulWidget {
 }
 
 class _WordsLevelOneState extends State<WordsLevelOne> {
+  late ScrollController scrollController;
+  final ttsPlayer = just_audio.AudioPlayer();
+
   String levelDescription = "";
   String uid = "";
   List<dynamic> texts = [];
@@ -28,10 +37,12 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
   bool isLoadingAudio = false;
   bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
     getLanguage().then((value) {
       getLevel1DataByName(widget.lessonName);
     });
@@ -111,9 +122,86 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
     }
   }
 
+  // Function to scroll through the page
+  void scrollPage(double scrollValue) {
+    scrollController.animateTo(
+      scrollController.offset + scrollValue,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  Future<void> playTextsAndScroll() async {
+    for (int i = 0; i < texts.length; i++) {
+      // Play TTS for the current text
+      await playTextToSpeech(texts[i]);
+
+      // Scroll the page
+      if (i < texts.length - 1) {
+        scrollPage(i == 0 ? 200 : 500); // Scroll down based on the index
+
+        if (i != 0) {
+          // Play the audio from AudioPlayer
+          await playLessonAudio(sounds[i]);
+          // Wait for the AudioPlayer playback to finish
+          scrollPage(500);
+        }
+
+        // Scroll down for all texts except the last one
+      }
+    }
+  }
+
+  Future<void> playLessonAudio(String url) async {
+    try {
+      await ttsPlayer
+          .setAudioSource(just_audio.AudioSource.uri(Uri.parse(url)));
+      await ttsPlayer.play();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  //For the Text To Speech
+  Future<void> playTextToSpeech(String text) async {
+    try {
+      String voiceRachel =
+          '21m00Tcm4TlvDq8ikWAM'; //Rachel voice - change if you know another Voice ID
+
+      String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voiceRachel';
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'audio/mpeg',
+          'xi-api-key': EL_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          "text": text,
+          "model_id": "eleven_multilingual_v2",
+          "voice_settings": {"stability": 1, "similarity_boost": 1}
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes; //get the bytes ElevenLabs sent back
+        await ttsPlayer.setAudioSource(MyCustomSource(
+            bytes)); //send the bytes to be read from the JustAudio library
+        await ttsPlayer.play(); //play the audio
+      } else {
+        // throw Exception('Failed to load audio');
+        print('Failed to load audio');
+        return;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
+    ttsPlayer.dispose();
     audio.dispose();
   }
 
@@ -125,6 +213,7 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
           : Stack(
               children: [
                 SingleChildScrollView(
+                  controller: scrollController,
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
@@ -268,6 +357,9 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(
+                                height: 80,
+                              ),
                             ],
                     ),
                   ),
@@ -317,6 +409,33 @@ class _WordsLevelOneState extends State<WordsLevelOne> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          // Play TTS for the texts and scroll
+          await playTextsAndScroll();
+        },
+        label: const Text("Play"),
+        icon: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+
+// Feed the retrieved AI TTS audio bytes into the player
+class MyCustomSource extends just_audio.StreamAudioSource {
+  final List<int> bytes;
+  MyCustomSource(this.bytes);
+
+  @override
+  Future<just_audio.StreamAudioResponse> request([int? start, int? end]) async {
+    start ??= 0;
+    end ??= bytes.length;
+    return just_audio.StreamAudioResponse(
+      sourceLength: bytes.length,
+      contentLength: end - start,
+      offset: start,
+      stream: Stream.value(bytes.sublist(start, end)),
+      contentType: 'audio/mpeg',
     );
   }
 }

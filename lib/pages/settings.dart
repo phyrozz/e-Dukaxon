@@ -136,7 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.normal,
-                                  color: Theme.of(context).cardColor),
+                                  color: Theme.of(context).primaryColorDark),
                               textAlign: TextAlign.right,
                             ),
                             Row(
@@ -144,7 +144,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               children: [
                                 Text(
                                   'Filipino',
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontSize: 16),
                                 ),
                                 Switch(
                                   value: isEnglish,
@@ -152,10 +155,16 @@ class _SettingsPageState extends State<SettingsPage> {
                                   activeColor: Theme.of(context).focusColor,
                                   inactiveThumbColor:
                                       Theme.of(context).focusColor,
+                                  trackColor: MaterialStatePropertyAll(
+                                      Theme.of(context)
+                                          .scaffoldBackgroundColor),
                                 ),
                                 Text(
                                   'English',
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontSize: 16),
                                 ),
                               ],
                             ),
@@ -179,7 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               text: "Theme: ",
                               style: TextStyle(
                                   fontFamily: "OpenDyslexic",
-                                  color: Theme.of(context).cardColor,
+                                  color: Theme.of(context).primaryColorDark,
                                   fontSize: 18,
                                   fontWeight: FontWeight.normal),
                               children: [
@@ -187,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   text: selectedColorScheme,
                                   style: TextStyle(
                                       fontFamily: "OpenDyslexic",
-                                      color: Theme.of(context).cardColor,
+                                      color: Theme.of(context).primaryColorDark,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -257,7 +266,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   : "Laki ng teksto: ",
                               style: TextStyle(
                                   fontFamily: "OpenDyslexic",
-                                  color: Theme.of(context).cardColor,
+                                  color: Theme.of(context).primaryColorDark,
                                   fontSize: 18,
                                   fontWeight: FontWeight.normal),
                               children: [
@@ -265,7 +274,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   text: (currentTextSize.toInt()).toString(),
                                   style: TextStyle(
                                       fontFamily: "OpenDyslexic",
-                                      color: Theme.of(context).cardColor,
+                                      color: Theme.of(context).primaryColorDark,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -278,6 +287,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                       .primaryColorDark
                                       .withOpacity(0.3)),
                               thumbColor: Theme.of(context).focusColor,
+                              inactiveColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
                               value: currentTextSize,
                               min: 12,
                               max: 42,

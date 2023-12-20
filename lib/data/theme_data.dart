@@ -18,6 +18,9 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          textStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -41,8 +44,10 @@ class AppThemes {
       appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF3F2305)),
       bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xFF3F2305)),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Color(0xFF3F2305)),
-      cardColor: const Color(0xFF3F2305),
+          foregroundColor: Colors.white, backgroundColor: Color(0xFF3F2305)),
+      cardTheme: const CardTheme(
+        color: Color(0xFF3F2305),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           overlayColor: const MaterialStatePropertyAll(Color(0xFF3F2305)),
@@ -75,6 +80,9 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          textStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -100,8 +108,11 @@ class AppThemes {
       bottomAppBarTheme:
           const BottomAppBarTheme(color: Color.fromARGB(255, 8, 71, 180)),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
           backgroundColor: Color.fromARGB(255, 8, 71, 180)),
-      cardColor: const Color.fromARGB(255, 8, 71, 180),
+      cardTheme: const CardTheme(
+        color: Color.fromARGB(255, 8, 71, 180),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           overlayColor:
@@ -160,8 +171,11 @@ class AppThemes {
       bottomAppBarTheme:
           const BottomAppBarTheme(color: Color.fromARGB(255, 87, 23, 99)),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
           backgroundColor: Color.fromARGB(255, 87, 23, 99)),
-      cardColor: const Color.fromARGB(255, 87, 23, 99),
+      cardTheme: const CardTheme(
+        color: Color.fromARGB(255, 87, 23, 99),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           overlayColor:
@@ -195,6 +209,9 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          textStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -220,8 +237,11 @@ class AppThemes {
       bottomAppBarTheme:
           const BottomAppBarTheme(color: Color.fromARGB(255, 14, 137, 153)),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
           backgroundColor: Color.fromARGB(255, 14, 137, 153)),
-      cardColor: const Color.fromARGB(255, 14, 137, 153),
+      cardTheme: const CardTheme(
+        color: Color.fromARGB(255, 14, 137, 153),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           overlayColor:
@@ -244,7 +264,7 @@ class AppThemes {
       primaryColorDark: Colors.grey.shade900,
       primaryColorLight: Colors.grey.shade700,
       // backgroundColor: Colors.grey[900],
-      scaffoldBackgroundColor: Color.fromARGB(255, 19, 19, 19),
+      scaffoldBackgroundColor: const Color.fromARGB(255, 19, 19, 19),
       focusColor: Colors.black,
       secondaryHeaderColor: Colors.white,
 
@@ -255,6 +275,9 @@ class AppThemes {
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
+          ),
+          textStyle: const TextStyle(
+            color: Colors.white,
           ),
         ),
       ),
@@ -278,9 +301,11 @@ class AppThemes {
           const ProgressIndicatorThemeData(color: Colors.black),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
       bottomAppBarTheme: const BottomAppBarTheme(color: Colors.black),
-      floatingActionButtonTheme:
-          const FloatingActionButtonThemeData(backgroundColor: Colors.black),
-      cardColor: Colors.black,
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white, backgroundColor: Colors.black),
+      cardTheme: const CardTheme(
+        color: Colors.black,
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
             overlayColor: MaterialStatePropertyAll(Colors.grey.shade900),
@@ -305,6 +330,9 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          textStyle: const TextStyle(
+            color: Colors.black,
+          ),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -327,9 +355,11 @@ class AppThemes {
           const ProgressIndicatorThemeData(color: Colors.grey),
       appBarTheme: const AppBarTheme(backgroundColor: Colors.grey),
       bottomAppBarTheme: const BottomAppBarTheme(color: Colors.grey),
-      floatingActionButtonTheme:
-          const FloatingActionButtonThemeData(backgroundColor: Colors.grey),
-      cardColor: Colors.grey,
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.black, backgroundColor: Colors.grey),
+      cardTheme: const CardTheme(
+        color: Colors.grey,
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           overlayColor: const MaterialStatePropertyAll(Colors.grey),
