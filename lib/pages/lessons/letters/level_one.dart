@@ -1,16 +1,13 @@
-import 'dart:convert';
-
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
-import 'package:e_dukaxon/main.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_two.dart';
 import 'package:e_dukaxon/pages/loading.dart';
+import 'package:e_dukaxon/play_lesson.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart' as just_audio;
-import 'package:http/http.dart' as http;
 
 class LettersLevelOne extends StatefulWidget {
   final String lessonName;
@@ -24,6 +21,7 @@ class LettersLevelOne extends StatefulWidget {
 class _LettersLevelOneState extends State<LettersLevelOne> {
   late ScrollController scrollController;
   final ttsPlayer = just_audio.AudioPlayer();
+  final playLesson = PlayLesson();
 
   String levelDescription = "";
   String uid = "";
@@ -37,6 +35,13 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   bool isPlaying = false;
   AudioPlayer audio = AudioPlayer();
   int currentIndex = 0;
+
+  // List of audio players for the play lesson mode
+  List<just_audio.AudioPlayer> players = [];
+
+  // bool states for the TTS feature on lessons
+  bool isPlayingAudio = false;
+  bool isSpeakingTtsText = false;
 
   @override
   void initState() {
@@ -122,59 +127,85 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
     }
   }
 
-  // Function to scroll through the page
-  void scrollPage(double scrollValue) {
-    scrollController.animateTo(
-      scrollController.offset + scrollValue,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOutCubic,
-    );
-  }
-
   Future<void> playTextsAndScroll() async {
-    for (int i = 0; i < texts.length; i++) {
-      // Play TTS for the current text
-      await playTextToSpeech(texts[i]).then((value) => {
-            // Scroll the page
-            if (i < texts.length - 1)
-              {
-                // Scroll down for all texts except the last one
-                scrollPage(500)
-              }
-          });
+    // Check if the scroll position is not at the top
+    if (scrollController.offset > 0) {
+      // Scroll to the top before continuing with the function
+      scrollController.animateTo(0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOutCubic);
     }
-  }
 
-  //For the Text To Speech
-  Future<void> playTextToSpeech(String text) async {
+    // Filter out null items from the sounds list
+    List nonNullSounds = sounds.where((sound) => sound != null).toList();
+    List ttsTextSounds = texts.toList();
+
+    players = List.generate(
+      nonNullSounds.length + ttsTextSounds.length,
+      (_) => just_audio.AudioPlayer(),
+    );
+
     try {
-      String voiceRachel =
-          '21m00Tcm4TlvDq8ikWAM'; //Rachel voice - change if you know another Voice ID
+      for (int i = 0; i < players.length; i++) {
+        if (i == 0) {
+          // Plays the first index of the texts list
+          await players[i].setAudioSource(
+              await playLesson.getTtsAudioSource(ttsTextSounds[0]!));
+          if (mounted) {
+            setState(() {
+              isSpeakingTtsText = true;
+            });
+          }
+          await players[i].play();
+          if (mounted) {
+            setState(() {
+              isSpeakingTtsText = false;
+            });
+          }
+          playLesson.scrollPage(scrollController, 300);
+        } else {
+          if (i % 2 == 1) {
+            // If the index is odd, play TTS audio
 
-      String url = 'https://api.elevenlabs.io/v1/text-to-speech/$voiceRachel';
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'audio/mpeg',
-          'xi-api-key': EL_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          "text": text,
-          "model_id": "eleven_multilingual_v2",
-          "voice_settings": {"stability": 1, "similarity_boost": 1}
-        }),
-      );
+            int ttsIndex = (i - 1) ~/ 2 + 1;
+            await players[i].setAudioSource(
+                await playLesson.getTtsAudioSource(ttsTextSounds[ttsIndex]!));
 
-      if (response.statusCode == 200) {
-        final bytes = response.bodyBytes; //get the bytes ElevenLabs sent back
-        await ttsPlayer.setAudioSource(MyCustomSource(
-            bytes)); //send the bytes to be read from the JustAudio library
-        ttsPlayer.play(); //play the audio
-      } else {
-        // throw Exception('Failed to load audio');
-        print('Failed to load audio');
-        return;
+            if (mounted) {
+              setState(() {
+                isSpeakingTtsText = true;
+              });
+            }
+            // Play the audio
+            await players[i].play();
+            if (mounted) {
+              setState(() {
+                isSpeakingTtsText = false;
+              });
+            }
+          } else {
+            if (mounted) {
+              setState(() {
+                isPlaying = true;
+              });
+            }
+            // If the index is even, play lesson audio
+            int lessonIndex = (i - 2) ~/ 2;
+            await players[i].setAudioSource(await playLesson
+                .getLessonAudioSource(nonNullSounds[lessonIndex]!));
+
+            // Play the audio
+            await players[i].play();
+            if (mounted) {
+              setState(() {
+                isPlaying = false;
+              });
+            }
+            // Scrolls the page after each audio playback
+            playLesson.scrollPage(
+                scrollController, MediaQuery.of(context).size.height);
+          }
+        }
       }
     } catch (e) {
       print("Error: $e");
@@ -184,8 +215,11 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
   @override
   void dispose() {
     super.dispose();
-    scrollController.dispose();
     audio.dispose();
+    for (var e in players) {
+      e.dispose();
+    }
+    scrollController.dispose();
   }
 
   @override
@@ -259,12 +293,25 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                         },
                                       ),
                                     const SizedBox(height: 20),
-                                    Text(
-                                      text,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
+                                    Container(
+                                      decoration: ShapeDecoration(
+                                          color: isSpeakingTtsText
+                                              ? Colors.yellow
+                                              : Colors.transparent,
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8)))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Text(
+                                          text,
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                      ),
                                     ),
                                     const SizedBox(height: 20),
                                     if (sounds[index] is String)
@@ -298,6 +345,14 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                             : Text(isEnglish
                                                 ? "Listen"
                                                 : "Pakinggan"),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                                    isPlaying
+                                                        ? Theme.of(context)
+                                                            .focusColor
+                                                        : Theme.of(context)
+                                                            .primaryColorDark)),
                                       ),
                                     const SizedBox(height: 50),
                                   ];
@@ -394,18 +449,38 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
               ],
             ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Play TTS for the page's description
-          playTextToSpeech(levelDescription).then((_) {
-            // Scroll down after the description is finished
-            scrollPage(200);
+        onPressed: () async {
+          if (isPlayingAudio) {
+            // If currently playing, stop the audio
+            for (var player in players) {
+              player.dispose();
+            }
+            if (mounted) {
+              setState(() {
+                isPlayingAudio = false;
+              });
+            }
+          } else {
+            // If not playing, start playing TTS and scroll
+            if (mounted) {
+              setState(() {
+                isPlayingAudio = true;
+              });
+            }
 
-            // Play TTS for the texts and scroll
-            playTextsAndScroll();
-          });
+            await playTextsAndScroll();
+            if (mounted) {
+              setState(() {
+                isPlayingAudio = false;
+              });
+            }
+          }
         },
-        label: const Text("Play"),
-        icon: const Icon(Icons.play_arrow),
+        label: Text(isPlayingAudio ? "Stop" : "Play"),
+        icon: Icon(isPlayingAudio ? Icons.stop : Icons.play_arrow),
+        backgroundColor: isPlayingAudio
+            ? Theme.of(context).focusColor
+            : Theme.of(context).primaryColorDark,
       ),
     );
   }
