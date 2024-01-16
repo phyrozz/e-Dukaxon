@@ -1,12 +1,9 @@
 import 'package:e_dukaxon/homepage_tree.dart';
 import 'package:e_dukaxon/pages/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../widgets/volume_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
-import 'package:e_dukaxon/speak_text.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,8 +30,6 @@ class _LoginPageState extends State<LoginPage> {
       if (_controllerEmailorUsername.text.isEmpty ||
           _controllerPassword.text.isEmpty) {
         // Display error message for empty fields
-        SpeakText().speak(
-            "Please fill out your username or email address and password.");
         _showErrorDialog(context,
             "Please fill out your username or email address and password.");
         return;
@@ -76,10 +71,12 @@ class _LoginPageState extends State<LoginPage> {
         // Email matched, sign in with email and password
         await Auth()
             .signInWithEmailAndPassword(email: email, password: password);
+        print("success!");
       } else if (usernameQuery.docs.isNotEmpty) {
         // Username matched, sign in with username and password
         await Auth().signInWithEmailAndPassword(
             email: usernameQuery.docs[0]['email'], password: password);
+        print("success!");
       } else {
         // No matching email or username found
         throw FirebaseAuthException(
@@ -98,8 +95,6 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         errorMessage = e.message;
       });
-      SpeakText().speak(
-          "Sign in failed. Please check your email or username and password.");
       _showErrorDialog(
         context,
         "Sign in failed. Please check your email or username and password.",
@@ -111,8 +106,6 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         errorMessage = e.toString();
       });
-      SpeakText()
-          .speak("Something went wrong while signing in. Please try again.");
       _showErrorDialog(
         context,
         "Something went wrong while signing in. Please try again.",
@@ -243,10 +236,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: const VolumeButton(
-        text:
-            "Hello! Let's get started by entering your username or email address. then, enter your password. Once you're done, tap the big gray button! If you don't have an account or you want to create another one, tap the text below the big button that says I want to create an account.",
       ),
     );
   }

@@ -236,11 +236,11 @@ class NumberLessonFirestore {
       List<int> unlockedLessons = [];
 
       if (dyslexiaScore >= 14 && dyslexiaScore <= 12) {
-        unlockedLessons = [0, 1, 2, 3, 4, 5, 6, 7];
+        unlockedLessons = [0, 1];
       } else if (dyslexiaScore < 12 && dyslexiaScore >= 9) {
         unlockedLessons = [0, 1, 2, 3, 4];
       } else if (dyslexiaScore < 9) {
-        unlockedLessons = [0, 1];
+        unlockedLessons = [0, 1, 2, 3, 4, 5, 6, 7];
       }
 
       // Unlock lessons in both en and ph locales

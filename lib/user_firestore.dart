@@ -75,12 +75,16 @@ class UserFirestore {
         Map<String, dynamic> data = sourceDoc.data() as Map<String, dynamic>;
 
         // Extract only the necessary keys
+        // Also initialize some keys
         Map<String, dynamic> newData = {
           'id': data['id'],
           'isUnlocked': data['isUnlocked'],
           'name': data['name'],
           'progress': data['progress'],
           'score': data['score'],
+          'total': data['total'],
+          'lessonTaken': 0,
+          'accumulatedScore': 0
         };
 
         // Get the document ID from the source document
@@ -153,43 +157,43 @@ class UserFirestore {
   Future<bool> getIsParent() async {
     var data = await getDocumentData();
 
-    return data['isParent'];
+    return data['isParent'] ?? false;
   }
 
   Future<bool> getIsNewAccount() async {
     var data = await getDocumentData();
 
-    return data['isNewAccount'];
+    return data['isNewAccount'] ?? false;
   }
 
   Future<bool> getIsAccountAnon() async {
     var data = await getDocumentData();
 
-    return data['isAccountAnon'];
+    return data['isAccountAnon'] ?? false;
   }
 
   Future<String> getAge() async {
     var data = await getDocumentData();
 
-    return data['age'];
+    return data['age'] ?? '3';
   }
 
   Future<bool> getHasDyslexia() async {
     var data = await getDocumentData();
 
-    return data['hasDyslexia'];
+    return data['hasDyslexia'] ?? false;
   }
 
   Future<String> getUsername() async {
     var data = await getDocumentData();
 
-    return data['username'];
+    return data['username'] ?? '';
   }
 
   Future<String> getEmail() async {
     var data = await getDocumentData();
 
-    return data['email'];
+    return data['email'] ?? '';
   }
 
   // Add more functions here for fetching other field values

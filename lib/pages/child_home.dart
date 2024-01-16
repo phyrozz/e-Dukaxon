@@ -403,6 +403,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                               child: SizedBox(
                                 height: 200.0,
                                 child: GridView.builder(
+                                  clipBehavior: Clip.none,
                                   scrollDirection: Axis.horizontal,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
@@ -454,6 +455,15 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Theme.of(context)
+                                                      .focusColor,
+                                                  offset: const Offset(6, 9),
+                                                  blurRadius: 28,
+                                                  spreadRadius: -10,
+                                                ),
+                                              ],
                                             ),
                                             child: Card(
                                               shape: RoundedRectangleBorder(
@@ -569,6 +579,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                               child: SizedBox(
                                 height: 200.0,
                                 child: GridView.builder(
+                                  clipBehavior: Clip.none,
                                   scrollDirection: Axis.horizontal,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
@@ -620,6 +631,15 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Theme.of(context)
+                                                      .focusColor,
+                                                  offset: const Offset(6, 9),
+                                                  blurRadius: 28,
+                                                  spreadRadius: -10,
+                                                ),
+                                              ],
                                             ),
                                             child: Card(
                                               shape: RoundedRectangleBorder(
@@ -735,6 +755,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                               child: SizedBox(
                                 height: 200.0,
                                 child: GridView.builder(
+                                  clipBehavior: Clip.none,
                                   scrollDirection: Axis.horizontal,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
@@ -782,6 +803,15 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Theme.of(context)
+                                                      .focusColor,
+                                                  offset: const Offset(6, 9),
+                                                  blurRadius: 28,
+                                                  spreadRadius: -10,
+                                                ),
+                                              ],
                                             ),
                                             child: Card(
                                               shape: RoundedRectangleBorder(
@@ -899,6 +929,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
                               child: SizedBox(
                                 height: 200.0,
                                 child: GridView.builder(
+                                  clipBehavior: Clip.none,
                                   scrollDirection: Axis.horizontal,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
@@ -927,6 +958,15 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(20.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Theme.of(context)
+                                                      .focusColor,
+                                                  offset: const Offset(6, 9),
+                                                  blurRadius: 28,
+                                                  spreadRadius: -10,
+                                                ),
+                                              ],
                                             ),
                                             child: Card(
                                               shape: RoundedRectangleBorder(

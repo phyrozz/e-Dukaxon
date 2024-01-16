@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/homepage_tree.dart';
@@ -35,6 +36,7 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
         NumberLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
       }
+      updateAccumulatedScoresAndLessonTakenCounter(widget.lessonName);
       // isParent = false;
     });
   }
@@ -128,6 +130,50 @@ class _NumbersResultPageState extends State<NumbersResultPage> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  // Accumulated scores are tracked on each lessons in the app to gather the user's accuracy as they continue to
+  // answer the lesson.
+  // This can be helpful for parents keeping track of their child's progress.
+  Future<void> updateAccumulatedScoresAndLessonTakenCounter(
+      String lessonName) async {
+    try {
+      final userId = Auth().getCurrentUserId();
+      Map<String, dynamic>? userLessonData =
+          await NumberLessonFirestore(userId: userId!)
+              .getUserLessonData(lessonName, isEnglish ? "en" : "ph");
+
+      if (userLessonData != null) {
+        int accumulatedScore =
+            userLessonData['accumulatedScore'] ?? 0; // Default to 0 if null
+        int lessonTaken =
+            userLessonData['lessonTaken'] ?? 0; // Default to 0 if null
+
+        accumulatedScore += score;
+        lessonTaken++; // Increment by 1 every time the lesson is accomplished. This way, the accumulated total score for this lesson can be determined in order to get the
+        // accuracy of that lesson for the user.
+
+        // Making this as a counter instead of just getting the accumulated total scores of that lesson then just easily dividing together with the accumulated score by 100 so
+        // that it can also act as the number of retries the user has made for that lesson. Needed for the analytics.
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('numbers')
+            .doc(isEnglish ? "en" : "ph")
+            .collection('lessons')
+            .doc(lessonName)
+            .update({
+          'accumulatedScore': accumulatedScore,
+          'lessonTaken': lessonTaken
+        });
+      } else {
+        print(
+            'User lesson data for "$lessonName" was not found within the Firestore.');
+      }
+    } catch (e) {
+      print('Error updating accumulated scores: $e');
     }
   }
 

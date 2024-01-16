@@ -645,37 +645,43 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                               userName,
                                               "userName")
                                           : null,
-                                      child: ListTile(
+                                      child: Material(
+                                        clipBehavior: Clip.antiAlias,
+                                        elevation: 20.0,
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12))),
-                                        tileColor:
-                                            Theme.of(context).primaryColorLight,
-                                        leading: Container(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            child: const Icon(
-                                              Icons.account_box_outlined,
-                                              size: 30,
+                                        shadowColor:
+                                            Theme.of(context).focusColor,
+                                        child: ListTile(
+                                          tileColor: Theme.of(context)
+                                              .primaryColorLight,
+                                          leading: Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: CircleAvatar(
+                                              backgroundColor: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                              child: const Icon(
+                                                Icons.account_box_outlined,
+                                                size: 30,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        title: Text(
-                                          "User name",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(fontSize: 18),
-                                        ),
-                                        subtitle: Text(
-                                          userName,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(fontSize: 16),
+                                          title: Text(
+                                            "User name",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(fontSize: 18),
+                                          ),
+                                          subtitle: Text(
+                                            userName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(fontSize: 16),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -684,38 +690,50 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                       ? const SizedBox()
                                       : Padding(
                                           padding: const EdgeInsets.all(4.0),
-                                          child: ListTile(
+                                          child: Material(
+                                            clipBehavior: Clip.antiAlias,
+                                            elevation: 20.0,
                                             shape: const RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(12))),
-                                            tileColor: Theme.of(context)
-                                                .primaryColorLight,
-                                            leading: Container(
-                                              width: 50,
-                                              height: 50,
-                                              child: CircleAvatar(
-                                                backgroundColor: Theme.of(
-                                                        context)
-                                                    .scaffoldBackgroundColor,
-                                                child: const Icon(
-                                                  Icons.email_outlined,
-                                                  size: 30,
+                                            shadowColor:
+                                                Theme.of(context).focusColor,
+                                            child: ListTile(
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  12))),
+                                              tileColor: Theme.of(context)
+                                                  .primaryColorLight,
+                                              leading: Container(
+                                                width: 50,
+                                                height: 50,
+                                                child: CircleAvatar(
+                                                  backgroundColor: Theme.of(
+                                                          context)
+                                                      .scaffoldBackgroundColor,
+                                                  child: const Icon(
+                                                    Icons.email_outlined,
+                                                    size: 30,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            title: Text(
-                                              "Email",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall!
-                                                  .copyWith(fontSize: 18),
-                                            ),
-                                            subtitle: Text(
-                                              email,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .copyWith(fontSize: 16),
+                                              title: Text(
+                                                "Email",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall!
+                                                    .copyWith(fontSize: 18),
+                                              ),
+                                              subtitle: Text(
+                                                email,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(fontSize: 16),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -726,41 +744,50 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                           ? showEditProfileDialog(context,
                                               "Edit Profile", age, "age")
                                           : null,
-                                      child: ListTile(
+                                      child: Material(
+                                        clipBehavior: Clip.antiAlias,
+                                        elevation: 20.0,
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12))),
-                                        tileColor:
-                                            Theme.of(context).primaryColorLight,
-                                        leading: Container(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            child: const Icon(
-                                              Icons.cake_outlined,
-                                              size: 30,
+                                        shadowColor:
+                                            Theme.of(context).focusColor,
+                                        child: ListTile(
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          tileColor: Theme.of(context)
+                                              .primaryColorLight,
+                                          leading: Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: CircleAvatar(
+                                              backgroundColor: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                              child: const Icon(
+                                                Icons.cake_outlined,
+                                                size: 30,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        title: Text(
-                                          isParent
-                                              ? (isEnglish
-                                                  ? "Child's age"
-                                                  : "Edad ng bata")
-                                              : (isEnglish ? "Age" : "Edad"),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(fontSize: 18),
-                                        ),
-                                        subtitle: Text(
-                                          age,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(fontSize: 16),
+                                          title: Text(
+                                            isParent
+                                                ? (isEnglish
+                                                    ? "Child's age"
+                                                    : "Edad ng bata")
+                                                : (isEnglish ? "Age" : "Edad"),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(fontSize: 18),
+                                          ),
+                                          subtitle: Text(
+                                            age,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(fontSize: 16),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -778,37 +805,46 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                           ? showEditProfileDialog(context,
                                               "Edit Profile", name, "name")
                                           : null,
-                                      child: ListTile(
+                                      child: Material(
+                                        clipBehavior: Clip.antiAlias,
+                                        elevation: 20.0,
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12))),
-                                        tileColor:
-                                            Theme.of(context).primaryColorLight,
-                                        leading: Container(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            child: const Icon(
-                                              Icons.person_outline_outlined,
-                                              size: 30,
+                                        shadowColor:
+                                            Theme.of(context).focusColor,
+                                        child: ListTile(
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          tileColor: Theme.of(context)
+                                              .primaryColorLight,
+                                          leading: Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: CircleAvatar(
+                                              backgroundColor: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                              child: const Icon(
+                                                Icons.person_outline_outlined,
+                                                size: 30,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        title: Text(
-                                          isEnglish ? "Name" : "Pangalan",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(fontSize: 18),
-                                        ),
-                                        subtitle: Text(
-                                          name == "" ? "-" : name,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(fontSize: 16),
+                                          title: Text(
+                                            isEnglish ? "Name" : "Pangalan",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall!
+                                                .copyWith(fontSize: 18),
+                                          ),
+                                          subtitle: Text(
+                                            name == "" ? "-" : name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(fontSize: 16),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -817,6 +853,81 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                       ? const SizedBox()
                                       : Padding(
                                           padding: const EdgeInsets.all(4.0),
+                                          child: Material(
+                                            clipBehavior: Clip.antiAlias,
+                                            elevation: 20.0,
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12))),
+                                            shadowColor:
+                                                Theme.of(context).focusColor,
+                                            child: ListTile(
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  12))),
+                                              tileColor: Theme.of(context)
+                                                  .primaryColorLight,
+                                              leading: Container(
+                                                width: 50,
+                                                height: 50,
+                                                child: CircleAvatar(
+                                                  backgroundColor: Theme.of(
+                                                          context)
+                                                      .scaffoldBackgroundColor,
+                                                  child: const Icon(
+                                                    Icons.emoji_events_outlined,
+                                                    size: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                              title: Text(
+                                                isEnglish
+                                                    ? "Achievements"
+                                                    : "Mga Tagumpay",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall!
+                                                    .copyWith(fontSize: 18),
+                                              ),
+                                              subtitle: Text(
+                                                '-',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(fontSize: 16),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: InkWell(
+                                      onTap: () => isOnEditMode
+                                          ? showEditProfileDialog(
+                                              context,
+                                              "Edit Profile",
+                                              isParent ? "Parent" : "Adult",
+                                              "accountOwner")
+                                          : null,
+                                      child: Material(
+                                        clipBehavior: Clip.antiAlias,
+                                        elevation: 20.0,
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        shadowColor:
+                                            Theme.of(context).focusColor,
+                                        child: Material(
+                                          clipBehavior: Clip.antiAlias,
+                                          elevation: 20.0,
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          shadowColor:
+                                              Theme.of(context).focusColor,
                                           child: ListTile(
                                             shape: const RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
@@ -831,78 +942,35 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                                         context)
                                                     .scaffoldBackgroundColor,
                                                 child: const Icon(
-                                                  Icons.emoji_events_outlined,
+                                                  Icons
+                                                      .supervisor_account_outlined,
                                                   size: 30,
                                                 ),
                                               ),
                                             ),
                                             title: Text(
                                               isEnglish
-                                                  ? "Achievements"
-                                                  : "Mga Tagumpay",
+                                                  ? "Account Owner"
+                                                  : "May-ari ng Account",
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .titleSmall!
                                                   .copyWith(fontSize: 18),
                                             ),
                                             subtitle: Text(
-                                              '-',
+                                              isParent
+                                                  ? isEnglish
+                                                      ? 'Parent'
+                                                      : 'Magulang'
+                                                  : isEnglish
+                                                      ? 'Adult'
+                                                      : 'Hustong Gulang',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .bodySmall!
                                                   .copyWith(fontSize: 16),
                                             ),
                                           ),
-                                        ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: InkWell(
-                                      onTap: () => isOnEditMode
-                                          ? showEditProfileDialog(
-                                              context,
-                                              "Edit Profile",
-                                              isParent ? "Parent" : "Adult",
-                                              "accountOwner")
-                                          : null,
-                                      child: ListTile(
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(12))),
-                                        tileColor:
-                                            Theme.of(context).primaryColorLight,
-                                        leading: Container(
-                                          width: 50,
-                                          height: 50,
-                                          child: CircleAvatar(
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            child: const Icon(
-                                              Icons.supervisor_account_outlined,
-                                              size: 30,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          isEnglish
-                                              ? "Account Owner"
-                                              : "May-ari ng Account",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(fontSize: 18),
-                                        ),
-                                        subtitle: Text(
-                                          isParent
-                                              ? isEnglish
-                                                  ? 'Parent'
-                                                  : 'Magulang'
-                                              : isEnglish
-                                                  ? 'Adult'
-                                                  : 'Hustong Gulang',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(fontSize: 16),
                                         ),
                                       ),
                                     ),

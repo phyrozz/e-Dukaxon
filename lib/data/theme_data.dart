@@ -21,6 +21,7 @@ class AppThemes {
           textStyle: const TextStyle(
             color: Colors.white,
           ),
+          shadowColor: const Color.fromARGB(255, 34, 19, 3),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -83,6 +84,7 @@ class AppThemes {
           textStyle: const TextStyle(
             color: Colors.white,
           ),
+          shadowColor: const Color.fromARGB(255, 7, 52, 131),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -146,6 +148,7 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
+          shadowColor: const Color.fromARGB(255, 57, 15, 65),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -212,6 +215,7 @@ class AppThemes {
           textStyle: const TextStyle(
             color: Colors.white,
           ),
+          shadowColor: const Color.fromARGB(255, 10, 93, 104),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -279,6 +283,7 @@ class AppThemes {
           textStyle: const TextStyle(
             color: Colors.white,
           ),
+          shadowColor: Colors.black,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -324,16 +329,16 @@ class AppThemes {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.grey,
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          textStyle: const TextStyle(
-            color: Colors.black,
-          ),
-        ),
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.grey,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            textStyle: const TextStyle(
+              color: Colors.black,
+            ),
+            shadowColor: Colors.grey),
       ),
       inputDecorationTheme: const InputDecorationTheme(
         prefixIconColor: Colors.grey,

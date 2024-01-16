@@ -122,9 +122,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     Container(
                       decoration: ShapeDecoration(
-                          color: Theme.of(context).primaryColorLight,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))),
+                        color: Theme.of(context).primaryColorLight,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        shadows: [
+                          BoxShadow(
+                            color: Theme.of(context).focusColor,
+                            offset: const Offset(6, 9),
+                            blurRadius: 28,
+                            spreadRadius: -10,
+                          ),
+                        ],
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
@@ -175,9 +184,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 20),
                     Container(
                       decoration: ShapeDecoration(
-                          color: Theme.of(context).primaryColorLight,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))),
+                        color: Theme.of(context).primaryColorLight,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        shadows: [
+                          BoxShadow(
+                            color: Theme.of(context).focusColor,
+                            offset: const Offset(6, 9),
+                            blurRadius: 28,
+                            spreadRadius: -10,
+                          ),
+                        ],
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Row(
@@ -250,9 +268,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 20),
                     Container(
                       decoration: ShapeDecoration(
-                          color: Theme.of(context).primaryColorLight,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))),
+                        color: Theme.of(context).primaryColorLight,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        shadows: [
+                          BoxShadow(
+                            color: Theme.of(context).focusColor,
+                            offset: const Offset(6, 9),
+                            blurRadius: 28,
+                            spreadRadius: -10,
+                          ),
+                        ],
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),

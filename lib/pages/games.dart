@@ -180,6 +180,14 @@ class _ButtonState extends State<Button> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).focusColor,
+                offset: const Offset(6, 9),
+                blurRadius: 28,
+                spreadRadius: -10,
+              ),
+            ],
           ),
           child: Card(
             shape: RoundedRectangleBorder(
