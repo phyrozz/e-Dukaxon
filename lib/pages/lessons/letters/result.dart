@@ -170,6 +170,12 @@ class _LettersResultPageState extends State<LettersResultPage> {
             .update({
           'accumulatedScore': accumulatedScore,
           'lessonTaken': lessonTaken,
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
           // For the daily streak counter
           // Update the lastUpdatedStreak to the current time to avoid resetting the daily streak if the value has not been updated for the past 24 hours
           'lastUpdatedStreak': FieldValue.serverTimestamp(),

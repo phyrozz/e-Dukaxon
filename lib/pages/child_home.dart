@@ -466,7 +466,16 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                           ),
                                         ),
                                       ),
-                                      StreakIndicator(dailyStreak: dailyStreak),
+                                      StreakIndicator(
+                                        dailyStreak: dailyStreak,
+                                        text: dailyStreak == 0
+                                            ? (isEnglish
+                                                ? "Start playing lessons to get your streaks going!"
+                                                : "Maglaro na ng mga aralin upang tumaas ang iyong daily streak!")
+                                            : (isEnglish
+                                                ? "Don't lose your streak. Keep playing!"
+                                                : "Huwag kang sumuko. Tuloy lang sa paglaro!"),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -1167,9 +1176,11 @@ class StreakIndicator extends StatelessWidget {
   const StreakIndicator({
     super.key,
     required this.dailyStreak,
+    required this.text,
   });
 
   final int dailyStreak;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -1180,9 +1191,7 @@ class StreakIndicator extends StatelessWidget {
         bodyBuilder: (context) => Padding(
           padding: const EdgeInsets.all(12.0),
           child: Text(
-            dailyStreak == 0
-                ? "Start playing lessons to get your streaks going!"
-                : "Don't lose your streak! Keep playing!",
+            text,
             style: const TextStyle(fontSize: 16),
           ),
         ),

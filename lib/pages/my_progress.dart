@@ -21,6 +21,8 @@ class _MyProgressPageState extends State<MyProgressPage> {
   bool isLessonsProgressGridVisible = true;
   bool isTopLessonsListVisible = false;
   bool isTopPlayedLessonsListVisible = false;
+  bool isParent = false;
+  int dailyStreak = 0;
 
   // For the top lessons list
   List<String> topLessonNames = [];
@@ -33,6 +35,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
   @override
   void initState() {
     getLanguage()
+        .then((_) => getIsParentValue())
         .then((_) => getParentModeValue())
         .then((_) => getTopLessonsList())
         .then((_) => getTopPlayedLessons());
@@ -58,6 +61,26 @@ class _MyProgressPageState extends State<MyProgressPage> {
       setState(() {
         isParentMode = prefValue!;
         isLoading = false;
+      });
+    }
+  }
+
+  Future<void> getIsParentValue() async {
+    final userId = Auth().getCurrentUserId();
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot snapshot = await documentRef.get();
+
+    try {
+      bool isParentValue = snapshot.get("isParent");
+
+      setState(() {
+        isParent = isParentValue;
+      });
+    } catch (e) {
+      await documentRef.update({
+        'isParent': false,
       });
     }
   }
@@ -338,6 +361,24 @@ class _MyProgressPageState extends State<MyProgressPage> {
     });
   }
 
+  Future<void> getDailyStreak() async {
+    final userId = Auth().getCurrentUserId();
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot snapshot = await documentRef.get();
+
+    try {
+      setState(() {
+        dailyStreak = snapshot.get("dailyStreak");
+      });
+    } catch (e) {
+      await documentRef.update({
+        'dailyStreak': 0,
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -372,6 +413,75 @@ class _MyProgressPageState extends State<MyProgressPage> {
                       ),
                       SliverPadding(
                         padding: const EdgeInsets.all(8.0),
+                        sliver: SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: ShapeDecoration(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(12))),
+                                  color: Theme.of(context).primaryColorLight,
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Theme.of(context).focusColor,
+                                      offset: const Offset(6, 9),
+                                      blurRadius: 28,
+                                      spreadRadius: -10,
+                                    ),
+                                  ],
+                                ),
+                                height: 110,
+                                width: 420,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 8, 0, 8),
+                                        child: Image.asset(dailyStreak == 0
+                                            ? "assets/images/streak_inactive.png"
+                                            : "assets/images/streak_active.png"),
+                                      ),
+                                      const SizedBox(
+                                        width: 12,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            isParent
+                                                ? (isEnglish
+                                                    ? "My Child's Daily Streak"
+                                                    : "Daily Streak ng Aking Anak")
+                                                : (isEnglish
+                                                    ? "My Daily Streak"
+                                                    : "Aking Daily Streak"),
+                                            style:
+                                                const TextStyle(fontSize: 18),
+                                          ),
+                                          Text(
+                                            isEnglish
+                                                ? "$dailyStreak days"
+                                                : "$dailyStreak araw",
+                                            style:
+                                                const TextStyle(fontSize: 36),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.all(8.0),
                         sliver: SliverPersistentHeader(
                             pinned: false,
                             delegate: CustomHeaderDelegate(
@@ -382,7 +492,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
                       ),
                       isLessonsProgressGridVisible
                           ? SliverPadding(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               sliver: SliverGrid.count(
                                 crossAxisCount: 4,
                                 mainAxisSpacing: 10,
