@@ -133,8 +133,8 @@ class _WordsResultPageState extends State<WordsResultPage> {
     }
   }
 
-  // Accumulated scores are tracked on each lessons in the app to gather the user's accuracy as they continue to
-  // answer the lesson.
+  // Accumulated scores are tracked on each lesson in the app to gather the user's accuracy as they continue to
+  // answer it.
   // This can be helpful for parents keeping track of their child's progress.
   Future<void> updateAccumulatedScoresAndLessonTakenCounter(
       String lessonName) async {
@@ -145,17 +145,16 @@ class _WordsResultPageState extends State<WordsResultPage> {
               .getUserLessonData(lessonName, isEnglish ? "en" : "ph");
 
       if (userLessonData != null) {
-        int accumulatedScore =
-            userLessonData['accumulatedScore'] ?? 0; // Default to 0 if null
-        int lessonTaken =
-            userLessonData['lessonTaken'] ?? 0; // Default to 0 if null
+        int accumulatedScore = userLessonData['accumulatedScore'] ?? 0;
+        int lessonTaken = userLessonData['lessonTaken'] ?? 0;
 
         accumulatedScore += score;
-        lessonTaken++; // Increment by 1 every time the lesson is accomplished. This way, the accumulated total score for this lesson can be determined in order to get the
+        lessonTaken++; // Increment by 1 every time the lesson is accomplished. In this way, the accumulated total score for this lesson can be determined in order to get the
         // accuracy of that lesson for the user.
 
         // Making this as a counter instead of just getting the accumulated total scores of that lesson then just easily dividing together with the accumulated score by 100 so
-        // that it can also act as the number of retries the user has made for that lesson. Needed for the analytics.
+        // that the number of retries the user has made for that lesson can also be easily retrieved. Needed for the web app analytics.
+        // I need mental help.
 
         await FirebaseFirestore.instance
             .collection('users')
@@ -166,7 +165,10 @@ class _WordsResultPageState extends State<WordsResultPage> {
             .doc(lessonName)
             .update({
           'accumulatedScore': accumulatedScore,
-          'lessonTaken': lessonTaken
+          'lessonTaken': lessonTaken,
+          // For the daily streak counter
+          // Update the lastUpdatedStreak to the current time to avoid resetting the daily streak if the value has not been updated for the past 24 hours
+          'lastUpdatedStreak': FieldValue.serverTimestamp(),
         });
       } else {
         print(

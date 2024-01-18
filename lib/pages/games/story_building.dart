@@ -102,7 +102,8 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
 
       showModalBottomSheet(
         context: context,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor:
+            isPassed ? Colors.lightGreen.shade100 : Colors.red.shade100,
         isDismissible: isPassed ? false : true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -111,9 +112,12 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
           ),
         ),
         builder: (context) {
-          return WillPopScope(
-            onWillPop: () async {
-              return isPassed ? false : true;
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) async {
+              if (didPop) {
+                return;
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(20),
@@ -135,7 +139,7 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
                             ? (isEnglish ? 'Great job!' : 'Mahusay!')
                             : ('Better luck next time.'),
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 18,
                           fontFamily: "OpenDyslexic",
                         ),
                       ),
@@ -192,47 +196,39 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  Expanded(
-                    child: ReorderableListView(
-                      onReorder: (int oldIndex, int newIndex) {
-                        setState(() {
-                          final dynamic item = storyList.removeAt(oldIndex);
-                          storyList.insert(newIndex, item);
-                        });
-                      },
-                      children: storyList
-                          .map(
-                            (word) => ReorderableDelayedDragStartListener(
-                              key: ValueKey(word),
-                              index: storyList.indexOf(word),
-                              child: DragTarget<String>(
-                                builder: (BuildContext context,
-                                    List<String?> candidateData,
-                                    List<dynamic> rejectedData) {
-                                  return Draggable<String>(
-                                    data: word,
-                                    feedback:
-                                        buildWordTile(word, isFeedback: true),
-                                    child: buildWordTile(word),
-                                  );
-                                },
-                                onWillAccept: (data) => true,
-                                onAccept: (data) {
-                                  setState(() {
-                                    final int oldIndex =
-                                        storyList.indexOf(data);
-                                    final int newIndex =
-                                        storyList.indexOf(word);
-                                    storyList.removeAt(oldIndex);
-                                    storyList.insert(newIndex, data);
-                                  });
-                                },
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: storyList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final word = storyList[index];
+
+                      return ReorderableDelayedDragStartListener(
+                        key: ValueKey(word),
+                        index: index,
+                        child: DragTarget<String>(
+                          builder: (BuildContext context,
+                              List<String?> candidateData,
+                              List<dynamic> rejectedData) {
+                            return Draggable<String>(
+                              data: word,
+                              feedback: buildWordTile(word, isFeedback: true),
+                              child: buildWordTile(word),
+                            );
+                          },
+                          onWillAccept: (data) => true,
+                          onAccept: (data) {
+                            setState(() {
+                              final int oldIndex = storyList.indexOf(data);
+                              final int newIndex = index;
+                              storyList.removeAt(oldIndex);
+                              storyList.insert(newIndex, data);
+                            });
+                          },
+                        ),
+                      );
+                    },
                   ),
+                  const SizedBox(),
                 ],
               ),
             ),
@@ -290,6 +286,14 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(8.0),
           color: backgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).focusColor,
+              offset: const Offset(6, 9),
+              blurRadius: 28,
+              spreadRadius: -10,
+            ),
+          ],
         ),
         child: Text(
           word,

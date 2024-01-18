@@ -18,9 +18,6 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: const TextStyle(
-            color: Colors.white,
-          ),
           shadowColor: const Color.fromARGB(255, 34, 19, 3),
         ),
       ),
@@ -80,9 +77,6 @@ class AppThemes {
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-          ),
-          textStyle: const TextStyle(
-            color: Colors.white,
           ),
           shadowColor: const Color.fromARGB(255, 7, 52, 131),
         ),
@@ -212,9 +206,6 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: const TextStyle(
-            color: Colors.white,
-          ),
           shadowColor: const Color.fromARGB(255, 10, 93, 104),
         ),
       ),
@@ -280,9 +271,6 @@ class AppThemes {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: const TextStyle(
-            color: Colors.white,
-          ),
           shadowColor: Colors.black,
         ),
       ),
@@ -334,9 +322,6 @@ class AppThemes {
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-            ),
-            textStyle: const TextStyle(
-              color: Colors.black,
             ),
             shadowColor: Colors.grey),
       ),

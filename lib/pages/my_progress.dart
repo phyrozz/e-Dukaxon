@@ -306,6 +306,38 @@ class _MyProgressPageState extends State<MyProgressPage> {
     }
   }
 
+  // Due to the fact that the headers are clickable and has state management within the delegate class, a function from this class must be passed into it to retrieve the state to
+  // toggle the cards' visibility.
+  void toggleLessonProgressGridVisibility() {
+    setState(() {
+      if (!isLessonsProgressGridVisible) {
+        isLessonsProgressGridVisible = true;
+      } else {
+        isLessonsProgressGridVisible = false;
+      }
+    });
+  }
+
+  void toggleTopLessonsListVisibility() {
+    setState(() {
+      if (!isTopLessonsListVisible) {
+        isTopLessonsListVisible = true;
+      } else {
+        isTopLessonsListVisible = false;
+      }
+    });
+  }
+
+  void toggleTopPlayedLessonsListVisibility() {
+    setState(() {
+      if (!isTopPlayedLessonsListVisible) {
+        isTopPlayedLessonsListVisible = true;
+      } else {
+        isTopPlayedLessonsListVisible = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,149 +375,172 @@ class _MyProgressPageState extends State<MyProgressPage> {
                         sliver: SliverPersistentHeader(
                             pinned: false,
                             delegate: CustomHeaderDelegate(
+                                state: toggleLessonProgressGridVisibility,
                                 headerText:
                                     isEnglish ? "Lessons" : "Mga Lesson",
                                 toggleState: isLessonsProgressGridVisible)),
                       ),
-                      SliverPadding(
-                        padding: EdgeInsets.all(8),
-                        sliver: SliverGrid.count(
-                          crossAxisCount: 4,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          children: [
-                            progressCard(
-                                isEnglish ? "Letters" : "Mga Titik", "letters"),
-                            progressCard(isEnglish ? "Numbers" : "Mga Numero",
-                                "numbers"),
-                            // TODO: add these widgets if the lessons on these are done
-                            progressCard(
-                                isEnglish ? "Words" : "Mga Salita", "words"),
-                          ],
-                        ),
-                      ),
+                      isLessonsProgressGridVisible
+                          ? SliverPadding(
+                              padding: EdgeInsets.all(8),
+                              sliver: SliverGrid.count(
+                                crossAxisCount: 4,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                                children: [
+                                  progressCard(
+                                      isEnglish ? "Letters" : "Mga Titik",
+                                      "letters"),
+                                  progressCard(
+                                      isEnglish ? "Numbers" : "Mga Numero",
+                                      "numbers"),
+                                  // TODO: add these widgets if the lessons on these are done
+                                  progressCard(
+                                      isEnglish ? "Words" : "Mga Salita",
+                                      "words"),
+                                ],
+                              ),
+                            )
+                          : const SliverToBoxAdapter(),
                       SliverPadding(
                         padding: const EdgeInsets.all(8.0),
                         sliver: SliverPersistentHeader(
                             pinned: false,
                             delegate: CustomHeaderDelegate(
+                                state: toggleTopLessonsListVisibility,
                                 headerText: isEnglish
                                     ? "Top Lessons"
                                     : "Mga Nangungunang Aralin",
                                 toggleState: isTopLessonsListVisible)),
                       ),
-                      SliverToBoxAdapter(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton.icon(
-                                onPressed: () {
-                                  if (isTopLessonsListDescending) {
-                                    setState(() {
-                                      isTopLessonsListDescending = false;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      isTopLessonsListDescending = true;
-                                    });
-                                  }
+                      isTopLessonsListVisible
+                          ? SliverToBoxAdapter(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton.icon(
+                                      onPressed: () {
+                                        if (isTopLessonsListDescending) {
+                                          setState(() {
+                                            isTopLessonsListDescending = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            isTopLessonsListDescending = true;
+                                          });
+                                        }
 
-                                  Iterable<String> sortTopLessonNames =
-                                      topLessonNames.reversed;
-                                  Iterable<double> sortTopLessonAccuracies =
-                                      topLessonAccuracies.reversed;
+                                        Iterable<String> sortTopLessonNames =
+                                            topLessonNames.reversed;
+                                        Iterable<double>
+                                            sortTopLessonAccuracies =
+                                            topLessonAccuracies.reversed;
 
-                                  setState(() {
-                                    topLessonNames =
-                                        sortTopLessonNames.toList();
-                                    topLessonAccuracies =
-                                        sortTopLessonAccuracies.toList();
-                                  });
-                                },
-                                icon: Icon(isTopLessonsListDescending
-                                    ? Icons.arrow_drop_down
-                                    : Icons.arrow_drop_up),
-                                label: Text(isTopLessonsListDescending
-                                    ? "Descending"
-                                    : "Ascending")),
-                          ],
-                        ),
-                      ),
+                                        setState(() {
+                                          topLessonNames =
+                                              sortTopLessonNames.toList();
+                                          topLessonAccuracies =
+                                              sortTopLessonAccuracies.toList();
+                                        });
+                                      },
+                                      icon: Icon(isTopLessonsListDescending
+                                          ? Icons.arrow_downward_rounded
+                                          : Icons.arrow_upward_rounded),
+                                      label: Text(isTopLessonsListDescending
+                                          ? "Descending"
+                                          : "Ascending")),
+                                ],
+                              ),
+                            )
+                          : const SliverToBoxAdapter(),
                       topLessonNames.isEmpty
                           ? const SliverToBoxAdapter()
-                          : SliverPadding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              sliver: SliverList.builder(
-                                  itemCount: 10,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return topLessonsCard(topLessonNames[index],
-                                        index + 1, topLessonAccuracies[index]);
-                                  }),
-                            ),
+                          : isTopLessonsListVisible
+                              ? SliverPadding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  sliver: SliverList.builder(
+                                      itemCount: 10,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return topLessonsCard(
+                                            topLessonNames[index],
+                                            index + 1,
+                                            topLessonAccuracies[index]);
+                                      }),
+                                )
+                              : const SliverToBoxAdapter(),
                       SliverPadding(
                         padding: const EdgeInsets.all(8.0),
                         sliver: SliverPersistentHeader(
                             pinned: false,
                             delegate: CustomHeaderDelegate(
+                                state: toggleTopPlayedLessonsListVisibility,
                                 headerText: isEnglish
                                     ? "Most Played Lessons"
                                     : "Pinaka Nilalaro na mga Aralin",
                                 toggleState: isTopPlayedLessonsListVisible)),
                       ),
-                      SliverToBoxAdapter(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton.icon(
-                                onPressed: () {
-                                  if (isTopPlayedLessonsListDescending) {
-                                    setState(() {
-                                      isTopPlayedLessonsListDescending = false;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      isTopPlayedLessonsListDescending = true;
-                                    });
-                                  }
+                      isTopPlayedLessonsListVisible
+                          ? SliverToBoxAdapter(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton.icon(
+                                      onPressed: () {
+                                        if (isTopPlayedLessonsListDescending) {
+                                          setState(() {
+                                            isTopPlayedLessonsListDescending =
+                                                false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            isTopPlayedLessonsListDescending =
+                                                true;
+                                          });
+                                        }
 
-                                  Iterable<String> sortTopLessonNames =
-                                      mostPlayedLessonNames.reversed;
-                                  Iterable<int> sortTopLessonCounts =
-                                      mostPlayedLessonCounts.reversed;
+                                        Iterable<String> sortTopLessonNames =
+                                            mostPlayedLessonNames.reversed;
+                                        Iterable<int> sortTopLessonCounts =
+                                            mostPlayedLessonCounts.reversed;
 
-                                  setState(() {
-                                    mostPlayedLessonNames =
-                                        sortTopLessonNames.toList();
-                                    mostPlayedLessonCounts =
-                                        sortTopLessonCounts.toList();
-                                  });
-                                },
-                                icon: Icon(isTopPlayedLessonsListDescending
-                                    ? Icons.arrow_drop_down
-                                    : Icons.arrow_drop_up),
-                                label: Text(isTopPlayedLessonsListDescending
-                                    ? "Descending"
-                                    : "Ascending")),
-                          ],
-                        ),
-                      ),
+                                        setState(() {
+                                          mostPlayedLessonNames =
+                                              sortTopLessonNames.toList();
+                                          mostPlayedLessonCounts =
+                                              sortTopLessonCounts.toList();
+                                        });
+                                      },
+                                      icon: Icon(
+                                          isTopPlayedLessonsListDescending
+                                              ? Icons.arrow_downward_rounded
+                                              : Icons.arrow_upward_rounded),
+                                      label: Text(
+                                          isTopPlayedLessonsListDescending
+                                              ? "Descending"
+                                              : "Ascending")),
+                                ],
+                              ),
+                            )
+                          : const SliverToBoxAdapter(),
                       mostPlayedLessonNames.isEmpty
                           ? const SliverToBoxAdapter()
-                          : SliverPadding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              sliver: SliverList.builder(
-                                  itemCount: 10,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return topPlayedLessonsCard(
-                                        mostPlayedLessonNames[index],
-                                        index + 1,
-                                        mostPlayedLessonCounts[index]);
-                                  }),
-                            ),
+                          : isTopPlayedLessonsListVisible
+                              ? SliverPadding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  sliver: SliverList.builder(
+                                      itemCount: 10,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return topPlayedLessonsCard(
+                                            mostPlayedLessonNames[index],
+                                            index + 1,
+                                            mostPlayedLessonCounts[index]);
+                                      }),
+                                )
+                              : const SliverToBoxAdapter(),
                     ],
                   ),
                 ),
@@ -724,8 +779,12 @@ class _MyProgressPageState extends State<MyProgressPage> {
 }
 
 class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
-  CustomHeaderDelegate({required this.headerText, required this.toggleState});
+  CustomHeaderDelegate(
+      {required this.headerText,
+      required this.toggleState,
+      required this.state});
 
+  final Function state;
   final String headerText;
   bool toggleState;
 
@@ -751,6 +810,7 @@ class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
+              state();
               setState(() {
                 if (!toggleState) {
                   toggleState = true;
@@ -776,8 +836,8 @@ class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
                       right: 10,
                       child: Icon(
                         toggleState
-                            ? Icons.arrow_drop_down
-                            : Icons.arrow_drop_up,
+                            ? Icons.arrow_drop_up
+                            : Icons.arrow_drop_down,
                         color: Theme.of(context).primaryColor,
                         size: 32,
                       )),

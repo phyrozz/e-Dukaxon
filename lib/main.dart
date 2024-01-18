@@ -145,7 +145,7 @@ class _MyAppState extends State<MyApp> {
         );
       case 'Purple':
         return AppThemes.purpleTheme.copyWith(
-          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+          textTheme: AppThemes.purpleTheme.textTheme.copyWith(
             displayLarge: const TextStyle(
                 color: Colors.black, fontFamily: 'OpenDyslexic'),
             displaySmall: const TextStyle(
@@ -195,7 +195,7 @@ class _MyAppState extends State<MyApp> {
         );
       case 'Cyan':
         return AppThemes.cyanTheme.copyWith(
-          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+          textTheme: AppThemes.cyanTheme.textTheme.copyWith(
             displayLarge: const TextStyle(
                 color: Colors.black, fontFamily: 'OpenDyslexic'),
             displaySmall: const TextStyle(
@@ -245,7 +245,7 @@ class _MyAppState extends State<MyApp> {
         );
       case 'Black':
         return AppThemes.blackTheme.copyWith(
-          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+          textTheme: AppThemes.blackTheme.textTheme.copyWith(
             displayLarge:
                 TextStyle(color: Colors.white, fontFamily: 'OpenDyslexic'),
             displaySmall:
@@ -295,7 +295,7 @@ class _MyAppState extends State<MyApp> {
         );
       case 'White':
         return AppThemes.whiteTheme.copyWith(
-          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+          textTheme: AppThemes.whiteTheme.textTheme.copyWith(
             displayLarge:
                 TextStyle(color: Colors.black, fontFamily: 'OpenDyslexic'),
             displaySmall:
@@ -345,7 +345,7 @@ class _MyAppState extends State<MyApp> {
         );
       default:
         return AppThemes.defaultTheme.copyWith(
-          textTheme: AppThemes.blueTheme.textTheme.copyWith(
+          textTheme: AppThemes.defaultTheme.textTheme.copyWith(
             displayLarge: const TextStyle(
                 color: Colors.black, fontFamily: 'OpenDyslexic'),
             displaySmall: const TextStyle(

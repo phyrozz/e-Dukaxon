@@ -6,6 +6,7 @@ import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
 import 'package:e_dukaxon/firestore_data/number_lessons.dart';
 import 'package:e_dukaxon/firestore_data/word_lessons.dart';
 import 'package:e_dukaxon/pages/assessment_questions/locale_select.dart';
+import 'package:e_dukaxon/pages/games.dart';
 import 'package:e_dukaxon/pages/lessons/letters/level_one.dart';
 import 'package:e_dukaxon/pages/lessons/numbers/level_one.dart';
 import 'package:e_dukaxon/pages/lessons/words/level_one.dart';
@@ -15,6 +16,7 @@ import 'package:e_dukaxon/widgets/new_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:popover/popover.dart';
 
 class ChildHomePage extends StatefulWidget {
   final bool isParentMode;
@@ -38,6 +40,7 @@ class _ChildHomePageState extends State<ChildHomePage> {
   bool isEnglish = true;
   bool isLoading = true;
   String currentColorScheme = "Default";
+  int dailyStreak = 0;
 
   Future<void> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -80,6 +83,69 @@ class _ChildHomePageState extends State<ChildHomePage> {
         return "assets/images/bg_light.png";
       default:
         return "assets/images/bg_brown.png";
+    }
+  }
+
+  // Always check the lastUpdatedStreak value on Firestore every time this page is loaded to determine if the user's daily streak is still active or not
+  Future<void> checkDailyStreak() async {
+    final userId = Auth().getCurrentUserId();
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot snapshot = await documentRef.get();
+
+    try {
+      int dailyStreak = snapshot.get("dailyStreak");
+      Timestamp lastUpdate = snapshot.get("lastUpdatedStreak");
+      Timestamp currentStreakStartedAt = snapshot.get("currentStreakStartedAt");
+
+      // Check if the current daily streak has reached a full day so it can be incremented by 1
+      if (isPast24Hours(currentStreakStartedAt.millisecondsSinceEpoch)) {
+        await documentRef.update({
+          'dailyStreak': dailyStreak++,
+        });
+      }
+
+      // Check if it's been more than 24 hours
+      if (isPast24Hours(lastUpdate.millisecondsSinceEpoch)) {
+        // Reset the dailyStreak to 0
+        await documentRef.update({
+          'dailyStreak': 0,
+          'lastUpdatedStreak': FieldValue.serverTimestamp(),
+          'currentStreakStartedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      await documentRef.update({
+        'dailyStreak': 0,
+        'lastUpdatedStreak': FieldValue.serverTimestamp(),
+        'currentStreakStartedAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+  // Exclusively for the checkDailyStreak function
+  bool isPast24Hours(int timestamp) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final last24Hours = now - 24 * 60 * 60 * 1000;
+    return timestamp < last24Hours;
+  }
+
+  Future<void> getDailyStreak() async {
+    final userId = Auth().getCurrentUserId();
+    DocumentReference documentRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot snapshot = await documentRef.get();
+
+    try {
+      setState(() {
+        dailyStreak = snapshot.get("dailyStreak");
+      });
+    } catch (e) {
+      await documentRef.update({
+        'dailyStreak': 0,
+      });
     }
   }
 
@@ -278,14 +344,17 @@ class _ChildHomePageState extends State<ChildHomePage> {
 
   @override
   void initState() {
-    getLanguage().then((_) {
-      letterLessonsFuture = letterLessons();
-      numberLessonsFuture = numberLessons();
-      wordLessonsFuture = wordLessons();
-      setState(() {
-        isLoading = false;
-      });
-    }).then((_) => getColorScheme());
+    getLanguage()
+        .then((_) {
+          letterLessonsFuture = letterLessons();
+          numberLessonsFuture = numberLessons();
+          wordLessonsFuture = wordLessons();
+          setState(() {
+            isLoading = false;
+          });
+        })
+        .then((_) => getColorScheme())
+        .then((_) => checkDailyStreak());
     super.initState();
     // initializeGameDataOnFirestore();
     // initLetterLessonData();
@@ -367,35 +436,39 @@ class _ChildHomePageState extends State<ChildHomePage> {
                                     ? "Let's learn!"
                                     : "Tayo'y mag-aral!",
                                 isParentMode: widget.isParentMode),
-                            SliverToBoxAdapter(
-                              child: SizedBox(
-                                height: 100.0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 12,
-                                    ),
-                                    AnimatedAlign(
-                                      alignment: headerPosition,
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                      curve: Curves.easeInOutCubic,
-                                      child: AnimatedOpacity(
-                                        opacity: containerOpacity,
+                            SliverPadding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              sliver: SliverToBoxAdapter(
+                                child: SizedBox(
+                                  height: 50.0,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      AnimatedAlign(
+                                        alignment: headerPosition,
                                         duration:
                                             const Duration(milliseconds: 500),
-                                        curve: Curves.easeInOut,
-                                        child: Text(
-                                          isEnglish ? 'Letters' : 'Mga Titik',
-                                          style: const TextStyle(
-                                              fontSize: 32,
-                                              fontWeight: FontWeight.bold),
+                                        curve: Curves.easeInOutCubic,
+                                        child: AnimatedOpacity(
+                                          opacity: containerOpacity,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut,
+                                          child: Text(
+                                            isEnglish ? 'Letters' : 'Mga Titik',
+                                            style: const TextStyle(
+                                                fontSize: 32,
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      StreakIndicator(dailyStreak: dailyStreak),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -1069,11 +1142,75 @@ class _ChildHomePageState extends State<ChildHomePage> {
                         ),
                       ),
                     ),
+                    floatingActionButton: widget.isParentMode
+                        ? null
+                        : FloatingActionButton.extended(
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    const GamesPage(),
+                              ),
+                            ),
+                            label: const Text("Games"),
+                            icon: const Icon(Icons.play_arrow_rounded),
+                            elevation: 20,
+                          ),
                   );
                 }
               }
             },
           );
+  }
+}
+
+class StreakIndicator extends StatelessWidget {
+  const StreakIndicator({
+    super.key,
+    required this.dailyStreak,
+  });
+
+  final int dailyStreak;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => showPopover(
+        context: context,
+        barrierColor: Colors.transparent,
+        bodyBuilder: (context) => Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            dailyStreak == 0
+                ? "Start playing lessons to get your streaks going!"
+                : "Don't lose your streak! Keep playing!",
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        direction: PopoverDirection.left,
+        backgroundColor: Theme.of(context).primaryColorLight,
+        transition: PopoverTransition.other,
+        transitionDuration: const Duration(milliseconds: 100),
+      ),
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Image.asset(
+                dailyStreak == 0
+                    ? "assets/images/streak_inactive.png"
+                    : "assets/images/streak_active.png",
+              ),
+            ),
+            Text("$dailyStreak"),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -169,7 +169,10 @@ class _LettersResultPageState extends State<LettersResultPage> {
             .doc(lessonName)
             .update({
           'accumulatedScore': accumulatedScore,
-          'lessonTaken': lessonTaken
+          'lessonTaken': lessonTaken,
+          // For the daily streak counter
+          // Update the lastUpdatedStreak to the current time to avoid resetting the daily streak if the value has not been updated for the past 24 hours
+          'lastUpdatedStreak': FieldValue.serverTimestamp(),
         });
       } else {
         print(
