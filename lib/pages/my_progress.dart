@@ -793,7 +793,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
                     right: 0,
                     bottom: 0,
                     child: Text(
-                      "Accuracy: $accuracy%",
+                      "Accuracy: ${accuracy.toStringAsFixed(2)}%",
                       style: const TextStyle(fontSize: 16),
                     )),
                 Positioned(

@@ -212,9 +212,9 @@ class _LettersLevelThreeState extends State<LettersLevelThree> {
       if (isCorrect) {
         LetterLessonFirestore(userId: uid)
             .addScoreToLessonBy(widget.lessonName, isEnglish ? "en" : "ph", 10);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

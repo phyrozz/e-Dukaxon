@@ -19,6 +19,10 @@ class _WordsResultPageState extends State<WordsResultPage> {
   int totalScore = 0;
   int score = 0;
   int progress = 0;
+  int accumulatedScore = 0;
+  int finalScore = 0;
+  int newFinalScore = 0;
+  int dailyStreak = 0;
   String uid = "";
   bool isLoading = true;
   bool isEnglish = true;
@@ -36,7 +40,8 @@ class _WordsResultPageState extends State<WordsResultPage> {
         WordLessonFirestore(userId: uid)
             .unlockLesson(widget.lessonName, isEnglish ? "en" : "ph");
       }
-      updateAccumulatedScoresAndLessonTakenCounter(widget.lessonName);
+      updateAccumulatedScoresAndLessonTakenCounter(widget.lessonName)
+          .then((value) => addCounterOnLesson(widget.lessonName));
       // isParent = false;
     });
   }
@@ -56,7 +61,7 @@ class _WordsResultPageState extends State<WordsResultPage> {
 
   void playLessonFinishedSound() {
     if (score <= totalScore && score >= totalScore / 2) {
-      audio.open(Audio('assets/sounds/lesson_finished_1.mp3'));
+      audio.open(Audio('assets/sounds/congratulations.wav'));
       if (progress < 100) {
         if (score == totalScore) {
           WordLessonFirestore(userId: uid).incrementProgressValue(
@@ -67,7 +72,7 @@ class _WordsResultPageState extends State<WordsResultPage> {
         }
       }
     } else {
-      audio.open(Audio('assets/sounds/lesson_finished_2.mp3'));
+      audio.open(Audio('assets/sounds/game_over.wav'));
       if (progress < 100) {
         WordLessonFirestore(userId: uid).incrementProgressValue(
             widget.lessonName, isEnglish ? "en" : "ph", 5);
@@ -159,6 +164,36 @@ class _WordsResultPageState extends State<WordsResultPage> {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
+            .update({
+          // For the daily streak counter
+          // Update the lastUpdatedStreak to the current time to avoid resetting the daily streak if the value has not been updated for the past 24 hours
+          'lastUpdatedStreak': FieldValue.serverTimestamp(),
+        });
+
+        // Retrieve the daily streak and final score values from the users document
+        DocumentReference userRef =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+
+        DocumentSnapshot userSnapshot = await userRef.get();
+        int dailyStreak = userSnapshot.exists
+            ? ((userSnapshot.data() as Map<String, dynamic>)['dailyStreak'] ??
+                0)
+            : 0;
+        int finalScore = userLessonData["finalScore"] ?? 0;
+
+        // Store the retrieved accumulated score and daily streak
+        setState(() {
+          this.accumulatedScore = accumulatedScore;
+          this.dailyStreak = dailyStreak;
+          this.finalScore = finalScore;
+        });
+
+        int newFinalScore =
+            finalScore + (dailyStreak == 0 ? score : (score * dailyStreak));
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
             .collection('words')
             .doc(isEnglish ? "en" : "ph")
             .collection('lessons')
@@ -168,13 +203,8 @@ class _WordsResultPageState extends State<WordsResultPage> {
           'lessonTaken': lessonTaken,
         });
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .update({
-          // For the daily streak counter
-          // Update the lastUpdatedStreak to the current time to avoid resetting the daily streak if the value has not been updated for the past 24 hours
-          'lastUpdatedStreak': FieldValue.serverTimestamp(),
+        setState(() {
+          this.newFinalScore = newFinalScore;
         });
       } else {
         print(
@@ -182,6 +212,30 @@ class _WordsResultPageState extends State<WordsResultPage> {
       }
     } catch (e) {
       print('Error updating accumulated scores: $e');
+    }
+  }
+
+  // Counter on a lesson document (not the user's lesson document) indicates the number of times the lesson was played by users
+  // For admin analytics
+  Future<void> addCounterOnLesson(String lessonName) async {
+    try {
+      DocumentReference lessonRef = FirebaseFirestore.instance
+          .collection('words')
+          .doc(isEnglish ? "en" : "ph")
+          .collection('lessons')
+          .doc(lessonName);
+
+      DocumentSnapshot lessonSnapshot = await lessonRef.get();
+      int currentCounter = lessonSnapshot.exists
+          ? ((lessonSnapshot.data() as Map<String, dynamic>)['counter'] ?? 0)
+          : 0;
+      int newCounter = currentCounter + 1;
+
+      await lessonRef.update({
+        'counter': newCounter,
+      });
+    } catch (e) {
+      print('Error updating lesson counter: $e');
     }
   }
 
@@ -230,17 +284,17 @@ class _WordsResultPageState extends State<WordsResultPage> {
                               isEnglish ? "That's okay!" : "Okay lang iyan!",
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
-                            Text(
-                              isEnglish
-                                  ? 'You can play this lesson again to get a higher score.'
-                                  : 'Puwede mo ulit laruin ang lesson na ito para makakuha ng mas mataas na marka.',
-                              style: const TextStyle(fontSize: 20),
-                            ),
+                            // Text(
+                            //   isEnglish
+                            //       ? 'You can play this lesson again to get a higher score.'
+                            //       : 'Puwede mo ulit laruin ang lesson na ito para makakuha ng mas mataas na marka.',
+                            //   style: const TextStyle(fontSize: 20),
+                            // ),
                           ],
                         ),
-                      Text(isEnglish
-                          ? 'You got a score of $score/$totalScore!'
-                          : 'Nakakuha ka ng $score/$totalScore!'),
+                      // Text(isEnglish
+                      //     ? 'You got a score of $score/$totalScore!'
+                      //     : 'Nakakuha ka ng $score/$totalScore!'),
                     ],
                   ),
                   Row(

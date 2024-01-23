@@ -207,9 +207,9 @@ class _LettersLevelFiveState extends State<LettersLevelFive> {
       if (isPassed) {
         LetterLessonFirestore(userId: uid)
             .addScoreToLessonBy(widget.lessonName, isEnglish ? "en" : "ph", 10);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

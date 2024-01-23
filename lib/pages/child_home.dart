@@ -1239,16 +1239,23 @@ class CircularProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: CircularProgressBarPainter(progress, context),
+      painter: progress == 100
+          ? null
+          : CircularProgressBarPainter(progress, context),
       child: Center(
-        child: Text(
-          '$progress%',
-          style: TextStyle(
-            fontSize: 22.0,
-            color: Theme.of(context).textTheme.labelMedium!.color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: progress == 100
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset("assets/images/crown.png"),
+              )
+            : Text(
+                '$progress%',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  color: Theme.of(context).textTheme.labelMedium!.color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }

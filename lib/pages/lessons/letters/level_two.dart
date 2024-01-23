@@ -244,10 +244,10 @@ class _LettersLevelTwoState extends State<LettersLevelTwo> {
               widget.lessonName, isEnglish ? "en" : "ph", 10);
           isCorrectAtFirstAttempt = false;
         }
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         isCorrectAtFirstAttempt = false;
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(
