@@ -38,7 +38,8 @@ class _MyProgressPageState extends State<MyProgressPage> {
         .then((_) => getIsParentValue())
         .then((_) => getParentModeValue())
         .then((_) => getTopLessonsList())
-        .then((_) => getTopPlayedLessons());
+        .then((_) => getTopPlayedLessons())
+        .then((_) => getDailyStreak());
     super.initState();
   }
 
@@ -60,7 +61,6 @@ class _MyProgressPageState extends State<MyProgressPage> {
     if (mounted) {
       setState(() {
         isParentMode = prefValue!;
-        isLoading = false;
       });
     }
   }
@@ -371,6 +371,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
     try {
       setState(() {
         dailyStreak = snapshot.get("dailyStreak");
+        isLoading = false;
       });
     } catch (e) {
       await documentRef.update({

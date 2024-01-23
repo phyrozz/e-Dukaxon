@@ -95,16 +95,12 @@ class _ChildHomePageState extends State<ChildHomePage> {
     DocumentSnapshot snapshot = await documentRef.get();
 
     try {
-      int dailyStreak = snapshot.get("dailyStreak");
       Timestamp lastUpdate = snapshot.get("lastUpdatedStreak");
       Timestamp currentStreakStartedAt = snapshot.get("currentStreakStartedAt");
 
-      // Check if the current daily streak has reached a full day so it can be incremented by 1
-      if (isPast24Hours(currentStreakStartedAt.millisecondsSinceEpoch)) {
-        await documentRef.update({
-          'dailyStreak': dailyStreak++,
-        });
-      }
+      await documentRef.update({
+        'dailyStreak': calculateDailyStreak(currentStreakStartedAt),
+      });
 
       // Check if it's been more than 24 hours
       if (isPast24Hours(lastUpdate.millisecondsSinceEpoch)) {
@@ -129,6 +125,16 @@ class _ChildHomePageState extends State<ChildHomePage> {
     final now = DateTime.now().millisecondsSinceEpoch;
     final last24Hours = now - 24 * 60 * 60 * 1000;
     return timestamp < last24Hours;
+  }
+
+  int calculateDailyStreak(Timestamp currentStreakStartedAt) {
+    DateTime startDate = currentStreakStartedAt.toDate();
+    DateTime today = DateTime.now();
+
+    // Calculate the difference in days
+    int differenceInDays = today.difference(startDate).inDays;
+
+    return differenceInDays;
   }
 
   Future<void> getDailyStreak() async {
@@ -354,7 +360,8 @@ class _ChildHomePageState extends State<ChildHomePage> {
           });
         })
         .then((_) => getColorScheme())
-        .then((_) => checkDailyStreak());
+        .then((_) => checkDailyStreak())
+        .then((_) => getDailyStreak());
     super.initState();
     // initializeGameDataOnFirestore();
     // initLetterLessonData();

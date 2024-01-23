@@ -45,6 +45,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
     if (mounted) {
       setState(() {
         isParentMode = prefValue!;
+        isLoading = false;
       });
     }
   }
@@ -296,18 +297,48 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             .where('username', isEqualTo: editUserName.text)
                             .get();
 
+                    if (editUserName.text.length > 80) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          elevation: 20,
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Username is too long. Please enter a shorter one.',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      );
+                      break;
+                    }
+                    if (!editUserName.text
+                        .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          elevation: 20,
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Username must not contain special characters.',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      );
+                      break;
+                    }
                     if (usernameCheck.docs.isNotEmpty) {
                       // Username already exists
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
+                          elevation: 20,
                           backgroundColor: Colors.red,
                           content: Text(
-                              'Username already exists. Please choose a different one.'),
+                            'Username already exists. Please choose a different one.',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
                         ),
                       );
-                      print(
-                          'Username already exists. Please choose a different one.');
                       break;
                     }
 
@@ -317,6 +348,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     updateProfile(userId, 'username', editUserName.text);
                     if (!context.mounted) return;
                     Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        elevation: 20,
+                        backgroundColor: Colors.lightGreen.shade200,
+                        content: const Text(
+                          'Username has been updated successfully!',
+                          style: TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                    );
                     break;
                   case "age":
                     updateProfile(userId, 'age', age);
@@ -324,6 +365,38 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     Navigator.pop(context);
                     break;
                   case "name":
+                    if (editName.text.length > 256) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          elevation: 20,
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Name is too long. Please try a shorter one.',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      );
+                      break;
+                    }
+                    if (!editName.text
+                        .split(" ")
+                        .join("")
+                        .contains(RegExp(r'^[a-zA-Z0-9]+$'))) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          elevation: 20,
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'Name must not contain special characters.',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      );
+                      break;
+                    }
+
                     setState(() {
                       name = editName.text;
                     });
@@ -453,8 +526,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
   void initState() {
     getLanguage()
         .then((value) => getUserAccountData())
-        .then((value) => getParentModeValue())
-        .then((value) => fetchAgeOptions());
+        .then((value) => fetchAgeOptions())
+        .then((value) => getParentModeValue());
     super.initState();
   }
 
