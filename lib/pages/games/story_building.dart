@@ -93,11 +93,11 @@ class _StoryBuildingGameState extends State<StoryBuildingGame>
       if (isPassed) {
         GameFirestore(userId: Auth().getCurrentUserId()!)
             .addScoreToGame("storyBuilding", isPassed);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         GameFirestore(userId: Auth().getCurrentUserId()!)
             .addScoreToGame("storyBuilding", isPassed);
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

@@ -134,11 +134,11 @@ class _LetterTracingPageState extends State<LetterTracingPage> {
       if (isPassed) {
         GameFirestore(userId: Auth().getCurrentUserId()!)
             .addScoreToGame("traceLetter", isPassed);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         GameFirestore(userId: Auth().getCurrentUserId()!)
             .addScoreToGame("traceLetter", isPassed);
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

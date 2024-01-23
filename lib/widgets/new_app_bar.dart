@@ -47,13 +47,15 @@ class _WelcomeCustomAppBarState extends State<WelcomeCustomAppBar> {
     bool? value = prefs.getBool('isParentMode');
 
     if (value != null) {
-      setState(() {
-        if (value) {
-          isParentMode = true;
-        } else {
-          isParentMode = false;
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (value) {
+            isParentMode = true;
+          } else {
+            isParentMode = false;
+          }
+        });
+      }
     }
   }
 

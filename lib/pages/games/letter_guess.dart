@@ -179,12 +179,12 @@ class _LetterGuessPageState extends State<LetterGuessPage> {
               .addScoreToGame("letterGuess", isCorrect);
           isCorrectAtFirstAttempt = false;
         }
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         isCorrectAtFirstAttempt = false;
         GameFirestore(userId: Auth().getCurrentUserId()!)
             .addScoreToGame("letterGuess", false);
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

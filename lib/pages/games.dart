@@ -1,5 +1,6 @@
 import 'package:e_dukaxon/pages/games/letter_guess.dart';
 import 'package:e_dukaxon/pages/games/sound_quiz.dart';
+import 'package:e_dukaxon/pages/games/game_menu.dart';
 import 'package:e_dukaxon/pages/games/story_building.dart';
 import 'package:e_dukaxon/pages/games/trace_letter.dart';
 import 'package:e_dukaxon/pages/games/word_place.dart';
@@ -53,27 +54,59 @@ class _GamesPageState extends State<GamesPage> {
     const Button(
       title: 'Sound Quiz',
       iconImageUrl: 'assets/images/sound_quiz_icon.png',
-      routePage: SoundQuizPage(),
+      routePage: GameMenuPage(
+        name: "Sound Quiz",
+        description: "Guess if the sound matches the letter given.",
+        gameIcon: "assets/images/sound_quiz_icon.png",
+        navigateTo: SoundQuizPage(),
+        docName: "soundQuiz",
+      ),
     ),
     const Button(
       title: 'Letter Tracing',
       iconImageUrl: 'assets/images/letter_tracing_icon.png',
-      routePage: LetterTracingPage(),
+      routePage: GameMenuPage(
+        name: "Letter Tracing",
+        description:
+            "Trace the letter on the canvas. You must trace accurately to pass.",
+        gameIcon: "assets/images/letter_tracing_icon.png",
+        navigateTo: LetterTracingPage(),
+        docName: "traceLetter",
+      ),
     ),
     const Button(
       title: 'Guess the Letter',
       iconImageUrl: 'assets/images/letter_guess_icon.png',
-      routePage: LetterGuessPage(),
+      routePage: GameMenuPage(
+        name: "Guess the Letter",
+        description: "Guess which of the images start with the given letter.",
+        gameIcon: "assets/images/letter_guess_icon.png",
+        navigateTo: LetterGuessPage(),
+        docName: "letterGuess",
+      ),
     ),
     const Button(
       title: 'Word Place',
       iconImageUrl: 'assets/images/word_place_icon.png',
-      routePage: WordPlaceGame(),
+      routePage: GameMenuPage(
+        name: "Word Place",
+        description: "Move the word to the right place in a given sentence.",
+        gameIcon: "assets/images/word_place_icon.png",
+        navigateTo: WordPlaceGame(),
+        docName: "wordPlace",
+      ),
     ),
     const Button(
       title: 'Story Building',
       iconImageUrl: 'assets/images/story_building_icon.png',
-      routePage: StoryBuildingGame(),
+      routePage: GameMenuPage(
+        name: "Story Building",
+        description:
+            "Arrange the sentences in the right order to fit the story.",
+        gameIcon: "assets/images/story_building_icon.png",
+        navigateTo: StoryBuildingGame(),
+        docName: "storyBuilding",
+      ),
     ),
     // Add more game buttons as needed
   ];

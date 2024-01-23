@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
@@ -20,6 +23,8 @@ class SoundQuizPage extends StatefulWidget {
 class _SoundQuizPageState extends State<SoundQuizPage> {
   String levelDescription = "";
   String uid = "";
+  String selectedLetter = "";
+  List<String> letters = [];
   List<dynamic> correctAnswers = [];
   List<String> sounds = [
     "sounds/a_sound_female_UK.mp3",
@@ -63,7 +68,48 @@ class _SoundQuizPageState extends State<SoundQuizPage> {
   @override
   void initState() {
     super.initState();
-    getLanguage();
+    getLanguage()
+        .then((value) => getLettersList())
+        .then((value) => getRandomLetter())
+        .then((value) => getLevelDataByName(selectedLetter));
+  }
+
+  Future<void> getRandomLetter() async {
+    final random = Random();
+    final randomIndex = random.nextInt(letters.length);
+    final l = letters[randomIndex];
+
+    setState(() {
+      selectedLetter = l;
+    });
+  }
+
+  Future<void> getLettersList() async {
+    try {
+      // Replace 'userId' with your actual user ID
+      final userId = Auth().getCurrentUserId();
+      final lettersCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('letters')
+          .doc(isEnglish ? "en" : "ph")
+          .collection('lessons');
+
+      QuerySnapshot querySnapshot = await lettersCollection.get();
+
+      List<String> lettersList = [];
+
+      for (var doc in querySnapshot.docs) {
+        String name = doc['name'];
+        lettersList.add(name);
+      }
+
+      setState(() {
+        letters = lettersList;
+      });
+    } catch (e) {
+      print('Error retrieving letters: $e');
+    }
   }
 
   Future<void> getLanguage() async {
@@ -76,11 +122,6 @@ class _SoundQuizPageState extends State<SoundQuizPage> {
       });
     }
   }
-
-  // LetterLesson? getLetterLessonByName(
-  //     List<LetterLesson> letterLessons, String lessonName) {
-  //   return letterLessons.firstWhere((lesson) => lesson.name == lessonName);
-  // }
 
   void getLevelDataByName(String lessonName) async {
     try {
@@ -135,7 +176,9 @@ class _SoundQuizPageState extends State<SoundQuizPage> {
       } else {
         print(
             'Letter lesson "$lessonName" was not found within the Firestore.');
-        isLoading = true;
+        setState(() {
+          isLoading = true;
+        });
       }
     } catch (e) {
       print('Error reading letter_lessons.json: $e');
@@ -160,10 +203,10 @@ class _SoundQuizPageState extends State<SoundQuizPage> {
     void showResultModal(BuildContext context, bool isCorrect) {
       if (isCorrect) {
         GameFirestore(userId: uid).addScoreToGame("soundQuiz", isCorrect);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         GameFirestore(userId: uid).addScoreToGame("soundQuiz", isCorrect);
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(

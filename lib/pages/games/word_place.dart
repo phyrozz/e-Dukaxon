@@ -173,12 +173,12 @@ class _WordPlaceGameState extends State<WordPlaceGame>
     void showResultModal(BuildContext context, bool isPassed) {
       if (isPassed) {
         GameFirestore(userId: Auth().getCurrentUserId()!)
-            .addScoreToGame("storyBuilding", isPassed);
-        audio.open(Audio('assets/sounds/correct.mp3'));
+            .addScoreToGame("wordPlace", isPassed);
+        audio.open(Audio('assets/sounds/correct.wav'));
       } else {
         GameFirestore(userId: Auth().getCurrentUserId()!)
-            .addScoreToGame("storyBuilding", isPassed);
-        audio.open(Audio('assets/sounds/wrong.mp3'));
+            .addScoreToGame("wordPlace", isPassed);
+        audio.open(Audio('assets/sounds/incorrect.wav'));
       }
 
       showModalBottomSheet(
