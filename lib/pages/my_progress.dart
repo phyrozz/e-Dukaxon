@@ -434,7 +434,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
                                   ],
                                 ),
                                 height: 110,
-                                width: 420,
+                                width: 350,
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Row(
@@ -465,9 +465,7 @@ class _MyProgressPageState extends State<MyProgressPage> {
                                                 const TextStyle(fontSize: 18),
                                           ),
                                           Text(
-                                            isEnglish
-                                                ? "$dailyStreak days"
-                                                : "$dailyStreak araw",
+                                            "$dailyStreak",
                                             style:
                                                 const TextStyle(fontSize: 36),
                                           ),

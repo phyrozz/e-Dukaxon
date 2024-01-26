@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_dukaxon/auth.dart';
 import 'package:e_dukaxon/firebase_storage.dart';
 import 'package:e_dukaxon/firestore_data/letter_lessons.dart';
@@ -124,6 +125,40 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
           MaterialPageRoute(
               builder: (BuildContext context) =>
                   LettersLevelTwo(lessonName: lessonName)));
+    }
+  }
+
+  Future<void> updateCounterOnFirestore() async {
+    try {
+      final String locale = isEnglish ? 'en' : 'ph';
+
+      final lessonDocRef = FirebaseFirestore.instance
+          .collection('letters')
+          .doc(locale)
+          .collection('lessons')
+          .doc(widget.lessonName);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        // Get the current value of the counter field
+        final currentCounterValue =
+            (await transaction.get(lessonDocRef)).get('startCounter') ?? 0;
+
+        // Increment the counter by one
+        final newCounterValue = currentCounterValue + 1;
+
+        // Update the counter field in the lesson document
+        transaction.update(lessonDocRef, {'startCounter': newCounterValue});
+      });
+    } catch (e) {
+      await FirebaseFirestore.instance
+          .collection('letters')
+          .doc(isEnglish ? "en" : "ph")
+          .collection('lessons')
+          .doc(widget.lessonName)
+          .update({
+        'startCounter': 1,
+      });
+      print('Error updating counter: $e');
     }
   }
 
@@ -386,13 +421,17 @@ class _LettersLevelOneState extends State<LettersLevelOne> {
                                       backgroundColor: MaterialStatePropertyAll(
                                           Color.fromARGB(255, 52, 156, 55)),
                                     ),
-                                    onPressed: () => Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                LettersLevelTwo(
-                                                    lessonName:
-                                                        widget.lessonName))),
+                                    onPressed: () {
+                                      updateCounterOnFirestore();
+
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LettersLevelTwo(
+                                                      lessonName:
+                                                          widget.lessonName)));
+                                    },
                                   ),
                                 ],
                               ),

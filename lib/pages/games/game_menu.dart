@@ -35,12 +35,28 @@ class _GameMenuPageState extends State<GameMenuPage> {
             .doc(widget.docName)
             .collection('plays');
 
-        await playsCollection.add({
-          'gameStartedAt': FieldValue.serverTimestamp(),
-          'score': 0,
-        });
+        // Use a transaction to update the counter field in the document
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          final gameDocRef = FirebaseFirestore.instance
+              .collection('games')
+              .doc(widget.docName);
 
-        print('Play document added successfully.');
+          // Get the current value of the counter field
+          final currentCounterValue =
+              (await transaction.get(gameDocRef)).get('counter') ?? 0;
+
+          // Increment the counter by one
+          final newCounterValue = currentCounterValue + 1;
+
+          // Add the play document
+          await playsCollection.add({
+            'gameStartedAt': FieldValue.serverTimestamp(),
+            'score': 0,
+          });
+
+          // Update the counter field in the game document
+          transaction.update(gameDocRef, {'counter': newCounterValue});
+        });
       } else {
         print('User is not signed in.');
       }
